@@ -529,7 +529,9 @@ button {
 .hero-headline {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 76px;
+  /* Fluid so the longest word ("powerhouses.") fits the 55% column on one
+     line at all desktop widths (~11.2px width per 1px of font-size) */
+  font-size: clamp(44px, 4.3vw, 58px);
   line-height: 1.05;
   color: var(--text-primary);
 }
@@ -543,6 +545,12 @@ button {
 .hero-headline .char {
   display: inline-block;
   opacity: 0;
+}
+
+/* Keep each word atomic so the headline only ever breaks between words */
+.hero-headline .word {
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .hero-subtitle {
@@ -2284,7 +2292,7 @@ button {
   }
 
   .hero-headline {
-    font-size: 40px;
+    font-size: clamp(24px, 7.5vw, 40px);
   }
 
   .hero-content {

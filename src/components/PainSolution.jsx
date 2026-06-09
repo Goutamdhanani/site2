@@ -33,9 +33,10 @@ export default function PainSolution() {
         scrollTrigger: { trigger: sectionRef.current, start: 'top 70%' }
       });
 
-      // Animate divider line
+      // Animate divider line (skip when non-rendered, e.g. hidden on mobile —
+      // getTotalLength() throws InvalidStateError on display:none SVG elements)
       const line = document.querySelector('.divider-line');
-      if (line) {
+      if (line && line.getClientRects().length > 0) {
         const length = line.getTotalLength();
         gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
         gsap.to(line, {

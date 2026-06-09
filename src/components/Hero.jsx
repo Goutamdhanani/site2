@@ -207,6 +207,21 @@ export default function Hero() {
   const headlineText = 'We build digital';
   const highlightText = 'powerhouses.';
 
+  // Render text as per-word groups so lines break only between words, never
+  // mid-word. Each letter keeps its `.char` span for the GSAP stagger.
+  let charKey = 0;
+  const renderWords = (text, prefix) =>
+    text.split(' ').map((word, wi, arr) => (
+      <React.Fragment key={`${prefix}-w-${wi}`}>
+        <span className="word">
+          {word.split('').map((c) => (
+            <span className="char" key={`${prefix}-c-${charKey++}`}>{c}</span>
+          ))}
+        </span>
+        {wi < arr.length - 1 ? ' ' : null}
+      </React.Fragment>
+    ));
+
   return (
     <section className="hero" id="hero">
       <canvas ref={canvasRef} className="hero-canvas" />
@@ -218,14 +233,10 @@ export default function Hero() {
           </div>
 
           <h1 className="hero-headline">
-            {headlineText.split('').map((c, i) => (
-              <span className="char" key={i}>{c === ' ' ? '\u00A0' : c}</span>
-            ))}
+            {renderWords(headlineText, 'head')}
             <br />
             <span className="highlight">
-              {highlightText.split('').map((c, i) => (
-                <span className="char" key={`h-${i}`}>{c}</span>
-              ))}
+              {renderWords(highlightText, 'hl')}
             </span>
           </h1>
 

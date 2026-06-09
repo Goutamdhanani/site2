@@ -39,9 +39,10 @@ export default function Process() {
         });
       });
 
-      // Draw the SVG line
+      // Draw the SVG line (skip when non-rendered, e.g. hidden on mobile —
+      // getTotalLength() throws InvalidStateError on display:none SVG elements)
       const line = document.querySelector('.process-svg-line');
-      if (line) {
+      if (line && line.getClientRects().length > 0) {
         const length = line.getTotalLength();
         gsap.set(line, { strokeDasharray: length, strokeDashoffset: length });
         gsap.to(line, {
