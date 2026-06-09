@@ -54,7 +54,7 @@ export default function PainSolution() {
       <div className="pain-solution-accent" />
       <div className="pain-solution-grid">
         <div className="pain-col">
-          <span className="section-label problem">[ THE PROBLEM ]</span>
+          <span className="section-label problem">The problem</span>
           <h2 className="pain-headline">
             Tired of agencies that <span className="strikethrough">ghost</span> you?
           </h2>
@@ -82,7 +82,7 @@ export default function PainSolution() {
         </div>
 
         <div className="solution-col">
-          <span className="section-label solution">[ THE ODDWEBS WAY ]</span>
+          <span className="section-label solution">The oddwebs way</span>
           <h2 className="solution-headline">
             We are your digital <strong>growth partner.</strong>
           </h2>

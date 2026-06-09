@@ -77,7 +77,7 @@ export default function Services() {
   return (
     <section className="services-section" id="services">
       <div className="section-header">
-        <span className="section-pill">[ WHAT WE DO ]</span>
+        <span className="section-pill">What we do</span>
         <h2 className="section-title">
           End-to-end digital solutions that <span className="highlight">scale.</span>
         </h2>

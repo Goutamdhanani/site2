@@ -15,7 +15,7 @@ export default function Marquee() {
   const allLogos = [...logos, ...logos];
   return (
     <section className="marquee-section">
-      <span className="marquee-label">[ TRUSTED BY ]</span>
+      <span className="marquee-label">Trusted by</span>
       <div className="marquee-track-wrapper">
         <div className="marquee-track">
           {allLogos.map((logo, i) => (

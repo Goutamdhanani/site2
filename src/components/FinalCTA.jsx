@@ -106,7 +106,7 @@ export default function FinalCTA() {
     <section className="final-cta" id="cta">
       <canvas ref={canvasRef} className="cta-canvas" />
       <div className="cta-content">
-        <div className="cta-label">[ LET'S BUILD SOMETHING AMAZING ]</div>
+        <div className="cta-label">Let's build something great</div>
         <h2 className="cta-headline">
           Ready to launch your next <span className="gradient-text">big idea?</span>
         </h2>

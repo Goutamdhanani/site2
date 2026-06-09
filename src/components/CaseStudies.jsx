@@ -131,7 +131,7 @@ export default function CaseStudies() {
   return (
     <section className="case-section" ref={sectionRef} id="case-studies">
       <div className="case-header">
-        <span className="section-pill">[ FEATURED CASE STUDIES ]</span>
+        <span className="section-pill">Featured case studies</span>
         <h2 className="section-title">Real results. Real <span className="highlight">impact.</span></h2>
       </div>
       <div className="case-track-wrapper">

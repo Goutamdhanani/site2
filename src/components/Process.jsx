@@ -63,7 +63,7 @@ export default function Process() {
   return (
     <section className="process-section" ref={sectionRef} id="process">
       <div className="section-header">
-        <span className="section-pill">[ HOW WE WORK ]</span>
+        <span className="section-pill">How we work</span>
         <h2 className="section-title">From idea to launch — <span className="highlight">in 4 steps.</span></h2>
       </div>
 

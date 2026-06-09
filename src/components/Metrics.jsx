@@ -98,7 +98,7 @@ export default function Metrics() {
       <canvas ref={canvasRef} className="metrics-canvas" />
       <div className="metrics-content">
         <div className="section-header">
-          <span className="section-pill">[ PROOF IN NUMBERS ]</span>
+          <span className="section-pill">Proof in numbers</span>
           <h2 className="section-title">Results that <span className="highlight">speak.</span></h2>
         </div>
 
@@ -113,7 +113,7 @@ export default function Metrics() {
 
         <div className="featured-impact">
           <div>
-            <div className="featured-label">[ FEATURED IMPACT ]</div>
+            <div className="featured-label">Featured impact</div>
             <div className="featured-project">DataFlow</div>
             <div className="featured-type">SaaS Analytics Platform</div>
             <div className="featured-metric">45%</div>
