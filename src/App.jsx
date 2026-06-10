@@ -1,95 +1,118 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { TextPlugin } from 'gsap/TextPlugin';
+import Lenis from '@studio-freight/lenis';
 
 import Preloader from './components/Preloader';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Marquee from './components/Marquee';
-import PainSolution from './components/PainSolution';
-import Services from './components/Services';
-import Showcase from './components/Showcase';
-import Metrics from './components/Metrics';
 import CaseStudies from './components/CaseStudies';
+import Services from './components/Services';
+import Metrics from './components/Metrics';
 import Process from './components/Process';
 import Testimonials from './components/Testimonials';
 import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
-import Toast from './components/Toast';
 import CustomCursor from './components/CustomCursor';
-import SectionDots from './components/SectionDots';
 
-gsap.registerPlugin(ScrollTrigger, TextPlugin);
+gsap.registerPlugin(ScrollTrigger);
 
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [siteVisible, setSiteVisible] = useState(false);
+  const lenisRef = useRef(null);
 
   const handlePreloaderComplete = () => {
     setLoading(false);
-    setTimeout(() => setSiteVisible(true), 50);
+    // Small delay for DOM to paint
+    requestAnimationFrame(() => {
+      setSiteVisible(true);
+    });
   };
+
+  // Initialize Lenis immediately but keep it paused until site is visible
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.0,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothTouch: false,
+      touchMultiplier: 1.5
+    });
+    lenisRef.current = lenis;
+
+    // Connect Lenis to GSAP ticker
+    const onTick = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(onTick);
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      gsap.ticker.remove(onTick);
+      lenis.destroy();
+    };
+  }, []);
 
   useEffect(() => {
     if (!siteVisible) return;
 
-    // Magnetic button effect
-    const magneticBtns = document.querySelectorAll('.magnetic');
-    const isMobile = 'ontouchstart' in window;
+    // Scroll progress bar
+    const onScroll = () => {
+      const scrollH = document.body.scrollHeight - window.innerHeight;
+      if (scrollH <= 0) return;
+      const prog = window.scrollY / scrollH;
+      const bar = document.querySelector('.scroll-bar');
+      if (bar) bar.style.width = (prog * 100) + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
 
+    // Magnetic buttons
+    const isMobile = 'ontouchstart' in window || window.innerWidth < 900;
     if (!isMobile) {
-      magneticBtns.forEach(btn => {
-        const handleMove = (e) => {
-          const rect = btn.getBoundingClientRect();
-          const relX = e.clientX - rect.left - rect.width / 2;
-          const relY = e.clientY - rect.top - rect.height / 2;
-          gsap.to(btn, { x: relX * 0.35, y: relY * 0.35, duration: 0.6, ease: 'power4.out' });
+      const btns = document.querySelectorAll('.magnetic');
+      const handlers = [];
+      btns.forEach(btn => {
+        const move = (e) => {
+          const r = btn.getBoundingClientRect();
+          gsap.to(btn, {
+            x: (e.clientX - r.left - r.width / 2) * 0.3,
+            y: (e.clientY - r.top - r.height / 2) * 0.3,
+            duration: 0.5, ease: 'power4.out'
+          });
         };
-        const handleLeave = () => {
-          gsap.to(btn, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.3)' });
+        const leave = () => {
+          gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)' });
         };
-        btn.addEventListener('mousemove', handleMove);
-        btn.addEventListener('mouseleave', handleLeave);
+        btn.addEventListener('mousemove', move);
+        btn.addEventListener('mouseleave', leave);
+        handlers.push({ btn, move, leave });
       });
     }
 
-    // Generic section heading animations
-    gsap.utils.toArray('.section-title, .section-header h2').forEach(el => {
-      gsap.fromTo(el, { y: 50, opacity: 0 }, {
-        y: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 80%' }
-      });
-    });
-
-    gsap.utils.toArray('.section-subtitle, .section-pill').forEach(el => {
-      gsap.fromTo(el, { y: 30, opacity: 0 }, {
-        y: 0, opacity: 1, duration: 0.7, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 85%' }
-      });
-    });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
   }, [siteVisible]);
 
   return (
     <>
       {loading && <Preloader onComplete={handlePreloaderComplete} />}
-      <div style={{ opacity: siteVisible ? 1 : 0, transform: siteVisible ? 'none' : 'translateY(30px)', transition: 'opacity 0.6s ease, transform 0.6s ease' }}>
+      <div className="scroll-bar" style={{ opacity: siteVisible ? 1 : 0 }} />
+      <div style={{
+        opacity: siteVisible ? 1 : 0,
+        transition: 'opacity 0.5s ease'
+      }}>
         <Navbar />
-        <SectionDots />
         <main>
           <Hero />
           <Marquee />
-          <PainSolution />
-          <Services />
-          <Showcase />
-          <Metrics />
           <CaseStudies />
+          <Services />
+          <Metrics />
           <Process />
           <Testimonials />
           <FinalCTA />
         </main>
         <Footer />
-        <Toast />
         <CustomCursor />
       </div>
     </>

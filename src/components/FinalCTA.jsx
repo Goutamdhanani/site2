@@ -1,140 +1,150 @@
 import React, { useEffect, useRef } from 'react';
-import * as THREE from 'three';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 export default function FinalCTA() {
-  const canvasRef = useRef(null);
+  const sectionRef = useRef(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.z = 8;
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    const ctx = gsap.context(() => {
 
-    // Large wireframe sphere
-    const sphereGeo = new THREE.SphereGeometry(4, 32, 32);
-    const sphereMat = new THREE.MeshBasicMaterial({ color: 0x7B3FE4, wireframe: true, transparent: true, opacity: 0.08 });
-    const bigSphere = new THREE.Mesh(sphereGeo, sphereMat);
-    scene.add(bigSphere);
+      const ctaTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#contact',
+          start: 'top 65%',
+          once: true
+        }
+      });
 
-    // Inner core
-    const coreGeo = new THREE.IcosahedronGeometry(0.8, 3);
-    const coreMat = new THREE.MeshBasicMaterial({ color: 0x06EFC5, wireframe: true, transparent: true, opacity: 0.6 });
-    const core = new THREE.Mesh(coreGeo, coreMat);
-    scene.add(core);
+      // Eyebrow fades in
+      ctaTl.fromTo('#contact .eyebrow', {
+        opacity: 0, y: 15
+      }, {
+        opacity: 1, y: 0,
+        duration: 0.5, ease: 'power2.out'
+      });
 
-    // Two torus rings
-    const ringMat1 = new THREE.MeshBasicMaterial({ color: 0x7B3FE4, transparent: true, opacity: 0.15 });
-    const ringMat2 = new THREE.MeshBasicMaterial({ color: 0x06EFC5, transparent: true, opacity: 0.12 });
-    const ring1 = new THREE.Mesh(new THREE.TorusGeometry(5, 0.02, 8, 100), ringMat1);
-    const ring2 = new THREE.Mesh(new THREE.TorusGeometry(5, 0.02, 8, 100), ringMat2);
-    ring2.rotation.x = Math.PI / 2;
-    scene.add(ring1, ring2);
+      // Headline — dramatic line-by-line clip reveal
+      ctaTl.fromTo('.cta-headline', {
+        opacity: 0,
+        y: 80,
+        clipPath: 'inset(100% 0 0 0)',
+        filter: 'blur(6px)'
+      }, {
+        opacity: 1,
+        y: 0,
+        clipPath: 'inset(0% 0 0 0)',
+        filter: 'blur(0px)',
+        duration: 1.4,
+        ease: 'power4.out'
+      }, '-=0.2');
 
-    // Orbiting particles
-    const isMobile = 'ontouchstart' in window;
-    const pCount = isMobile ? 1000 : 2000;
-    const pGeo = new THREE.BufferGeometry();
-    const pPos = new Float32Array(pCount * 3);
-    const offsets = new Float32Array(pCount);
-    const radii = new Float32Array(pCount * 2);
-    for (let i = 0; i < pCount; i++) {
-      offsets[i] = Math.random() * Math.PI * 2;
-      radii[i * 2] = 2 + Math.random() * 4;
-      radii[i * 2 + 1] = 1.5 + Math.random() * 3;
-      pPos[i * 3] = Math.sin(offsets[i]) * radii[i * 2];
-      pPos[i * 3 + 1] = Math.cos(offsets[i]) * radii[i * 2 + 1];
-      pPos[i * 3 + 2] = (Math.random() - 0.5) * 6;
-    }
-    pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-    const pMat = new THREE.PointsMaterial({ color: 0xA78BFA, size: 0.02, transparent: true, opacity: 0.5 });
-    const particles = new THREE.Points(pGeo, pMat);
-    scene.add(particles);
+      // Subtitle
+      ctaTl.fromTo('.cta-sub', {
+        opacity: 0, y: 30
+      }, {
+        opacity: 1, y: 0,
+        duration: 0.8, ease: 'power2.out'
+      }, '-=0.6');
 
-    let t = 0;
-    let animId;
-    const animate = () => {
-      animId = requestAnimationFrame(animate);
-      t += 0.005;
-      bigSphere.rotation.y += 0.002;
-      bigSphere.rotation.x += 0.001;
-      core.rotation.y += 0.01;
-      core.rotation.x += 0.007;
-      ring1.rotation.z += 0.002;
-      ring2.rotation.z -= 0.003;
+      // CTA buttons — pop with scale
+      ctaTl.fromTo('.cta-actions', {
+        opacity: 0, y: 25, scale: 0.95
+      }, {
+        opacity: 1, y: 0, scale: 1,
+        duration: 0.7, ease: 'back.out(1.5)'
+      }, '-=0.4');
 
-      // Orbit particles
-      const positions = pGeo.attributes.position.array;
-      for (let i = 0; i < pCount; i++) {
-        positions[i * 3] = Math.sin(t + offsets[i]) * radii[i * 2];
-        positions[i * 3 + 1] = Math.cos(t * 0.7 + offsets[i]) * radii[i * 2 + 1];
-      }
-      pGeo.attributes.position.needsUpdate = true;
+      // Note
+      ctaTl.fromTo('.cta-note', {
+        opacity: 0
+      }, {
+        opacity: 1,
+        duration: 0.5, ease: 'power2.out'
+      }, '-=0.2');
 
-      renderer.render(scene, camera);
-    };
+      // Urgency badge — scale bounce
+      ctaTl.fromTo('.cta-urgency', {
+        opacity: 0, scale: 0.8
+      }, {
+        opacity: 1, scale: 1,
+        duration: 0.6, ease: 'elastic.out(1, 0.5)'
+      }, '-=0.2');
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting) animate();
-      else cancelAnimationFrame(animId);
-    }, { threshold: 0.1 });
-    const section = canvas.closest('.final-cta');
-    if (section) observer.observe(section);
+      // ─── FLOATING ASTEROID IN CTA BACKGROUND ───
+      gsap.fromTo('.cta-asteroid', {
+        opacity: 0,
+        rotation: -20,
+        scale: 0.6
+      }, {
+        opacity: 0.08,
+        rotation: 0,
+        scale: 1,
+        duration: 2,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '#contact',
+          start: 'top 60%',
+          once: true
+        }
+      });
 
-    const handleResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-    window.addEventListener('resize', handleResize);
+      // Asteroid subtle float on scroll
+      gsap.to('.cta-asteroid', {
+        yPercent: -20,
+        rotation: 10,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#contact',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 2
+        }
+      });
 
-    return () => {
-      cancelAnimationFrame(animId);
-      observer.disconnect();
-      window.removeEventListener('resize', handleResize);
-      renderer.dispose();
-      sphereGeo.dispose(); sphereMat.dispose();
-      coreGeo.dispose(); coreMat.dispose();
-      ringMat1.dispose(); ringMat2.dispose();
-      pGeo.dispose(); pMat.dispose();
-    };
+    }, sectionRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
-    <section className="final-cta" id="cta">
-      <canvas ref={canvasRef} className="cta-canvas" />
-      <div className="cta-content">
-        <div className="cta-label">Let's build something great</div>
+    <section id="contact" ref={sectionRef}>
+      {/* Background asteroid from user's uploaded media */}
+      <img
+        src="/assets/asteroid.png"
+        alt=""
+        className="cta-asteroid"
+        aria-hidden="true"
+      />
+
+      <div className="cta-inner">
+        <p className="eyebrow" style={{ textAlign: 'center' }}>Start a Project</p>
+
         <h2 className="cta-headline">
-          Ready to launch your next <span className="gradient-text">big idea?</span>
+          Ready to build<br />
+          something<br />
+          <em>extraordinary?</em>
         </h2>
+
         <p className="cta-sub">
-          Book a free 30-minute call with our experts. No pitch decks. No fluff. Just honest advice.
+          Book a free 30-minute call. No pitch decks.<br />
+          No fluff. Just honest advice.
         </p>
-        <div className="cta-buttons">
-          <a href="#" className="cta-btn-primary magnetic">Schedule Free Call →</a>
-          <a
-            href="https://wa.me/+91XXXXXXXXXX?text=Hi!%20I%20want%20to%20discuss%20a%20project%20with%20oddwebs."
-            className="cta-btn-secondary"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Or Chat on WhatsApp 💬
+
+        <div className="cta-actions">
+          <a href="#" className="btn-primary btn-large magnetic">
+            Book a Free Call ↗
+          </a>
+          <a href="https://wa.me/" className="btn-ghost">
+            Or chat on WhatsApp
           </a>
         </div>
-        <div className="urgency-badge">⚡ Only 3 client slots left this month</div>
-        <div className="response-time">Typically replies within 2 hours</div>
-      </div>
-      <div className="cta-contact-strip">
-        <a href="mailto:hello@oddwebs.com">📧 hello@oddwebs.com</a>
-        <span>|</span>
-        <a href="https://wa.me/+91XXXXXXXXXX" target="_blank" rel="noopener noreferrer">📱 WhatsApp Us</a>
-        <span>|</span>
-        <a href="https://www.oddwebs.com" target="_blank" rel="noopener noreferrer">🌐 www.oddwebs.com</a>
-        <span>|</span>
-        <a href="https://instagram.com/oddwebs" target="_blank" rel="noopener noreferrer">📸 @oddwebs</a>
+
+        <p className="cta-note">Typically replies within 2 hours · hello@oddwebs.com</p>
+
+        <div className="cta-urgency">
+          Only 3 client slots open this month
+        </div>
       </div>
     </section>
   );

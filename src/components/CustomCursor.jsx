@@ -2,71 +2,50 @@ import React, { useEffect, useRef } from 'react';
 
 export default function CustomCursor() {
   const dotRef = useRef(null);
-  const followerRef = useRef(null);
+  const ringRef = useRef(null);
+  const mouse = useRef({ x: 0, y: 0 });
+  const ring = useRef({ x: 0, y: 0 });
+  const raf = useRef(null);
 
   useEffect(() => {
-    const isMobile = 'ontouchstart' in window || window.innerWidth < 768;
-    if (isMobile) return;
+    // Don't render on touch devices
+    if ('ontouchstart' in window) return;
 
     const dot = dotRef.current;
-    const follower = followerRef.current;
-    let mouseX = 0, mouseY = 0;
-    let followerX = 0, followerY = 0;
+    const ringEl = ringRef.current;
 
-    const onMouseMove = (e) => {
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      dot.style.left = mouseX + 'px';
-      dot.style.top = mouseY + 'px';
+    const onMove = (e) => {
+      mouse.current.x = e.clientX;
+      mouse.current.y = e.clientY;
+      if (dot) {
+        dot.style.left = e.clientX + 'px';
+        dot.style.top = e.clientY + 'px';
+      }
     };
 
-    const animateFollower = () => {
-      followerX += (mouseX - followerX) * 0.15;
-      followerY += (mouseY - followerY) * 0.15;
-      follower.style.left = followerX + 'px';
-      follower.style.top = followerY + 'px';
-      requestAnimationFrame(animateFollower);
+    const animate = () => {
+      ring.current.x += (mouse.current.x - ring.current.x) * 0.15;
+      ring.current.y += (mouse.current.y - ring.current.y) * 0.15;
+      if (ringEl) {
+        ringEl.style.left = ring.current.x + 'px';
+        ringEl.style.top = ring.current.y + 'px';
+      }
+      raf.current = requestAnimationFrame(animate);
     };
 
-    const onHoverEnter = () => follower.classList.add('hovering');
-    const onHoverLeave = () => {
-      follower.classList.remove('hovering');
-      follower.classList.remove('cta-hover');
-    };
-    const onCTAEnter = () => follower.classList.add('cta-hover');
-
-    document.addEventListener('mousemove', onMouseMove);
-    animateFollower();
-
-    // Add hover effect to links and buttons
-    const interactiveElements = document.querySelectorAll('a, button, .service-card, .testimonial-card, .showcase-tab');
-    interactiveElements.forEach(el => {
-      el.addEventListener('mouseenter', onHoverEnter);
-      el.addEventListener('mouseleave', onHoverLeave);
-    });
-
-    const ctaElements = document.querySelectorAll('.btn-primary, .cta-btn-primary, .nav-cta');
-    ctaElements.forEach(el => {
-      el.addEventListener('mouseenter', onCTAEnter);
-      el.addEventListener('mouseleave', onHoverLeave);
-    });
+    document.addEventListener('mousemove', onMove);
+    raf.current = requestAnimationFrame(animate);
 
     return () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      interactiveElements.forEach(el => {
-        el.removeEventListener('mouseenter', onHoverEnter);
-        el.removeEventListener('mouseleave', onHoverLeave);
-      });
+      document.removeEventListener('mousemove', onMove);
+      if (raf.current) cancelAnimationFrame(raf.current);
     };
   }, []);
-
-  const isMobile = typeof window !== 'undefined' && ('ontouchstart' in window || window.innerWidth < 768);
-  if (isMobile) return null;
 
   return (
     <>
       <div className="cursor-dot" ref={dotRef} />
-      <div className="cursor-follower" ref={followerRef} />
+      <div className="cursor-ring" ref={ringRef} />
     </>
   );
 }

@@ -1,28 +1,56 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const logos = [
-  { name: 'Lunacart', style: { fontFamily: "'Inter', sans-serif", fontWeight: 600 } },
-  { name: 'DataFlow', style: { fontFamily: "'Syne', sans-serif", fontWeight: 700 } },
-  { name: 'mintpay', style: { fontFamily: "'Inter', sans-serif", fontWeight: 300, textTransform: 'lowercase' } },
-  { name: 'VOYAGE', style: { fontFamily: "'JetBrains Mono', monospace", fontWeight: 400, letterSpacing: '4px', textTransform: 'uppercase' } },
-  { name: 'northbeam', style: { fontFamily: "'Inter', sans-serif", fontWeight: 400 } },
-  { name: 'simple.', style: { fontFamily: "'Syne', sans-serif", fontWeight: 400 } },
-  { name: 'Reachly', style: { fontFamily: "'Syne', sans-serif", fontWeight: 600 } },
-  { name: 'Apex IO', style: { fontFamily: "'JetBrains Mono', monospace", fontWeight: 400 } },
+const items = [
+  'Websites', 'Mobile Apps', 'AI Systems', 'Automation', 'Design Systems', 'Growth'
 ];
 
 export default function Marquee() {
-  const allLogos = [...logos, ...logos];
+  const stripRef = useRef(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Entrance
+      gsap.fromTo('.marquee-strip', {
+        opacity: 0
+      }, {
+        opacity: 1,
+        duration: 0.8,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.marquee-strip',
+          start: 'top 95%',
+          once: true
+        }
+      });
+
+      // Simple CSS-based infinite scroll via GSAP
+      const track = document.querySelector('.marquee-track');
+      if (track) {
+        const w = track.scrollWidth / 3;
+        gsap.to(track, {
+          x: -w,
+          duration: 30,
+          ease: 'none',
+          repeat: -1
+        });
+      }
+    }, stripRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="marquee-section">
-      <span className="marquee-label">Trusted by</span>
-      <div className="marquee-track-wrapper">
-        <div className="marquee-track">
-          {allLogos.map((logo, i) => (
-            <span key={i} className="marquee-logo" style={logo.style}>{logo.name}</span>
-          ))}
-        </div>
+    <div className="marquee-strip" ref={stripRef}>
+      <div className="marquee-track marquee-track--gsap">
+        {[...items, ...items, ...items].map((item, i) => (
+          <React.Fragment key={i}>
+            <span>{item}</span>
+            <span className="marquee-dot">◆</span>
+          </React.Fragment>
+        ))}
       </div>
-    </section>
+    </div>
   );
 }

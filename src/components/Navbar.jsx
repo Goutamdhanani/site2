@@ -1,67 +1,77 @@
-import React, { useState, useEffect } from 'react';
-import Logo from './Logo';
-
-const links = [
-  { label: 'Services', href: '#services' },
-  { label: 'Work', href: '#case-studies' },
-  { label: 'Process', href: '#process' },
-  { label: 'About', href: '#metrics' },
-  { label: 'Insights', href: '#testimonials' },
-  { label: 'Contact', href: '#cta' },
-];
+import React, { useEffect, useState, useRef } from 'react';
+import { gsap } from 'gsap';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const navRef = useRef(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 80);
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      setProgress(maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0);
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Nav entrance
+    const ctx = gsap.context(() => {
+      gsap.fromTo('.nav-logo', { opacity: 0, x: -15 }, {
+        opacity: 1, x: 0, duration: 0.6, ease: 'power3.out', delay: 0.05
+      });
+      gsap.fromTo('.nav-link', { opacity: 0, y: -8 }, {
+        opacity: 1, y: 0, duration: 0.4, stagger: 0.05,
+        ease: 'power2.out', delay: 0.15
+      });
+      gsap.fromTo('.nav-cta', { opacity: 0, scale: 0.92 }, {
+        opacity: 1, scale: 1, duration: 0.4,
+        ease: 'back.out(1.7)', delay: 0.35
+      });
+    }, navRef);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      ctx.revert();
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollTo = (e, href) => {
-    e.preventDefault();
-    const el = document.querySelector(href);
-    if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 72;
-      window.scrollTo({ top, behavior: 'smooth' });
-    }
-    setMenuOpen(false);
-  };
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <>
-      <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
-        <div className="scroll-progress" style={{ width: `${progress}%` }} />
-        <a href="#" className="nav-brand" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
-          <Logo size={28} />
-          <span className="nav-wordmark">
-            <span className="odd">odd</span>
-            <span className="webs">webs</span>
-          </span>
-        </a>
-        <div className="nav-links">
-          {links.map(l => (
-            <a key={l.href} href={l.href} onClick={(e) => scrollTo(e, l.href)}>{l.label}</a>
-          ))}
+      <nav id="navbar" ref={navRef} className={scrolled ? 'scrolled' : ''}>
+        <div className="nav-container">
+          <a href="/" className="nav-logo">
+            <span className="nav-logo-mark">OW</span>
+            <span className="nav-logo-word">oddwebs</span>
+          </a>
+
+          <ul className="nav-links">
+            <li><a href="#work" className="nav-link">Work</a></li>
+            <li><a href="#services" className="nav-link">Services</a></li>
+            <li><a href="#about" className="nav-link">About</a></li>
+            <li><a href="#process" className="nav-link">Process</a></li>
+            <li><a href="#testimonials" className="nav-link">Insights</a></li>
+          </ul>
+
+          <a href="#contact" className="nav-cta magnetic">
+            Book a Call <span className="nav-cta-arrow">↗</span>
+          </a>
+
+          <button
+            className="nav-burger"
+            aria-label="Menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            <span style={menuOpen ? { transform: 'rotate(45deg) translate(3px, 3px)' } : {}} />
+            <span style={menuOpen ? { transform: 'rotate(-45deg) translate(3px, -3px)' } : {}} />
+          </button>
         </div>
-        <a href="#cta" className="nav-cta magnetic" onClick={(e) => scrollTo(e, '#cta')}>
-          Start Your Project →
-        </a>
-        <button className={`hamburger${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(!menuOpen)} aria-label="Toggle menu">
-          <span /><span /><span />
-        </button>
       </nav>
-      <div className={`mobile-menu${menuOpen ? ' open' : ''}`}>
-        {links.map(l => (
-          <a key={l.href} href={l.href} onClick={(e) => scrollTo(e, l.href)}>{l.label}</a>
-        ))}
+
+      <div className={`mobile-menu ${menuOpen ? 'active' : ''}`}>
+        <a href="#work" onClick={closeMenu}>Work</a>
+        <a href="#services" onClick={closeMenu}>Services</a>
+        <a href="#about" onClick={closeMenu}>About</a>
+        <a href="#process" onClick={closeMenu}>Process</a>
+        <a href="#testimonials" onClick={closeMenu}>Insights</a>
+        <a href="#contact" onClick={closeMenu}>Contact</a>
       </div>
     </>
   );
