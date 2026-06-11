@@ -35,7 +35,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav id="navbar" ref={navRef} className={scrolled ? 'scrolled' : ''}>
+      <nav id="navbar" ref={navRef} className={scrolled ? 'scrolled' : ''} data-hero-nav>
         <div className="nav-container">
           <a href="/" className="nav-logo">
             <span className="nav-logo-mark">OW</span>

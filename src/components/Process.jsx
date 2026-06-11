@@ -110,10 +110,16 @@ export default function Process() {
 
   return (
     <section id="process" ref={sectionRef}>
+      {/* Decorative blobs */}
+      <div className="section__blobs" aria-hidden="true">
+        <div className="blob blob--primary" data-parallax="0.2" style={{ top: '-15%', left: '-10%' }} />
+        <div className="blob blob--secondary" data-parallax="0.15" style={{ bottom: '-20%', right: '-15%' }} />
+      </div>
+
       <div className="container">
         <div className="process-top">
           <div>
-            <p className="eyebrow">Our Process</p>
+            <p className="eyebrow" data-animate="fade-up">Our Process</p>
             <h2 className="heading-lg">How we work.</h2>
           </div>
           <p className="body-lg" style={{ maxWidth: '480px' }}>
@@ -121,9 +127,9 @@ export default function Process() {
           </p>
         </div>
 
-        <div className="process-grid">
+        <div className="process-grid" data-animate="stagger">
           {steps.map((s, i) => (
-            <div className="process-step" key={i}>
+            <div className="process-step" key={i} data-stagger-item>
               <span className="process-num">{s.num}</span>
               <h3 className="heading-sm">{s.title}</h3>
               <p className="body-md">{s.desc}</p>

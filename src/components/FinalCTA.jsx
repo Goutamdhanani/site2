@@ -109,6 +109,12 @@ export default function FinalCTA() {
 
   return (
     <section id="contact" ref={sectionRef}>
+      {/* Dark decorative blobs */}
+      <div className="cta-blobs" aria-hidden="true">
+        <div className="blob blob--dark-primary cta-blob-1" data-parallax="0.2" />
+        <div className="blob blob--dark-secondary cta-blob-2" data-parallax="0.15" />
+      </div>
+
       {/* Background asteroid from user's uploaded media */}
       <img
         src="/assets/asteroid.png"

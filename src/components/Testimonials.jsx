@@ -94,8 +94,14 @@ export default function Testimonials() {
 
   return (
     <section id="testimonials" ref={sectionRef}>
+      {/* Decorative blobs */}
+      <div className="section__blobs" aria-hidden="true">
+        <div className="blob blob--primary" data-parallax="0.2" style={{ top: '-15%', right: '-10%' }} />
+        <div className="blob blob--tertiary" data-parallax="0.1" style={{ bottom: '-10%', left: '-15%' }} />
+      </div>
+
       <div className="container">
-        <p className="eyebrow">What They Say</p>
+        <p className="eyebrow" data-animate="fade-up">What They Say</p>
 
         <div className="testimonials-list">
           {testimonials.map((t, i) => (

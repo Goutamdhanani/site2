@@ -53,6 +53,11 @@ export default function Footer() {
 
   return (
     <footer ref={footerRef}>
+      {/* Subtle decorative blob */}
+      <div className="section__blobs" aria-hidden="true">
+        <div className="blob blob--tertiary" data-parallax="0.1" style={{ top: '-20%', right: '-10%', opacity: 0.15 }} />
+      </div>
+
       <div className="container">
         <div className="footer-top">
           <div className="footer-brand">

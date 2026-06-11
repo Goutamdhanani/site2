@@ -3,6 +3,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
 
+import { useScrollAnimations } from './hooks/useScrollAnimations';
+
 import Preloader from './components/Preloader';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -31,17 +33,27 @@ export default function App() {
     });
   };
 
-  // Initialize Lenis immediately but keep it paused until site is visible
+  // Initialize Lenis smooth scroll
   useEffect(() => {
+    // Respect reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
     const lenis = new Lenis({
-      duration: 1.0,
-      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.4,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
       smoothTouch: false,
-      touchMultiplier: 1.5
+      touchMultiplier: 2,
     });
+
     lenisRef.current = lenis;
 
-    // Connect Lenis to GSAP ticker
+    // Bridge Lenis → GSAP ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+
     const onTick = (time) => lenis.raf(time * 1000);
     gsap.ticker.add(onTick);
     gsap.ticker.lagSmoothing(0);
@@ -51,6 +63,9 @@ export default function App() {
       lenis.destroy();
     };
   }, []);
+
+  // Initialize scroll animations when site becomes visible
+  useScrollAnimations(siteVisible);
 
   useEffect(() => {
     if (!siteVisible) return;
@@ -74,19 +89,24 @@ export default function App() {
         const move = (e) => {
           const r = btn.getBoundingClientRect();
           gsap.to(btn, {
-            x: (e.clientX - r.left - r.width / 2) * 0.3,
-            y: (e.clientY - r.top - r.height / 2) * 0.3,
-            duration: 0.5, ease: 'power4.out'
+            x: (e.clientX - r.left - r.width / 2) * 0.35,
+            y: (e.clientY - r.top - r.height / 2) * 0.35,
+            duration: 0.4, ease: 'power2.out'
           });
         };
         const leave = () => {
-          gsap.to(btn, { x: 0, y: 0, duration: 0.7, ease: 'elastic.out(1, 0.4)' });
+          gsap.to(btn, { x: 0, y: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' });
         };
         btn.addEventListener('mousemove', move);
         btn.addEventListener('mouseleave', leave);
         handlers.push({ btn, move, leave });
       });
     }
+
+    // Refresh ScrollTrigger after content mounts
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
 
     return () => {
       window.removeEventListener('scroll', onScroll);

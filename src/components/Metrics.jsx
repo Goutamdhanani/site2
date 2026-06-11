@@ -108,10 +108,16 @@ export default function Metrics() {
 
   return (
     <section id="proof" ref={sectionRef}>
+      {/* Decorative blobs */}
+      <div className="section__blobs" aria-hidden="true">
+        <div className="blob blob--primary" data-parallax="0.2" style={{ top: '-20%', right: '-15%' }} />
+        <div className="blob blob--secondary" data-parallax="0.15" style={{ bottom: '-15%', left: '-10%' }} />
+      </div>
+
       <div className="container">
         <div className="proof-grid">
           <div className="proof-headline">
-            <p className="eyebrow">By The Numbers</p>
+            <p className="eyebrow" data-animate="fade-up">By The Numbers</p>
             <h2 className="heading-lg">Numbers that<br />tell the story.</h2>
           </div>
 

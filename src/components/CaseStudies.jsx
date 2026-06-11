@@ -164,23 +164,30 @@ export default function Work() {
 
   return (
     <section id="work" ref={sectionRef}>
+      {/* Decorative blobs */}
+      <div className="section__blobs" aria-hidden="true">
+        <div className="blob blob--primary" data-parallax="0.2" style={{ top: '-15%', right: '-10%' }} />
+        <div className="blob blob--secondary" data-parallax="0.15" style={{ bottom: '-10%', left: '-5%' }} />
+      </div>
+
       <div className="container">
         <div className="section-header-row">
           <div>
-            <p className="eyebrow">Selected Work</p>
+            <p className="eyebrow" data-animate="fade-up">Selected Work</p>
             <h2 className="heading-lg">Real results.<br />Real impact.</h2>
           </div>
           <a href="#" className="btn-outline magnetic">View All Work ↗</a>
         </div>
 
-        <div className="work-grid">
+        <div className="work-grid" data-animate="stagger">
           {cases.map((c, i) => (
             <article
               key={i}
               className={`work-card ${c.type === 'full' ? 'work-card--full' : 'work-card--half'}`}
               data-index={String(i + 1).padStart(2, '0')}
+              data-stagger-item
             >
-              <div className="work-card-image-wrap">
+              <div className="work-card-image-wrap" data-animate="image-reveal">
                 <img src={c.image} alt={c.alt} className="work-card-image" />
               </div>
               <div className="work-card-info">

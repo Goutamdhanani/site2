@@ -51,6 +51,15 @@ export default function Hero() {
         duration: 1.4, ease: 'power3.out'
       }, 0.1);
 
+      // Blob entrance
+      heroTl.fromTo('[data-hero-blob]', {
+        scale: 0.7, opacity: 0
+      }, {
+        scale: 1, opacity: 0.35,
+        duration: 2, ease: 'power2.out',
+        stagger: 0.15
+      }, 0.2);
+
       // Moon parallax on scroll
       gsap.to('.hero-image', {
         yPercent: -12,
@@ -104,6 +113,13 @@ export default function Hero() {
 
   return (
     <section id="hero" ref={sectionRef}>
+      {/* Decorative blobs — parallax depth */}
+      <div className="hero-blobs" aria-hidden="true">
+        <div className="blob blob--primary hero-blob-1" data-hero-blob data-parallax="0.2" />
+        <div className="blob blob--secondary hero-blob-2" data-hero-blob data-parallax="0.15" />
+        <div className="blob blob--tertiary hero-blob-3" data-hero-blob data-parallax="0.1" />
+      </div>
+
       {/* Moon visual — behind content */}
       <div className="hero-visual">
         <img
@@ -119,9 +135,9 @@ export default function Hero() {
 
       <div className="hero-layout">
         <div className="hero-content">
-          <p className="hero-eyebrow">Digital Experiences That Perform</p>
+          <p className="hero-eyebrow" data-hero-eyebrow>Digital Experiences That Perform</p>
 
-          <h1 className="hero-headline">
+          <h1 className="hero-headline" data-hero-headline>
             <span className="hero-line">
               <span className="hero-line-inner">We build digital</span>
             </span>
@@ -130,12 +146,12 @@ export default function Hero() {
             </span>
           </h1>
 
-          <p className="hero-sub">
+          <p className="hero-sub" data-hero-subtext>
             Websites, mobile apps and digital products<br />
             designed to attract, engage and convert.
           </p>
 
-          <div className="hero-actions">
+          <div className="hero-actions" data-hero-cta>
             <a href="#contact" className="btn-primary magnetic">
               Start a Project <span className="btn-arrow">↗</span>
             </a>

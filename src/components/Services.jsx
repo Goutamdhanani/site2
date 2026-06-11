@@ -112,11 +112,17 @@ export default function Services() {
 
   return (
     <section id="services" ref={sectionRef}>
+      {/* Decorative blobs */}
+      <div className="section__blobs" aria-hidden="true">
+        <div className="blob blob--primary" data-parallax="0.2" style={{ top: '-10%', left: '-15%' }} />
+        <div className="blob blob--secondary" data-parallax="0.15" style={{ bottom: '-10%', right: '-10%' }} />
+      </div>
+
       <div className="container">
-        <p className="eyebrow">What We Do</p>
+        <p className="eyebrow" data-animate="fade-up">What We Do</p>
         <h2 className="heading-lg">End-to-end digital<br />solutions that <em>scale.</em></h2>
 
-        <div className="services-list">
+        <div className="services-list" data-animate="line-draw">
           {services.map((s, i) => (
             <div key={i} className={`service-row ${openIndex === i ? 'open' : ''}`}>
               <div className="service-row-header" onClick={() => toggle(i)}>
