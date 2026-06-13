@@ -47,7 +47,7 @@ export default function Marquee() {
         {[...items, ...items, ...items].map((item, i) => (
           <React.Fragment key={i}>
             <span>{item}</span>
-            <span className="marquee-dot">◆</span>
+            <span className="marquee-dot">/</span>
           </React.Fragment>
         ))}
       </div>

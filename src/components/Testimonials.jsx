@@ -6,20 +6,20 @@ const testimonials = [
     quote: '"oddwebs rebuilt our entire revenue engine. 320% growth in 6 months. I recommend them to every founder I meet."',
     name: 'Rahul Kumar',
     role: 'Founder, LunaCart',
-    avatar: '🚀'
+    initials: 'RK'
   },
   {
     quote: '"I\'ve worked with 4 agencies before oddwebs. They\'re the only ones who actually care about your outcomes."',
     name: 'Ananya Mehta',
     role: 'CEO, DataFlow',
-    avatar: '⭐',
+    initials: 'AM',
     featured: true
   },
   {
     quote: '"They built our fintech MVP in 5 weeks. It directly helped us close our $2.4M seed round."',
     name: 'Vikram Patel',
     role: 'Co-Founder, Payze',
-    avatar: '💎'
+    initials: 'VP'
   }
 ];
 
@@ -77,7 +77,7 @@ export default function Testimonials() {
               <div className="testimonial-card__quote-mark">"</div>
               <p className="testimonial-card__quote">{t.quote}</p>
               <div className="testimonial-card__author">
-                <div className="testimonial-card__avatar">{t.avatar}</div>
+                <div className="testimonial-card__avatar">{t.initials}</div>
                 <div>
                   <span className="testimonial-card__name">{t.name}</span>
                   <span className="testimonial-card__role">{t.role}</span>

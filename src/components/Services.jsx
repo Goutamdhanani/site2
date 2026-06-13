@@ -8,7 +8,6 @@ const services = [
     title: 'Web Development',
     desc: 'Lightning-fast websites built for performance, SEO, and conversion. Next.js, React, Webflow — whatever the job requires.',
     tags: ['Next.js', 'React', 'Webflow', 'SEO'],
-    icon: '⚡',
     color: '#8b5cf6'
   },
   {
@@ -16,7 +15,6 @@ const services = [
     title: 'Mobile Development',
     desc: 'Native and cross-platform mobile apps that feel at home on every device. iOS, Android, React Native.',
     tags: ['iOS', 'Android', 'React Native'],
-    icon: '📱',
     color: '#3b82f6'
   },
   {
@@ -24,7 +22,6 @@ const services = [
     title: 'AI & Automation',
     desc: 'Intelligent workflows and AI-powered tools that eliminate manual work and scale your operations.',
     tags: ['GPT-4o', 'LangChain', 'n8n', 'Make'],
-    icon: '🧠',
     color: '#14b8a6'
   },
   {
@@ -32,7 +29,6 @@ const services = [
     title: 'UI/UX Design',
     desc: 'Interfaces that convert visitors into customers. Every pixel intentional, every interaction considered.',
     tags: ['Figma', 'Prototyping', 'Design Systems'],
-    icon: '🎨',
     color: '#ec4899'
   },
   {
@@ -40,7 +36,6 @@ const services = [
     title: 'Growth & SEO',
     desc: 'Technical SEO, conversion optimisation, and analytics setup that turns traffic into revenue.',
     tags: ['SEO', 'CRO', 'Analytics', 'A/B Tests'],
-    icon: '📈',
     color: '#f59e0b'
   }
 ];
@@ -124,7 +119,6 @@ export default function Services() {
               style={{ '--service-color': s.color }}
             >
               <div className="service-row-header" onClick={() => toggle(i)}>
-                <span className="service-icon">{s.icon}</span>
                 <span className="service-num">{s.num}</span>
                 <h3 className="service-title">{s.title}</h3>
                 <div className="service-arrow-wrap">

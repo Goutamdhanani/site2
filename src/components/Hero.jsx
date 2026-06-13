@@ -137,11 +137,12 @@ export default function Hero() {
 
           <div className="hero-actions">
             <a href="#contact" className="btn-primary magnetic">
-              Start a Project <span className="btn-arrow">↗</span>
+              Start a Project <span className="btn-arrow">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </span>
             </a>
             <a href="#work" className="btn-ghost magnetic">
               <span>View Our Work</span>
-              <span className="btn-play">▶</span>
             </a>
           </div>
         </div>
@@ -150,21 +151,21 @@ export default function Hero() {
       {/* Trusted by strip */}
       <div className="hero-logos">
         <div className="logo-strip">
-          <div className="logo-item"><span>⊕</span> Mercury</div>
+          <div className="logo-strip-label">Trusted by</div>
           <div className="logo-divider" />
-          <div className="logo-item">ramp <span style={{ fontSize: '16px' }}>↗</span></div>
+          <div className="logo-item">Mercury</div>
+          <div className="logo-divider" />
+          <div className="logo-item">Ramp</div>
           <div className="logo-divider" />
           <div className="logo-item logo-bold">HEX</div>
           <div className="logo-divider" />
-          <div className="logo-item"><span>▲</span> Vercel</div>
+          <div className="logo-item">Vercel</div>
           <div className="logo-divider" />
-          <div className="logo-item">≡ descript</div>
+          <div className="logo-item">Descript</div>
           <div className="logo-divider" />
-          <div className="logo-item"><span className="logo-dollar">$</span> Cash App</div>
+          <div className="logo-item">Cash App</div>
           <div className="logo-divider" />
-          <div className="logo-item logo-stacked">FIVE<br />ONE<br />FOUR</div>
-          <div className="logo-divider" />
-          <div className="logo-item">ℛ runway</div>
+          <div className="logo-item">Runway</div>
         </div>
       </div>
 

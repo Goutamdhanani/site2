@@ -65,9 +65,11 @@ export default function FinalCTA() {
           </div>
 
           <div className="cta-trust">
-            <span>✓ Free consultation</span>
-            <span>✓ 48hr response</span>
-            <span>✓ No commitment</span>
+            <span>Free consultation</span>
+            <span className="cta-trust-dot"></span>
+            <span>48hr response</span>
+            <span className="cta-trust-dot"></span>
+            <span>No commitment</span>
           </div>
         </div>
       </div>

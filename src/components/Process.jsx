@@ -6,35 +6,30 @@ const steps = [
     num: '01',
     title: 'Discovery',
     desc: 'Deep dive into your business, audience, and goals. We map the competitive landscape and identify opportunities.',
-    icon: '🔍',
     color: '#8b5cf6'
   },
   {
     num: '02',
     title: 'Strategy',
     desc: 'Architecture, user flows, and technical specifications. Every decision backed by data and experience.',
-    icon: '🎯',
     color: '#3b82f6'
   },
   {
     num: '03',
     title: 'Design',
     desc: 'Pixel-perfect interfaces that balance beauty with conversion. Interactive prototypes before a single line of code.',
-    icon: '✨',
     color: '#ec4899'
   },
   {
     num: '04',
     title: 'Build',
     desc: 'Clean, performant code. Agile sprints with weekly demos. You see progress in real-time, not just at the end.',
-    icon: '⚡',
     color: '#14b8a6'
   },
   {
     num: '05',
     title: 'Launch & Scale',
     desc: 'Deployment, monitoring, and continuous optimisation. We don\'t disappear after launch — we help you grow.',
-    icon: '🚀',
     color: '#f59e0b'
   }
 ];
@@ -97,10 +92,9 @@ export default function Process() {
           {steps.map((step, i) => (
             <div key={i} className="process-step" style={{ '--step-color': step.color }}>
               <div className="process-step__dot">
-                <span>{step.icon}</span>
+                <span>{step.num}</span>
               </div>
               <div className="process-step__content">
-                <span className="process-step__num">{step.num}</span>
                 <h3 className="process-step__title">{step.title}</h3>
                 <p className="process-step__desc">{step.desc}</p>
               </div>

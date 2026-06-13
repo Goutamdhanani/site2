@@ -3,10 +3,10 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const stats = [
-  { value: 150, suffix: '+', label: 'Projects Delivered', icon: '🚀' },
-  { value: 98, suffix: '%', label: 'Client Satisfaction', icon: '⭐' },
-  { value: 4.2, suffix: 'x', label: 'Average ROI', decimals: 1, icon: '📊' },
-  { value: 24, suffix: '/7', label: 'Support & Uptime', icon: '🛡️' },
+  { value: 150, suffix: '+', label: 'Projects Delivered' },
+  { value: 98, suffix: '%', label: 'Client Satisfaction' },
+  { value: 4.2, suffix: 'x', label: 'Average ROI', decimals: 1 },
+  { value: 24, suffix: '/7', label: 'Support & Uptime' },
 ];
 
 export default function Metrics() {
@@ -76,7 +76,6 @@ export default function Metrics() {
         <div className="stats-grid">
           {stats.map((stat, i) => (
             <div key={i} className="stat-card">
-              <div className="stat-card__icon">{stat.icon}</div>
               <div
                 className="stat-value"
                 data-target={stat.value}
