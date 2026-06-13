@@ -2,150 +2,115 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-const cases = [
+const projects = [
   {
-    type: 'full',
-    image: '/assets/case-01.png',
-    alt: 'LunaCart',
-    tag: 'E-Commerce',
-    year: '2024',
-    title: 'LunaCart',
-    description: 'A high-converting e-commerce platform that scaled revenue by 320% in 6 months.',
-    metricValue: '320%',
-    metricLabel: 'Revenue Growth'
+    image: '/assets/projects/project-1.png',
+    title: 'LuxeThread',
+    category: 'E-Commerce',
+    year: '2026',
+    description: 'A high-converting luxury fashion platform that increased AOV by 180% through personalized AI recommendations.',
+    metric: '+180%',
+    metricLabel: 'AOV Increase',
+    color: '#8b5cf6',
+    size: 'large'
   },
   {
-    type: 'half',
-    image: '/assets/case-02.png',
-    alt: 'DataFlow',
-    tag: 'SaaS',
-    year: '2024',
-    title: 'DataFlow',
-    metricValue: '45%',
-    metricLabel: 'Churn Reduced'
+    image: '/assets/projects/project-2.png',
+    title: 'VaultPay',
+    category: 'Fintech',
+    year: '2025',
+    description: 'Enterprise banking dashboard serving 50K+ daily active users with real-time analytics.',
+    metric: '50K+',
+    metricLabel: 'Daily Users',
+    color: '#3b82f6',
+    size: 'medium'
   },
   {
-    type: 'half',
-    image: '/assets/case-03.png',
-    alt: 'Payze',
-    tag: 'Fintech',
-    year: '2023',
-    title: 'Payze',
-    metricValue: '$2.4M',
-    metricLabel: 'Funding Raised'
+    image: '/assets/projects/project-3.png',
+    title: 'BiteBuddy',
+    category: 'Mobile App',
+    year: '2026',
+    description: 'Food delivery platform handling 100K+ orders per day across 3 countries.',
+    metric: '100K+',
+    metricLabel: 'Daily Orders',
+    color: '#ec4899',
+    size: 'medium'
+  },
+  {
+    image: '/assets/projects/project-4.png',
+    title: 'NestHub',
+    category: 'Real Estate',
+    year: '2025',
+    description: 'AI-powered property matching platform with 3D virtual tours and smart valuations.',
+    metric: '$24M',
+    metricLabel: 'Properties Sold',
+    color: '#14b8a6',
+    size: 'large'
+  },
+  {
+    image: '/assets/projects/project-5.png',
+    title: 'PulseIQ',
+    category: 'SaaS',
+    year: '2024',
+    description: 'Enterprise analytics suite with predictive insights used by Fortune 500 companies.',
+    metric: '4.2x',
+    metricLabel: 'ROI Delivered',
+    color: '#f59e0b',
+    size: 'medium'
+  },
+  {
+    image: '/assets/projects/project-6.png',
+    title: 'ZenFit',
+    category: 'Health & Wellness',
+    year: '2025',
+    description: 'Premium fitness brand with subscription model achieving 92% retention rate.',
+    metric: '92%',
+    metricLabel: 'Retention Rate',
+    color: '#a78bfa',
+    size: 'medium'
   }
 ];
 
-export default function Work() {
+export default function CaseStudies() {
   const sectionRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
 
-      // ─── SECTION HEADER — Split text-like animation ───
+      // Section header animation
       const headerTl = gsap.timeline({
         scrollTrigger: { trigger: '#work', start: 'top 75%', once: true }
       });
 
       headerTl
-        .fromTo('#work .eyebrow', {
-          opacity: 0,
-          x: -30
-        }, {
-          opacity: 1,
-          x: 0,
-          duration: 0.7,
-          ease: 'power3.out'
-        })
-        .fromTo('#work .heading-lg', {
-          opacity: 0,
-          y: 60,
-          clipPath: 'inset(100% 0 0 0)'
-        }, {
-          opacity: 1,
-          y: 0,
-          clipPath: 'inset(0% 0 0 0)',
-          duration: 1,
-          ease: 'power4.out'
-        }, '-=0.3')
-        .fromTo('#work .btn-outline', {
-          opacity: 0,
-          x: 30
-        }, {
-          opacity: 1,
-          x: 0,
-          duration: 0.6,
-          ease: 'power2.out'
-        }, '-=0.5');
+        .fromTo('#work .section-counter', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' })
+        .fromTo('#work .eyebrow', { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' }, '-=0.3')
+        .fromTo('#work .work-heading', { opacity: 0, y: 60, clipPath: 'inset(100% 0 0 0)' }, {
+          opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)', duration: 1, ease: 'power4.out'
+        }, '-=0.4')
+        .fromTo('#work .work-subtext', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.5');
 
-      // ─── WORK CARDS — dramatic staggered reveal ───
-      gsap.utils.toArray('.work-card').forEach((card, i) => {
-        const image = card.querySelector('.work-card-image');
-        const info = card.querySelector('.work-card-info');
-        const metric = card.querySelector('.work-card-metric');
-
-        const cardTl = gsap.timeline({
+      // Project cards — staggered reveal with parallax
+      gsap.utils.toArray('.project-card').forEach((card, i) => {
+        // Reveal
+        gsap.fromTo(card, {
+          y: 100, opacity: 0, scale: 0.95
+        }, {
+          y: 0, opacity: 1, scale: 1,
+          duration: 1, ease: 'power3.out',
           scrollTrigger: {
             trigger: card,
-            start: 'top 85%',
+            start: 'top 90%',
             once: true
-          }
+          },
+          delay: (i % 2) * 0.15
         });
 
-        // Card container slides up
-        cardTl.fromTo(card, {
-          y: 80,
-          opacity: 0
-        }, {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          ease: 'power3.out'
-        });
-
-        // Image reveals with scale + clip
-        if (image) {
-          cardTl.fromTo(image, {
-            scale: 1.2,
-            filter: 'blur(4px)'
-          }, {
-            scale: 1,
-            filter: 'blur(0px)',
-            duration: 1.4,
-            ease: 'power3.out'
-          }, '<0.1');
-        }
-
-        // Info fades in
-        if (info) {
-          cardTl.fromTo(info, {
-            opacity: 0,
-            y: 20
-          }, {
-            opacity: 1,
-            y: 0,
-            duration: 0.7,
-            ease: 'power2.out'
-          }, '-=0.5');
-        }
-
-        // Metric counter animation
-        if (metric) {
-          cardTl.fromTo(metric, {
-            opacity: 0,
-            x: -20
-          }, {
-            opacity: 1,
-            x: 0,
-            duration: 0.6,
-            ease: 'power2.out'
-          }, '-=0.3');
-        }
-
-        // Image parallax on scroll
-        if (image) {
-          gsap.to(image, {
-            yPercent: -10,
+        // Image parallax inside card
+        const img = card.querySelector('.project-card__image img');
+        if (img) {
+          gsap.to(img, {
+            yPercent: -15,
             ease: 'none',
             scrollTrigger: {
               trigger: card,
@@ -155,6 +120,29 @@ export default function Work() {
             }
           });
         }
+
+        // 3D tilt on hover
+        const handleMove = (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          gsap.to(card, {
+            rotateX: y * -8,
+            rotateY: x * 8,
+            duration: 0.4,
+            ease: 'power2.out',
+            transformPerspective: 1000,
+          });
+        };
+        const handleLeave = () => {
+          gsap.to(card, {
+            rotateX: 0, rotateY: 0,
+            duration: 0.7, ease: 'elastic.out(1, 0.5)'
+          });
+        };
+        card.addEventListener('mousemove', handleMove);
+        card.addEventListener('mouseleave', handleLeave);
+        card.style.transformStyle = 'preserve-3d';
       });
 
     }, sectionRef);
@@ -164,51 +152,67 @@ export default function Work() {
 
   return (
     <section id="work" ref={sectionRef}>
-      {/* Decorative blobs */}
-      <div className="section__blobs" aria-hidden="true">
-        <div className="blob blob--primary" data-parallax="0.2" style={{ top: '-15%', right: '-10%' }} />
-        <div className="blob blob--secondary" data-parallax="0.15" style={{ bottom: '-10%', left: '-5%' }} />
-      </div>
-
-      <div className="container">
-        <div className="section-header-row">
-          <div>
-            <p className="eyebrow" data-animate="fade-up">Selected Work</p>
-            <h2 className="heading-lg">Real results.<br />Real impact.</h2>
-          </div>
-          <a href="#" className="btn-outline magnetic">View All Work ↗</a>
+      <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+        {/* Section header */}
+        <div className="work-header">
+          <span className="section-counter">06 Projects</span>
+          <p className="eyebrow">Selected Work</p>
+          <h2 className="work-heading">
+            Projects that<br />move the needle.
+          </h2>
+          <p className="work-subtext">
+            From startups to enterprise — we build products that users love and businesses rely on.
+          </p>
         </div>
 
-        <div className="work-grid" data-animate="stagger">
-          {cases.map((c, i) => (
+        {/* Project grid — bento-style */}
+        <div className="project-grid">
+          {projects.map((project, i) => (
             <article
               key={i}
-              className={`work-card ${c.type === 'full' ? 'work-card--full' : 'work-card--half'}`}
-              data-index={String(i + 1).padStart(2, '0')}
-              data-stagger-item
+              className={`project-card project-card--${project.size}`}
+              style={{ '--card-accent': project.color }}
             >
-              <div className="work-card-image-wrap" data-animate="image-reveal">
-                <img src={c.image} alt={c.alt} className="work-card-image" />
+              {/* Image */}
+              <div className="project-card__image">
+                <img src={project.image} alt={project.title} loading="lazy" />
+                <div className="project-card__overlay" />
               </div>
-              <div className="work-card-info">
-                <div className="work-card-meta">
-                  <span className="work-tag">{c.tag}</span>
-                  <span className="work-year">{c.year}</span>
+
+              {/* Content */}
+              <div className="project-card__content">
+                <div className="project-card__meta">
+                  <span className="project-card__category">{project.category}</span>
+                  <span className="project-card__year">{project.year}</span>
                 </div>
-                <h3 className={c.type === 'full' ? 'heading-md' : 'heading-sm'}>{c.title}</h3>
-                {c.description && <p className="body-md">{c.description}</p>}
-                <div className="work-card-metric">
-                  <span
-                    className="metric"
-                    style={c.type === 'half' ? { fontSize: 'clamp(36px, 4vw, 56px)' } : undefined}
-                  >
-                    {c.metricValue}
-                  </span>
-                  <span className="metric-label">{c.metricLabel}</span>
+
+                <h3 className="project-card__title">{project.title}</h3>
+                <p className="project-card__desc">{project.description}</p>
+
+                <div className="project-card__metric">
+                  <span className="project-card__metric-value">{project.metric}</span>
+                  <span className="project-card__metric-label">{project.metricLabel}</span>
                 </div>
+              </div>
+
+              {/* Hover arrow */}
+              <div className="project-card__arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               </div>
             </article>
           ))}
+        </div>
+
+        {/* View all CTA */}
+        <div className="work-cta" data-animate="fade-up">
+          <a href="#" className="btn-outline magnetic">
+            View All Projects
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ marginLeft: '8px' }}>
+              <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </a>
         </div>
       </div>
     </section>

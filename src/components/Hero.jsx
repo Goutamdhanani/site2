@@ -1,157 +1,141 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, lazy, Suspense } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+const ThreeScene = lazy(() => import('./ThreeScene'));
 
 export default function Hero() {
   const sectionRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const heroTl = gsap.timeline({ delay: 0.15 });
+      const tl = gsap.timeline({ delay: 0.3 });
 
-      // Eyebrow clip-path reveal
-      heroTl.fromTo('.hero-eyebrow', {
-        opacity: 0, y: 16, clipPath: 'inset(100% 0 0 0)'
+      // Gradient background pulse in
+      tl.fromTo('.hero-gradient-bg', {
+        opacity: 0, scale: 1.2
       }, {
-        opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)',
-        duration: 0.7, ease: 'power3.out'
-      }, 0);
+        opacity: 1, scale: 1,
+        duration: 2, ease: 'power2.out'
+      });
 
-      // H1 lines — clip reveal from bottom
-      heroTl.fromTo('.hero-line-inner', {
-        y: '110%'
+      // Eyebrow
+      tl.fromTo('.hero-eyebrow', {
+        opacity: 0, y: 20
       }, {
-        y: '0%',
-        duration: 1,
-        stagger: 0.12,
+        opacity: 1, y: 0,
+        duration: 0.8, ease: 'power3.out'
+      }, '-=1.5');
+
+      // Headline words — staggered reveal
+      const words = document.querySelectorAll('.hero-word');
+      tl.fromTo(words, {
+        y: '110%', opacity: 0, rotateX: 40
+      }, {
+        y: '0%', opacity: 1, rotateX: 0,
+        duration: 1, stagger: 0.08,
         ease: 'power4.out'
-      }, 0.2);
+      }, '-=1');
 
-      // Subtitle — blur dissolve
-      heroTl.fromTo('.hero-sub', {
-        opacity: 0, y: 20, filter: 'blur(3px)'
+      // Subtitle
+      tl.fromTo('.hero-sub', {
+        opacity: 0, y: 30
       }, {
-        opacity: 1, y: 0, filter: 'blur(0px)',
-        duration: 0.7, ease: 'power2.out'
-      }, 0.8);
+        opacity: 1, y: 0,
+        duration: 0.8, ease: 'power3.out'
+      }, '-=0.5');
 
-      // CTA buttons
-      heroTl.fromTo('.hero-actions', {
+      // Buttons
+      tl.fromTo('.hero-actions', {
         opacity: 0, y: 20
       }, {
         opacity: 1, y: 0,
         duration: 0.6, ease: 'power2.out'
-      }, 1.0);
+      }, '-=0.4');
 
-      // Moon image — scale + fade
-      heroTl.fromTo('.hero-image', {
-        scale: 1.1, opacity: 0
-      }, {
-        scale: 1, opacity: 1,
-        duration: 1.4, ease: 'power3.out'
-      }, 0.1);
-
-      // Blob entrance
-      heroTl.fromTo('[data-hero-blob]', {
-        scale: 0.7, opacity: 0
-      }, {
-        scale: 1, opacity: 0.35,
-        duration: 2, ease: 'power2.out',
-        stagger: 0.15
-      }, 0.2);
-
-      // Moon parallax on scroll
-      gsap.to('.hero-image', {
-        yPercent: -12,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '#hero',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1.2
-        }
-      });
-
-      // Content parallax — depth effect
+      // Scroll-driven parallax on hero content
       gsap.to('.hero-content', {
-        yPercent: 12,
-        opacity: 0.2,
+        y: -100,
+        opacity: 0,
         ease: 'none',
         scrollTrigger: {
           trigger: '#hero',
           start: 'top top',
           end: 'bottom top',
-          scrub: 0.8
+          scrub: 1
         }
       });
 
-      // Logo strip stagger
-      gsap.fromTo('.logo-item', {
-        opacity: 0, y: 10
-      }, {
-        opacity: 0.55, y: 0,
-        stagger: 0.05,
-        duration: 0.4,
-        ease: 'power2.out',
-        delay: 1.3
+      // 3D scene parallax
+      gsap.to('.hero-3d-wrap', {
+        y: -60,
+        scale: 0.95,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '#hero',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: 1.5
+        }
       });
 
-      gsap.fromTo('.logo-divider', {
-        scaleY: 0
+      // Logo strip reveal
+      tl.fromTo('.hero-logos', {
+        opacity: 0, y: 20
       }, {
-        scaleY: 1,
-        stagger: 0.05,
-        duration: 0.3,
-        ease: 'power2.out',
-        delay: 1.4
-      });
+        opacity: 1, y: 0,
+        duration: 0.6, ease: 'power2.out'
+      }, '-=0.3');
 
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
+  const headlineWords = ['We', 'build', 'digital', 'powerhouses.'];
+
   return (
     <section id="hero" ref={sectionRef}>
-      {/* Decorative blobs — parallax depth */}
-      <div className="hero-blobs" aria-hidden="true">
-        <div className="blob blob--primary hero-blob-1" data-hero-blob data-parallax="0.2" />
-        <div className="blob blob--secondary hero-blob-2" data-hero-blob data-parallax="0.15" />
-        <div className="blob blob--tertiary hero-blob-3" data-hero-blob data-parallax="0.1" />
+      {/* Animated mesh gradient background */}
+      <div className="hero-gradient-bg" aria-hidden="true">
+        <div className="hero-gradient-orb hero-gradient-orb--1" />
+        <div className="hero-gradient-orb hero-gradient-orb--2" />
+        <div className="hero-gradient-orb hero-gradient-orb--3" />
+        <div className="hero-gradient-orb hero-gradient-orb--4" />
+        <div className="hero-noise-overlay" />
       </div>
 
-      {/* Moon visual — behind content */}
-      <div className="hero-visual">
-        <img
-          src="/assets/hero-moon.png"
-          alt="3D disintegrating moon"
-          className="hero-image"
-          loading="eager"
-        />
+      {/* Three.js 3D scene (reliable, no external dependency) */}
+      <div className="hero-3d-wrap" aria-hidden="true">
+        <Suspense fallback={null}>
+          <ThreeScene />
+        </Suspense>
       </div>
 
-      {/* Texture overlay */}
-      <div className="hero-texture-overlay" />
+      {/* Grid lines overlay */}
+      <div className="hero-grid-lines" aria-hidden="true" />
 
-      <div className="hero-layout">
+      {/* Hero text content */}
+      <div className="hero-content-overlay">
         <div className="hero-content">
-          <p className="hero-eyebrow" data-hero-eyebrow>Digital Experiences That Perform</p>
+          <p className="hero-eyebrow">
+            Digital Experiences That Perform
+          </p>
 
-          <h1 className="hero-headline" data-hero-headline>
-            <span className="hero-line">
-              <span className="hero-line-inner">We build digital</span>
-            </span>
-            <span className="hero-line">
-              <span className="hero-line-inner">powerhouses.</span>
-            </span>
+          <h1 className="hero-headline">
+            {headlineWords.map((word, i) => (
+              <span className="hero-word-wrap" key={i}>
+                <span className="hero-word">{word}</span>
+              </span>
+            ))}
           </h1>
 
-          <p className="hero-sub" data-hero-subtext>
+          <p className="hero-sub">
             Websites, mobile apps and digital products<br />
             designed to attract, engage and convert.
           </p>
 
-          <div className="hero-actions" data-hero-cta>
+          <div className="hero-actions">
             <a href="#contact" className="btn-primary magnetic">
               Start a Project <span className="btn-arrow">↗</span>
             </a>
@@ -163,7 +147,7 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Static client logos — NOT a marquee */}
+      {/* Trusted by strip */}
       <div className="hero-logos">
         <div className="logo-strip">
           <div className="logo-item"><span>⊕</span> Mercury</div>
@@ -182,6 +166,12 @@ export default function Hero() {
           <div className="logo-divider" />
           <div className="logo-item">ℛ runway</div>
         </div>
+      </div>
+
+      {/* Scroll indicator */}
+      <div className="hero-scroll-indicator">
+        <div className="scroll-line" />
+        <span>Scroll</span>
       </div>
     </section>
   );

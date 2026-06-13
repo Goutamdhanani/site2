@@ -3,10 +3,10 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const stats = [
-  { value: 47, suffix: '+', desc: 'Projects delivered across 18 industries worldwide' },
-  { value: 98, suffix: '%', desc: 'Client satisfaction rate — measured, not assumed' },
-  { value: null, display: '₹4.2Cr', desc: 'Revenue generated for clients in the last 12 months' },
-  { value: 21, suffix: '', desc: 'Countries served — from Mumbai to Melbourne' }
+  { value: 150, suffix: '+', label: 'Projects Delivered', icon: '🚀' },
+  { value: 98, suffix: '%', label: 'Client Satisfaction', icon: '⭐' },
+  { value: 4.2, suffix: 'x', label: 'Average ROI', decimals: 1, icon: '📊' },
+  { value: 24, suffix: '/7', label: 'Support & Uptime', icon: '🛡️' },
 ];
 
 export default function Metrics() {
@@ -15,90 +15,42 @@ export default function Metrics() {
   useEffect(() => {
     const ctx = gsap.context(() => {
 
-      // ─── HEADLINE ENTRANCE ───
-      const headerTl = gsap.timeline({
+      // Giant title
+      gsap.fromTo('#proof .section-title-reveal', {
+        y: 80, opacity: 0, scale: 0.9, filter: 'blur(4px)'
+      }, {
+        y: 0, opacity: 1, scale: 1, filter: 'blur(0px)',
+        duration: 1, ease: 'power3.out',
         scrollTrigger: { trigger: '#proof', start: 'top 75%', once: true }
       });
 
-      headerTl
-        .fromTo('#proof .eyebrow', {
-          opacity: 0, x: -20
+      // Stat cards — dramatic stagger
+      gsap.utils.toArray('.stat-card').forEach((card, i) => {
+        gsap.fromTo(card, {
+          y: 100, opacity: 0, rotateX: 15, scale: 0.9
         }, {
-          opacity: 1, x: 0,
-          duration: 0.6, ease: 'power3.out'
-        })
-        .fromTo('#proof .heading-lg', {
-          opacity: 0, y: 50, clipPath: 'inset(100% 0 0 0)'
-        }, {
-          opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)',
-          duration: 1, ease: 'power4.out'
-        }, '-=0.3');
-
-      // ─── STAT BLOCKS — STAGGERED + COUNTER ANIMATION ───
-      gsap.utils.toArray('.stat-block').forEach((block, i) => {
-        const metricEl = block.querySelector('.metric');
-        const descEl = block.querySelector('.stat-desc');
-        const borderEl = block;
-
-        const statTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: block,
-            start: 'top 88%',
-            once: true
-          },
-          delay: i * 0.15
+          y: 0, opacity: 1, rotateX: 0, scale: 1,
+          duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: card, start: 'top 90%', once: true },
+          delay: i * 0.12
         });
+      });
 
-        // Border draws in
-        statTl.fromTo(borderEl, {
-          clipPath: 'inset(0 100% 0 0)'
-        }, {
-          clipPath: 'inset(0 0% 0 0)',
-          duration: 0.8,
-          ease: 'power3.out'
+      // Counter animations
+      gsap.utils.toArray('.stat-value').forEach((el) => {
+        const target = parseFloat(el.dataset.target);
+        const suffix = el.dataset.suffix || '';
+        const decimals = parseInt(el.dataset.decimals) || 0;
+
+        gsap.fromTo({ val: 0 }, { val: 0 }, {
+          val: target,
+          duration: 2.5,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 85%', once: true },
+          onUpdate() {
+            el.textContent = this.targets()[0].val.toFixed(decimals) + suffix;
+          }
         });
-
-        // Counter animates
-        if (metricEl && metricEl.dataset.target) {
-          const target = parseInt(metricEl.dataset.target);
-          const suffix = metricEl.dataset.suffix || '';
-          statTl.fromTo(metricEl, {
-            opacity: 0, scale: 0.8
-          }, {
-            opacity: 1, scale: 1,
-            duration: 0.5,
-            ease: 'back.out(1.5)'
-          }, '-=0.4');
-
-          statTl.to(metricEl, {
-            innerText: target,
-            duration: 2,
-            ease: 'power2.out',
-            snap: { innerText: 1 },
-            onUpdate: function() {
-              metricEl.textContent = Math.round(gsap.getProperty(metricEl, 'innerText')) + suffix;
-            }
-          }, '-=0.3');
-        } else if (metricEl) {
-          statTl.fromTo(metricEl, {
-            opacity: 0, scale: 0.8
-          }, {
-            opacity: 1, scale: 1,
-            duration: 0.6,
-            ease: 'back.out(1.5)'
-          }, '-=0.4');
-        }
-
-        // Description fades in
-        if (descEl) {
-          statTl.fromTo(descEl, {
-            opacity: 0, y: 10
-          }, {
-            opacity: 1, y: 0,
-            duration: 0.5,
-            ease: 'power2.out'
-          }, '-=0.3');
-        }
       });
 
     }, sectionRef);
@@ -108,37 +60,35 @@ export default function Metrics() {
 
   return (
     <section id="proof" ref={sectionRef}>
-      {/* Decorative blobs */}
-      <div className="section__blobs" aria-hidden="true">
-        <div className="blob blob--primary" data-parallax="0.2" style={{ top: '-20%', right: '-15%' }} />
-        <div className="blob blob--secondary" data-parallax="0.15" style={{ bottom: '-15%', left: '-10%' }} />
-      </div>
+      <div className="section-glow-line" aria-hidden="true" />
 
       <div className="container">
-        <div className="proof-grid">
-          <div className="proof-headline">
-            <p className="eyebrow" data-animate="fade-up">By The Numbers</p>
-            <h2 className="heading-lg">Numbers that<br />tell the story.</h2>
-          </div>
+        <div className="metrics-header">
+          <p className="eyebrow">The Numbers</p>
+          <h2 className="section-title-reveal metrics-big-title">
+            Results
+          </h2>
+          <p className="metrics-subtitle">
+            We let our work speak for itself. Here's the proof.
+          </p>
+        </div>
 
-          <div className="proof-stats">
-            {stats.map((s, i) => (
-              <div className="stat-block" key={i}>
-                {s.value !== null ? (
-                  <span
-                    className="metric"
-                    data-target={s.value}
-                    data-suffix={s.suffix}
-                  >
-                    0{s.suffix}
-                  </span>
-                ) : (
-                  <span className="metric">{s.display}</span>
-                )}
-                <p className="stat-desc">{s.desc}</p>
+        <div className="stats-grid">
+          {stats.map((stat, i) => (
+            <div key={i} className="stat-card">
+              <div className="stat-card__icon">{stat.icon}</div>
+              <div
+                className="stat-value"
+                data-target={stat.value}
+                data-suffix={stat.suffix}
+                data-decimals={stat.decimals || 0}
+              >
+                0{stat.suffix}
               </div>
-            ))}
-          </div>
+              <div className="stat-label">{stat.label}</div>
+              <div className="stat-card__glow" aria-hidden="true" />
+            </div>
+          ))}
         </div>
       </div>
     </section>
