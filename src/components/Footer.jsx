@@ -2,48 +2,50 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function Footer() {
   const footerRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
 
-      // ─── FOOTER ENTRANCE ───
+      // ─── FOOTER: Content emerges from below ───
       const footerTl = gsap.timeline({
         scrollTrigger: {
           trigger: 'footer',
           start: 'top 85%',
-          once: true
-        }
+          once: true,
+        },
       });
 
       footerTl
         .fromTo('.footer-brand', {
-          opacity: 0, x: -30
+          opacity: 0, x: -40, filter: 'blur(6px)',
         }, {
-          opacity: 1, x: 0,
-          duration: 0.7, ease: 'power3.out'
+          opacity: 1, x: 0, filter: 'blur(0px)',
+          duration: 0.8, ease: 'power3.out',
         })
         .fromTo('.footer-tagline', {
-          opacity: 0, x: 30
+          opacity: 0, x: 40, filter: 'blur(6px)',
         }, {
-          opacity: 1, x: 0,
-          duration: 0.7, ease: 'power3.out'
+          opacity: 1, x: 0, filter: 'blur(0px)',
+          duration: 0.8, ease: 'power3.out',
         }, '<')
         .fromTo('.footer-col', {
-          opacity: 0, y: 30
+          opacity: 0, y: 40, scale: 0.95,
         }, {
-          opacity: 1, y: 0,
-          duration: 0.6,
-          stagger: 0.1,
-          ease: 'power2.out'
+          opacity: 1, y: 0, scale: 1,
+          duration: 0.7,
+          stagger: 0.12,
+          ease: 'power2.out',
         }, '-=0.3')
         .fromTo('.footer-bottom', {
-          opacity: 0
+          opacity: 0, y: 20,
         }, {
-          opacity: 1,
+          opacity: 1, y: 0,
           duration: 0.5,
-          ease: 'power2.out'
+          ease: 'power2.out',
         }, '-=0.2');
 
     }, footerRef);
@@ -52,7 +54,7 @@ export default function Footer() {
   }, []);
 
   return (
-    <footer ref={footerRef}>
+    <footer ref={footerRef} data-scene="footer">
       {/* Subtle decorative blob */}
       <div className="section__blobs" aria-hidden="true">
         <div className="blob blob--tertiary" data-parallax="0.1" style={{ top: '-20%', right: '-10%', opacity: 0.15 }} />

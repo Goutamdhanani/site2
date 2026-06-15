@@ -10,18 +10,20 @@ export default function Navbar() {
     const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    // Nav entrance
+    // Nav entrance — subtle, doesn't compete with preloader
     const ctx = gsap.context(() => {
-      gsap.fromTo('.nav-logo', { opacity: 0, x: -15 }, {
-        opacity: 1, x: 0, duration: 0.6, ease: 'power3.out', delay: 0.05
+      gsap.fromTo('.nav-logo', { opacity: 0, x: -20, filter: 'blur(4px)' }, {
+        opacity: 1, x: 0, filter: 'blur(0px)',
+        duration: 0.7, ease: 'power3.out', delay: 0.1,
       });
-      gsap.fromTo('.nav-link', { opacity: 0, y: -8 }, {
-        opacity: 1, y: 0, duration: 0.4, stagger: 0.05,
-        ease: 'power2.out', delay: 0.15
+      gsap.fromTo('.nav-link', { opacity: 0, y: -10 }, {
+        opacity: 1, y: 0,
+        duration: 0.5, stagger: 0.06,
+        ease: 'power2.out', delay: 0.2,
       });
-      gsap.fromTo('.nav-cta', { opacity: 0, scale: 0.92 }, {
-        opacity: 1, scale: 1, duration: 0.4,
-        ease: 'back.out(1.7)', delay: 0.35
+      gsap.fromTo('.nav-cta', { opacity: 0, scale: 0.88, filter: 'blur(4px)' }, {
+        opacity: 1, scale: 1, filter: 'blur(0px)',
+        duration: 0.5, ease: 'back.out(1.7)', delay: 0.4,
       });
     }, navRef);
 

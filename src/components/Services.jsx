@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+gsap.registerPlugin(ScrollTrigger);
+
 const services = [
   {
     num: '01',
@@ -47,31 +49,56 @@ export default function Services() {
   useEffect(() => {
     const ctx = gsap.context(() => {
 
-      // Giant section title reveal
+      // ─── SECTION TITLE: Emerges from depth with scale ───
       gsap.fromTo('#services .section-title-reveal', {
-        y: 100, opacity: 0, scale: 0.9, filter: 'blur(6px)'
+        y: 120, opacity: 0, scale: 0.8, filter: 'blur(12px)',
+        rotateX: 15,
       }, {
         y: 0, opacity: 1, scale: 1, filter: 'blur(0px)',
-        duration: 1.2, ease: 'power3.out',
-        scrollTrigger: { trigger: '#services', start: 'top 75%', once: true }
+        rotateX: 0,
+        duration: 1.4, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '#services',
+          start: 'top 75%',
+          once: true,
+        },
       });
 
-      // Service rows — cinematic staggered reveal
+      // ─── SERVICE ROWS: Slide from alternating sides with depth warp ───
       gsap.utils.toArray('.service-row').forEach((row, i) => {
+        const direction = i % 2 === 0 ? -1 : 1;
+
         gsap.fromTo(row, {
           opacity: 0,
-          x: i % 2 === 0 ? -60 : 60,
-          clipPath: i % 2 === 0 ? 'inset(0 100% 0 0)' : 'inset(0 0 0 100%)'
+          x: direction * 100,
+          rotateY: direction * 8,
+          filter: 'blur(4px)',
+          transformPerspective: 1200,
         }, {
-          opacity: 1, x: 0,
-          clipPath: 'inset(0 0% 0 0%)',
-          duration: 0.9, ease: 'power3.out',
+          opacity: 1,
+          x: 0,
+          rotateY: 0,
+          filter: 'blur(0px)',
+          duration: 1,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: row,
             start: 'top 90%',
-            once: true
+            once: true,
           },
-          delay: i * 0.08
+          delay: i * 0.08,
+        });
+
+        // Parallax depth per row
+        gsap.to(row, {
+          y: -15 * (i + 1) * 0.3,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: row,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.5,
+          },
         });
       });
 
@@ -86,18 +113,33 @@ export default function Services() {
     if (row && openIndex !== i) {
       const body = row.querySelector('.service-row-body');
       if (body) {
-        gsap.fromTo(body.children, { opacity: 0, y: 15 }, {
-          opacity: 1, y: 0,
+        // 3D unfold animation
+        gsap.fromTo(body, {
+          rotateX: -20,
+          transformOrigin: 'top center',
+          opacity: 0,
+          filter: 'blur(4px)',
+        }, {
+          rotateX: 0,
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 0.6,
+          ease: 'power3.out',
+        });
+
+        gsap.fromTo(body.children, {
+          opacity: 0, y: 20, scale: 0.95,
+        }, {
+          opacity: 1, y: 0, scale: 1,
           duration: 0.5, stagger: 0.08,
-          ease: 'power2.out', delay: 0.15
+          ease: 'power2.out', delay: 0.1,
         });
       }
     }
   };
 
   return (
-    <section id="services" ref={sectionRef}>
-      {/* Decorative glow line */}
+    <section id="services" ref={sectionRef} data-scene="services" style={{ perspective: '1200px' }}>
       <div className="section-glow-line" aria-hidden="true" />
 
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
@@ -116,7 +158,7 @@ export default function Services() {
             <div
               key={i}
               className={`service-row ${openIndex === i ? 'open' : ''}`}
-              style={{ '--service-color': s.color }}
+              style={{ '--service-color': s.color, transformStyle: 'preserve-3d' }}
             >
               <div className="service-row-header" onClick={() => toggle(i)}>
                 <span className="service-num">{s.num}</span>
@@ -129,7 +171,7 @@ export default function Services() {
                   </span>
                 </div>
               </div>
-              <div className="service-row-body">
+              <div className="service-row-body" style={{ transformStyle: 'preserve-3d' }}>
                 <p>{s.desc}</p>
                 <div className="service-tags">
                   {s.tags.map((tag, j) => <span key={j}>{tag}</span>)}

@@ -1,5 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 const steps = [
   {
@@ -39,42 +42,110 @@ export default function Process() {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Title
+
+      // ─── TITLE: Slides through depth ───
       gsap.fromTo('#process .section-title-reveal', {
-        y: 80, opacity: 0, scale: 0.9, filter: 'blur(4px)'
+        y: 100, opacity: 0, scale: 0.85, filter: 'blur(10px)',
       }, {
         y: 0, opacity: 1, scale: 1, filter: 'blur(0px)',
-        duration: 1, ease: 'power3.out',
-        scrollTrigger: { trigger: '#process', start: 'top 75%', once: true }
+        duration: 1.2, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '#process',
+          start: 'top 75%',
+          once: true,
+        },
       });
 
-      // Timeline steps
-      gsap.utils.toArray('.process-step').forEach((step, i) => {
-        gsap.fromTo(step, {
-          opacity: 0, y: 60, scale: 0.95
-        }, {
-          opacity: 1, y: 0, scale: 1,
-          duration: 0.8, ease: 'power3.out',
-          scrollTrigger: { trigger: step, start: 'top 88%', once: true },
-          delay: i * 0.1
-        });
-      });
-
-      // Timeline line draw
+      // ─── TIMELINE LINE: Draws in 3D space ───
       const line = document.querySelector('.process-timeline-line');
       if (line) {
-        gsap.fromTo(line, { scaleY: 0 }, {
-          scaleY: 1, duration: 2, ease: 'power2.inOut',
-          scrollTrigger: { trigger: '#process .process-timeline', start: 'top 80%', once: true }
+        gsap.fromTo(line, {
+          scaleY: 0,
+          opacity: 0,
+        }, {
+          scaleY: 1,
+          opacity: 1,
+          duration: 2,
+          ease: 'power2.inOut',
+          scrollTrigger: {
+            trigger: '#process .process-timeline',
+            start: 'top 80%',
+            end: 'bottom 40%',
+            scrub: 1,
+          },
         });
       }
+
+      // ─── STEPS: Each emerges as camera reaches it ───
+      gsap.utils.toArray('.process-step').forEach((step, i) => {
+        const isEven = i % 2 === 0;
+
+        // Step content emerges from side with perspective warp
+        gsap.fromTo(step, {
+          opacity: 0,
+          x: isEven ? -80 : 80,
+          y: 60,
+          scale: 0.85,
+          rotateY: isEven ? -12 : 12,
+          filter: 'blur(6px)',
+          transformPerspective: 1200,
+        }, {
+          opacity: 1,
+          x: 0,
+          y: 0,
+          scale: 1,
+          rotateY: 0,
+          filter: 'blur(0px)',
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: step,
+            start: 'top 88%',
+            once: true,
+          },
+          delay: i * 0.1,
+        });
+
+        // Dot pulses with light when visible
+        const dot = step.querySelector('.process-step__dot');
+        if (dot) {
+          gsap.fromTo(dot, {
+            scale: 0,
+            opacity: 0,
+          }, {
+            scale: 1,
+            opacity: 1,
+            duration: 0.6,
+            ease: 'elastic.out(1, 0.5)',
+            scrollTrigger: {
+              trigger: step,
+              start: 'top 85%',
+              once: true,
+            },
+            delay: i * 0.1 + 0.3,
+          });
+        }
+
+        // Independent parallax per step
+        gsap.to(step, {
+          y: -20 * (i + 1) * 0.25,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: step,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.5,
+          },
+        });
+      });
+
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
   return (
-    <section id="process" ref={sectionRef}>
+    <section id="process" ref={sectionRef} data-scene="process" style={{ perspective: '1200px' }}>
       <div className="section-glow-line" aria-hidden="true" />
 
       <div className="container">
@@ -90,7 +161,7 @@ export default function Process() {
           <div className="process-timeline-line" aria-hidden="true" />
 
           {steps.map((step, i) => (
-            <div key={i} className="process-step" style={{ '--step-color': step.color }}>
+            <div key={i} className="process-step" style={{ '--step-color': step.color, transformStyle: 'preserve-3d' }}>
               <div className="process-step__dot">
                 <span>{step.num}</span>
               </div>

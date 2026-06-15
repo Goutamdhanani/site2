@@ -2,9 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+gsap.registerPlugin(ScrollTrigger);
+
 const projects = [
   {
-    image: '/assets/projects/project-1.png',
     title: 'LuxeThread',
     category: 'E-Commerce',
     year: '2026',
@@ -15,7 +16,6 @@ const projects = [
     size: 'large'
   },
   {
-    image: '/assets/projects/project-2.png',
     title: 'VaultPay',
     category: 'Fintech',
     year: '2025',
@@ -26,7 +26,6 @@ const projects = [
     size: 'medium'
   },
   {
-    image: '/assets/projects/project-3.png',
     title: 'BiteBuddy',
     category: 'Mobile App',
     year: '2026',
@@ -37,7 +36,6 @@ const projects = [
     size: 'medium'
   },
   {
-    image: '/assets/projects/project-4.png',
     title: 'NestHub',
     category: 'Real Estate',
     year: '2025',
@@ -48,7 +46,6 @@ const projects = [
     size: 'large'
   },
   {
-    image: '/assets/projects/project-5.png',
     title: 'PulseIQ',
     category: 'SaaS',
     year: '2024',
@@ -59,7 +56,6 @@ const projects = [
     size: 'medium'
   },
   {
-    image: '/assets/projects/project-6.png',
     title: 'ZenFit',
     category: 'Health & Wellness',
     year: '2025',
@@ -77,72 +73,133 @@ export default function CaseStudies() {
   useEffect(() => {
     const ctx = gsap.context(() => {
 
-      // Section header animation
+      // ─── SECTION HEADER: Emerges from depth ───
       const headerTl = gsap.timeline({
-        scrollTrigger: { trigger: '#work', start: 'top 75%', once: true }
+        scrollTrigger: {
+          trigger: '#work',
+          start: 'top 75%',
+          once: true,
+        },
       });
 
       headerTl
-        .fromTo('#work .section-counter', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' })
-        .fromTo('#work .eyebrow', { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.6, ease: 'power3.out' }, '-=0.3')
-        .fromTo('#work .work-heading', { opacity: 0, y: 60, clipPath: 'inset(100% 0 0 0)' }, {
-          opacity: 1, y: 0, clipPath: 'inset(0% 0 0 0)', duration: 1, ease: 'power4.out'
-        }, '-=0.4')
-        .fromTo('#work .work-subtext', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, '-=0.5');
-
-      // Project cards — staggered reveal with parallax
-      gsap.utils.toArray('.project-card').forEach((card, i) => {
-        // Reveal
-        gsap.fromTo(card, {
-          y: 100, opacity: 0, scale: 0.95
+        .fromTo('#work .section-counter', {
+          opacity: 0, y: 30, filter: 'blur(6px)',
         }, {
-          y: 0, opacity: 1, scale: 1,
-          duration: 1, ease: 'power3.out',
+          opacity: 1, y: 0, filter: 'blur(0px)',
+          duration: 0.6, ease: 'power3.out',
+        })
+        .fromTo('#work .eyebrow', {
+          opacity: 0, x: -40, filter: 'blur(4px)',
+        }, {
+          opacity: 1, x: 0, filter: 'blur(0px)',
+          duration: 0.7, ease: 'power3.out',
+        }, '-=0.3')
+        .fromTo('#work .work-heading', {
+          opacity: 0, y: 80, scale: 0.85, filter: 'blur(10px)',
+          clipPath: 'inset(100% 0 0 0)',
+        }, {
+          opacity: 1, y: 0, scale: 1, filter: 'blur(0px)',
+          clipPath: 'inset(0% 0 0 0)',
+          duration: 1.2, ease: 'power4.out',
+        }, '-=0.4')
+        .fromTo('#work .work-subtext', {
+          opacity: 0, y: 30, filter: 'blur(4px)',
+        }, {
+          opacity: 1, y: 0, filter: 'blur(0px)',
+          duration: 0.7, ease: 'power2.out',
+        }, '-=0.6');
+
+      // ─── PROJECT CARDS: Float in from 3D space ───
+      gsap.utils.toArray('.project-card').forEach((card, i) => {
+        // Each card emerges from a different 3D position
+        const xDir = i % 2 === 0 ? -1 : 1;
+        const depth = 80 + i * 20;
+        const rotate = xDir * (5 + Math.random() * 8);
+
+        gsap.fromTo(card, {
+          y: depth,
+          x: xDir * 60,
+          opacity: 0,
+          scale: 0.8,
+          rotateY: rotate,
+          rotateX: 8,
+          filter: 'blur(6px)',
+          transformPerspective: 1200,
+        }, {
+          y: 0,
+          x: 0,
+          opacity: 1,
+          scale: 1,
+          rotateY: 0,
+          rotateX: 0,
+          filter: 'blur(0px)',
+          duration: 1.2,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: card,
-            start: 'top 90%',
-            once: true
+            start: 'top 92%',
+            once: true,
           },
-          delay: (i % 2) * 0.15
+          delay: (i % 2) * 0.15,
         });
 
-        // Image parallax inside card
-        const img = card.querySelector('.project-card__image img');
-        if (img) {
-          gsap.to(img, {
-            yPercent: -15,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 1.5
-            }
-          });
-        }
+        // ─── SCROLL PARALLAX: Cards at different depths ───
+        gsap.to(card, {
+          y: -30 * (1 + (i % 3) * 0.4),
+          rotateX: -2,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.5,
+          },
+        });
 
-        // 3D tilt on hover
+        // ─── HOVER: 3D tilt with depth ───
         const handleMove = (e) => {
           const rect = card.getBoundingClientRect();
           const x = (e.clientX - rect.left) / rect.width - 0.5;
           const y = (e.clientY - rect.top) / rect.height - 0.5;
           gsap.to(card, {
-            rotateX: y * -8,
-            rotateY: x * 8,
+            rotateX: y * -12,
+            rotateY: x * 12,
+            scale: 1.02,
+            boxShadow: `${x * 20}px ${y * 20}px 60px rgba(0,0,0,0.4), 0 0 80px ${card.style.getPropertyValue('--card-accent')}22`,
             duration: 0.4,
             ease: 'power2.out',
             transformPerspective: 1000,
           });
         };
+
         const handleLeave = () => {
           gsap.to(card, {
-            rotateX: 0, rotateY: 0,
-            duration: 0.7, ease: 'elastic.out(1, 0.5)'
+            rotateX: 0,
+            rotateY: 0,
+            scale: 1,
+            boxShadow: 'none',
+            duration: 0.8,
+            ease: 'elastic.out(1, 0.5)',
           });
         };
+
         card.addEventListener('mousemove', handleMove);
         card.addEventListener('mouseleave', handleLeave);
         card.style.transformStyle = 'preserve-3d';
+      });
+
+      // ─── VIEW ALL CTA: Slides up ───
+      gsap.fromTo('.work-cta', {
+        opacity: 0, y: 50,
+      }, {
+        opacity: 1, y: 0,
+        duration: 0.8, ease: 'power3.out',
+        scrollTrigger: {
+          trigger: '.work-cta',
+          start: 'top 90%',
+          once: true,
+        },
       });
 
     }, sectionRef);
@@ -151,7 +208,7 @@ export default function CaseStudies() {
   }, []);
 
   return (
-    <section id="work" ref={sectionRef}>
+    <section id="work" ref={sectionRef} data-scene="work" style={{ perspective: '1200px' }}>
       <div className="container" style={{ position: 'relative', zIndex: 2 }}>
         {/* Section header */}
         <div className="work-header">
@@ -165,7 +222,7 @@ export default function CaseStudies() {
           </p>
         </div>
 
-        {/* Project grid — bento-style */}
+        {/* Project grid */}
         <div className="project-grid">
           {projects.map((project, i) => (
             <article
@@ -173,9 +230,20 @@ export default function CaseStudies() {
               className={`project-card project-card--${project.size}`}
               style={{ '--card-accent': project.color }}
             >
-              {/* Image */}
+              {/* Visual placeholder — CSS-drawn gradient */}
               <div className="project-card__image">
-                <img src={project.image} alt={project.title} loading="lazy" />
+                <div
+                  className="project-card__visual"
+                  style={{
+                    background: `linear-gradient(135deg, ${project.color}22, ${project.color}08)`,
+                  }}
+                >
+                  <div className="project-card__visual-grid" />
+                  <div
+                    className="project-card__visual-orb"
+                    style={{ background: project.color }}
+                  />
+                </div>
                 <div className="project-card__overlay" />
               </div>
 
@@ -190,7 +258,7 @@ export default function CaseStudies() {
                 <p className="project-card__desc">{project.description}</p>
 
                 <div className="project-card__metric">
-                  <span className="project-card__metric-value">{project.metric}</span>
+                  <span className="project-card__metric-value" style={{ color: project.color }}>{project.metric}</span>
                   <span className="project-card__metric-label">{project.metricLabel}</span>
                 </div>
               </div>
@@ -206,7 +274,7 @@ export default function CaseStudies() {
         </div>
 
         {/* View all CTA */}
-        <div className="work-cta" data-animate="fade-up">
+        <div className="work-cta">
           <a href="#" className="btn-outline magnetic">
             View All Projects
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ marginLeft: '8px' }}>
