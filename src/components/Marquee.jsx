@@ -15,7 +15,7 @@ export default function Marquee() {
     const ctx = gsap.context(() => {
 
       // ─── ENTRANCE: Marquee materializes from blur ───
-      gsap.fromTo('.marquee-strip', {
+      gsap.fromTo(stripRef.current, {
         opacity: 0,
         filter: 'blur(12px)',
         scaleY: 0.3,
@@ -26,14 +26,14 @@ export default function Marquee() {
         duration: 1,
         ease: 'power3.out',
         scrollTrigger: {
-          trigger: '.marquee-strip',
+          trigger: stripRef.current,
           start: 'top 95%',
           once: true,
         },
       });
 
       // Infinite horizontal scroll
-      const track = document.querySelector('.marquee-track');
+      const track = stripRef.current?.querySelector('.marquee-track');
       if (track) {
         const w = track.scrollWidth / 3;
         gsap.to(track, {
@@ -45,14 +45,14 @@ export default function Marquee() {
       }
 
       // ─── SCROLL: Marquee skews and distorts as camera passes ───
-      gsap.to('.marquee-strip', {
+      gsap.to(stripRef.current, {
         skewX: -6,
         scaleX: 1.1,
         filter: 'blur(2px)',
         opacity: 0.4,
         ease: 'none',
         scrollTrigger: {
-          trigger: '.marquee-strip',
+          trigger: stripRef.current,
           start: 'top 60%',
           end: 'bottom 20%',
           scrub: 1.5,
@@ -65,7 +65,7 @@ export default function Marquee() {
           y: (i % 2 === 0 ? -1 : 1) * 20,
           ease: 'none',
           scrollTrigger: {
-            trigger: '.marquee-strip',
+            trigger: stripRef.current,
             start: 'top bottom',
             end: 'bottom top',
             scrub: 1,

@@ -13,7 +13,7 @@ export default function Footer() {
       // ─── FOOTER: Content emerges from below ───
       const footerTl = gsap.timeline({
         scrollTrigger: {
-          trigger: 'footer',
+          trigger: footerRef.current,
           start: 'top 85%',
           once: true,
         },

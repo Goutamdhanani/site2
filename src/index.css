@@ -2797,16 +2797,117 @@ footer {
    CINEMATIC SPATIAL SYSTEM — New layer architecture
    ═══════════════════════════════════════════════════════════════ */
 
-/* ─── Atmospheric Three.js Canvas ─── */
-.atmospheric-canvas {
+/* ─── Performant Atmospheric Container & Layers ─── */
+.atmospheric-container {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  overflow: hidden;
 }
 
-.atmospheric-canvas canvas {
-  display: block;
+.atmos-space-base {
+  position: absolute;
+  inset: 0;
+  background: #08080c;
+  z-index: 0;
+}
+
+.atmos-layer {
+  position: absolute;
+  inset: -15%;
+  width: 130%;
+  height: 130%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  will-change: transform;
+}
+
+.atmos-nebula {
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  z-index: 1;
+}
+
+.atmos-glow {
+  opacity: 0.45;
+  mix-blend-mode: color-dodge;
+  z-index: 2;
+}
+
+.atmos-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(150px);
+  will-change: transform;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.atmos-blob-1 {
+  width: 80vw;
+  height: 80vw;
+  max-width: 900px;
+  max-height: 900px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.22) 0%, rgba(139, 92, 246, 0) 70%);
+  top: -10%;
+  left: -20%;
+}
+
+.atmos-blob-2 {
+  width: 90vw;
+  height: 90vw;
+  max-width: 1100px;
+  max-height: 1100px;
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.18) 0%, rgba(20, 184, 166, 0) 70%);
+  bottom: -15%;
+  right: -25%;
+}
+
+.atmos-streak {
+  position: absolute;
+  width: 3px;
+  height: 140%;
+  mix-blend-mode: screen;
+  will-change: transform;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.atmos-streak-1 {
+  background: linear-gradient(to bottom, rgba(139, 92, 246, 0) 0%, rgba(139, 92, 246, 0.4) 50%, rgba(139, 92, 246, 0) 100%);
+  left: 25%;
+  top: -20%;
+}
+
+.atmos-streak-2 {
+  background: linear-gradient(to bottom, rgba(20, 184, 166, 0) 0%, rgba(20, 184, 166, 0.35) 50%, rgba(20, 184, 166, 0) 100%);
+  right: 20%;
+  top: -20%;
+}
+
+.atmos-debris {
+  mix-blend-mode: screen;
+  z-index: 5;
+}
+
+.atmos-debris-far {
+  opacity: 0.22;
+  filter: blur(1px) brightness(0.85);
+}
+
+.atmos-debris-close {
+  opacity: 0.35;
+  filter: brightness(1.15);
+}
+
+.atmos-overlay-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 30%, rgba(8, 8, 12, 0.85) 100%);
+  z-index: 6;
+  pointer-events: none;
 }
 
 /* ─── Cinematic Wrapper ─── */
@@ -3042,3 +3143,66 @@ footer {
 /* Ensure content is above atmospheric canvas */
 #hero { z-index: 2; }
 .hero-gradient-bg { opacity: 0.6; }
+
+/* ─── Hero Canvas Sequence ─── */
+.hero-canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--bg-primary); /* Base color behind frames */
+}
+
+.hero-canvas {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform-origin: bottom center; /* Camera tilt pivots from bottom */
+}
+
+.hero-ui-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hero-ui-layer > * {
+  pointer-events: auto;
+}
+
+.hero-sticky-container {
+  position: relative;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#hero {
+  height: 100vh;
+  background: transparent !important;
+  position: relative;
+}
+
+.hero-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-primary);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}

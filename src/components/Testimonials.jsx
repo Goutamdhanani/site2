@@ -36,7 +36,7 @@ export default function Testimonials() {
     const ctx = gsap.context(() => {
 
       // ─── TITLE: Unmask reveal ───
-      gsap.fromTo('#testimonials .section-title-reveal', {
+      gsap.fromTo('.section-title-reveal', {
         y: 100, opacity: 0, scale: 0.85, filter: 'blur(10px)',
         clipPath: 'inset(100% 0 0 0)',
       }, {
@@ -44,7 +44,7 @@ export default function Testimonials() {
         clipPath: 'inset(0% 0 0 0)',
         duration: 1.4, ease: 'power3.out',
         scrollTrigger: {
-          trigger: '#testimonials',
+          trigger: sectionRef.current,
           start: 'top 75%',
           once: true,
         },

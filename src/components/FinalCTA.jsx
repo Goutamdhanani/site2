@@ -42,7 +42,7 @@ export default function FinalCTA() {
       });
 
       // ─── TITLE: Massive mask reveal ───
-      gsap.fromTo('#contact .cta-big-title', {
+      gsap.fromTo('.cta-big-title', {
         y: 120,
         opacity: 0,
         scale: 0.7,
@@ -57,14 +57,14 @@ export default function FinalCTA() {
         duration: 1.5,
         ease: 'power3.out',
         scrollTrigger: {
-          trigger: '#contact',
+          trigger: sectionRef.current,
           start: 'top 70%',
           once: true,
         },
       });
 
       // ─── SUBTITLE: Fades through depth ───
-      gsap.fromTo('#contact .cta-subtitle', {
+      gsap.fromTo('.cta-subtitle', {
         opacity: 0,
         y: 40,
         filter: 'blur(6px)',
@@ -75,7 +75,7 @@ export default function FinalCTA() {
         duration: 1,
         ease: 'power2.out',
         scrollTrigger: {
-          trigger: '#contact',
+          trigger: sectionRef.current,
           start: 'top 65%',
           once: true,
         },
@@ -83,7 +83,7 @@ export default function FinalCTA() {
       });
 
       // ─── BUTTONS: Emerge with gravitational pull ───
-      gsap.fromTo('#contact .cta-actions', {
+      gsap.fromTo('.cta-actions', {
         opacity: 0,
         y: 50,
         scale: 0.9,
@@ -94,7 +94,7 @@ export default function FinalCTA() {
         duration: 0.8,
         ease: 'back.out(1.7)',
         scrollTrigger: {
-          trigger: '#contact',
+          trigger: sectionRef.current,
           start: 'top 60%',
           once: true,
         },
@@ -110,14 +110,14 @@ export default function FinalCTA() {
         repeat: -1,
         stagger: 0.7,
         scrollTrigger: {
-          trigger: '#contact',
+          trigger: sectionRef.current,
           start: 'top 50%',
           toggleActions: 'play pause resume pause',
         },
       });
 
       // ─── TRUST BADGES ───
-      gsap.fromTo('#contact .cta-trust', {
+      gsap.fromTo('.cta-trust', {
         opacity: 0,
         y: 20,
       }, {
@@ -126,7 +126,7 @@ export default function FinalCTA() {
         duration: 0.6,
         ease: 'power2.out',
         scrollTrigger: {
-          trigger: '#contact',
+          trigger: sectionRef.current,
           start: 'top 55%',
           once: true,
         },

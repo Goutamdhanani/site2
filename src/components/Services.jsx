@@ -50,7 +50,7 @@ export default function Services() {
     const ctx = gsap.context(() => {
 
       // ─── SECTION TITLE: Emerges from depth with scale ───
-      gsap.fromTo('#services .section-title-reveal', {
+      gsap.fromTo('.section-title-reveal', {
         y: 120, opacity: 0, scale: 0.8, filter: 'blur(12px)',
         rotateX: 15,
       }, {
@@ -58,7 +58,7 @@ export default function Services() {
         rotateX: 0,
         duration: 1.4, ease: 'power3.out',
         scrollTrigger: {
-          trigger: '#services',
+          trigger: sectionRef.current,
           start: 'top 75%',
           once: true,
         },

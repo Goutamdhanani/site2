@@ -18,13 +18,13 @@ export default function Metrics() {
     const ctx = gsap.context(() => {
 
       // ─── SECTION TITLE: Scale from massive to normal with depth ───
-      gsap.fromTo('#proof .section-title-reveal', {
+      gsap.fromTo('.section-title-reveal', {
         y: 100, opacity: 0, scale: 1.8, filter: 'blur(16px)',
       }, {
         y: 0, opacity: 1, scale: 1, filter: 'blur(0px)',
         duration: 1.5, ease: 'power3.out',
         scrollTrigger: {
-          trigger: '#proof',
+          trigger: sectionRef.current,
           start: 'top 75%',
           once: true,
         },

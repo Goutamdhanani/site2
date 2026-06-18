@@ -44,13 +44,13 @@ export default function Process() {
     const ctx = gsap.context(() => {
 
       // ─── TITLE: Slides through depth ───
-      gsap.fromTo('#process .section-title-reveal', {
+      gsap.fromTo('.section-title-reveal', {
         y: 100, opacity: 0, scale: 0.85, filter: 'blur(10px)',
       }, {
         y: 0, opacity: 1, scale: 1, filter: 'blur(0px)',
         duration: 1.2, ease: 'power3.out',
         scrollTrigger: {
-          trigger: '#process',
+          trigger: sectionRef.current,
           start: 'top 75%',
           once: true,
         },
@@ -68,7 +68,7 @@ export default function Process() {
           duration: 2,
           ease: 'power2.inOut',
           scrollTrigger: {
-            trigger: '#process .process-timeline',
+            trigger: '.process-timeline',
             start: 'top 80%',
             end: 'bottom 40%',
             scrub: 1,

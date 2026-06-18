@@ -76,26 +76,26 @@ export default function CaseStudies() {
       // ─── SECTION HEADER: Emerges from depth ───
       const headerTl = gsap.timeline({
         scrollTrigger: {
-          trigger: '#work',
+          trigger: sectionRef.current,
           start: 'top 75%',
           once: true,
         },
       });
 
       headerTl
-        .fromTo('#work .section-counter', {
+        .fromTo('.section-counter', {
           opacity: 0, y: 30, filter: 'blur(6px)',
         }, {
           opacity: 1, y: 0, filter: 'blur(0px)',
           duration: 0.6, ease: 'power3.out',
         })
-        .fromTo('#work .eyebrow', {
+        .fromTo('.eyebrow', {
           opacity: 0, x: -40, filter: 'blur(4px)',
         }, {
           opacity: 1, x: 0, filter: 'blur(0px)',
           duration: 0.7, ease: 'power3.out',
         }, '-=0.3')
-        .fromTo('#work .work-heading', {
+        .fromTo('.work-heading', {
           opacity: 0, y: 80, scale: 0.85, filter: 'blur(10px)',
           clipPath: 'inset(100% 0 0 0)',
         }, {
@@ -103,7 +103,7 @@ export default function CaseStudies() {
           clipPath: 'inset(0% 0 0 0)',
           duration: 1.2, ease: 'power4.out',
         }, '-=0.4')
-        .fromTo('#work .work-subtext', {
+        .fromTo('.work-subtext', {
           opacity: 0, y: 30, filter: 'blur(4px)',
         }, {
           opacity: 1, y: 0, filter: 'blur(0px)',
