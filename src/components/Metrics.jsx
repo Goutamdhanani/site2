@@ -1,34 +1,36 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitHeading from './SplitHeading';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
-  { value: 150, suffix: '+', label: 'Projects Delivered', color: '#8b5cf6' },
-  { value: 98, suffix: '%', label: 'Client Satisfaction', color: '#3b82f6' },
-  { value: 4.2, suffix: 'x', label: 'Average ROI', decimals: 1, color: '#14b8a6' },
-  { value: 24, suffix: '/7', label: 'Support & Uptime', color: '#ec4899' },
+  { value: 150, suffix: '+', label: 'Projects Delivered', color: 'var(--accent-ember)' },
+  { value: 98, suffix: '%', label: 'Client Satisfaction', color: 'var(--accent-amber)' },
+  { value: 4.2, suffix: 'x', label: 'Average ROI', decimals: 1, color: 'var(--accent-gold)' },
+  { value: 24, suffix: '/7', label: 'Support & Uptime', color: 'var(--accent-lacquer)' },
 ];
 
 export default function Metrics() {
   const sectionRef = useRef(null);
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const ctx = gsap.context(() => {
 
-      // ─── SECTION TITLE: Scale from massive to normal with depth ───
-      gsap.fromTo('.section-title-reveal', {
-        y: 100, opacity: 0, scale: 1.8, filter: 'blur(16px)',
-      }, {
-        y: 0, opacity: 1, scale: 1, filter: 'blur(0px)',
-        duration: 1.5, ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 75%',
-          once: true,
-        },
-      });
+      // Skip animations if reduced motion preferred
+      if (prefersReducedMotion) {
+        // Set final values immediately
+      const stats = document.querySelectorAll('.stat-value');
+      stats.forEach((el) => {
+          const target = parseFloat(el.dataset.target);
+          const suffix = el.dataset.suffix || '';
+          const decimals = parseInt(el.dataset.decimals) || 0;
+          el.textContent = target.toFixed(decimals) + suffix;
+        });
+        return;
+      }
 
       // ─── STAT CARDS: Emerge from deep behind camera ───
       gsap.utils.toArray('.stat-card').forEach((card, i) => {
@@ -55,7 +57,7 @@ export default function Metrics() {
             start: 'top 92%',
             once: true,
           },
-          delay: i * 0.15,
+          stagger: 0.1,
         });
 
         // Parallax depth — front cards move more
@@ -71,13 +73,46 @@ export default function Metrics() {
         });
       });
 
-      // ─── COUNTER ANIMATIONS with dramatic easing ───
-      gsap.utils.toArray('.stat-value').forEach((el) => {
+      // ─── PARALLAX DEPTH & COUNTER ANIMATIONS ───
+      const numbers = gsap.utils.toArray('.stat-value');
+      const labels = gsap.utils.toArray('.stat-label');
+
+      numbers.forEach((el, i) => {
         const target = parseFloat(el.dataset.target);
         const suffix = el.dataset.suffix || '';
         const decimals = parseInt(el.dataset.decimals) || 0;
 
-        // Number stretches vertically as it counts
+        // 1. Parallax scroll effect (numbers move faster)
+        gsap.fromTo(el,
+          { y: 60 },
+          {
+            y: -30,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
+            }
+          }
+        );
+
+        // 2. Count up with elastic overshoot
+        gsap.fromTo({ val: 0 }, { val: 0 }, {
+          val: target,
+          duration: 2.5,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top 85%',
+            once: true,
+          },
+          onUpdate() {
+            el.textContent = this.targets()[0].val.toFixed(decimals) + suffix;
+          },
+        });
+        
+        // 3. Stretch reveal
         gsap.fromTo(el, {
           scaleY: 2,
           opacity: 0,
@@ -94,20 +129,23 @@ export default function Metrics() {
             once: true,
           },
         });
+      });
 
-        gsap.fromTo({ val: 0 }, { val: 0 }, {
-          val: target,
-          duration: 2.5,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 85%',
-            once: true,
-          },
-          onUpdate() {
-            el.textContent = this.targets()[0].val.toFixed(decimals) + suffix;
-          },
-        });
+      labels.forEach((label) => {
+        // Parallax scroll effect (labels move slower)
+        gsap.fromTo(label,
+          { y: 20 },
+          {
+            y: -10,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: true,
+            }
+          }
+        );
       });
 
     }, sectionRef);
@@ -116,15 +154,13 @@ export default function Metrics() {
   }, []);
 
   return (
-    <section id="proof" ref={sectionRef} data-scene="metrics" style={{ perspective: '1200px' }}>
+    <section id="about" ref={sectionRef} data-scene="metrics" style={{ perspective: '1200px' }}>
       <div className="section-glow-line" aria-hidden="true" />
 
       <div className="container">
         <div className="metrics-header">
           <p className="eyebrow">The Numbers</p>
-          <h2 className="section-title-reveal metrics-big-title">
-            Results
-          </h2>
+          <SplitHeading text="Results" className="metrics-big-title" />
           <p className="metrics-subtitle">
             We let our work speak for itself. Here's the proof.
           </p>

@@ -37,7 +37,7 @@ export default function Footer() {
         }, {
           opacity: 1, y: 0, scale: 1,
           duration: 0.7,
-          stagger: 0.12,
+          stagger: 0.1,
           ease: 'power2.out',
         }, '-=0.3')
         .fromTo('.footer-bottom', {

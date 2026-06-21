@@ -12,25 +12,13 @@ export default function Marquee() {
   const stripRef = useRef(null);
 
   useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const ctx = gsap.context(() => {
 
-      // ─── ENTRANCE: Marquee materializes from blur ───
-      gsap.fromTo(stripRef.current, {
-        opacity: 0,
-        filter: 'blur(12px)',
-        scaleY: 0.3,
-      }, {
-        opacity: 1,
-        filter: 'blur(0px)',
-        scaleY: 1,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: stripRef.current,
-          start: 'top 95%',
-          once: true,
-        },
-      });
+      // Stop GSAP timeline if reduced motion preferred
+      if (prefersReducedMotion) {
+        return;
+      }
 
       // Infinite horizontal scroll
       const track = stripRef.current?.querySelector('.marquee-track');

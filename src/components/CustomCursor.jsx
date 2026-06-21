@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 
 export default function CustomCursor() {
@@ -66,7 +66,7 @@ export default function CustomCursor() {
       const isCard = e.target.closest('.project-card, .testimonial-card, .service-row, .stat-card');
 
       if (isButton) {
-        gsap.to(ringEl, { width: 56, height: 56, opacity: 0.4, borderColor: '#8b5cf6', duration: 0.3 });
+         gsap.to(ringEl, { width: 56, height: 56, opacity: 0.4, borderColor: 'var(--accent-ember)', duration: 0.3 });
         gsap.to(dot, { width: 0, height: 0, opacity: 0, duration: 0.2 });
       } else if (isCard) {
         gsap.to(ringEl, { width: 80, height: 80, opacity: 0.15, duration: 0.4 });

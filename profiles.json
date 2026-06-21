@@ -1,0 +1,658 @@
+{
+    "inferenceProfileSummaries": [
+        {
+            "inferenceProfileName": "EU Nova Micro",
+            "description": "Routes requests to Nova Micro in eu-central-1, eu-north-1, eu-west-1 and eu-west-3.",
+            "createdAt": "2025-02-17T14:00:00+00:00",
+            "updatedAt": "2025-02-27T00:35:56.889250+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.amazon.nova-micro-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/amazon.nova-micro-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/amazon.nova-micro-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/amazon.nova-micro-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/amazon.nova-micro-v1:0"
+                }
+            ],
+            "inferenceProfileId": "eu.amazon.nova-micro-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Nova Lite",
+            "description": "Routes requests to Nova Lite in eu-central-1, eu-north-1, eu-west-1 and eu-west-3.",
+            "createdAt": "2025-02-17T14:00:00+00:00",
+            "updatedAt": "2025-02-27T00:42:53.941081+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.amazon.nova-lite-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/amazon.nova-lite-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/amazon.nova-lite-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/amazon.nova-lite-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/amazon.nova-lite-v1:0"
+                }
+            ],
+            "inferenceProfileId": "eu.amazon.nova-lite-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Mistral Pixtral Large 25.02",
+            "description": "Routes requests to Mistral Pixtral Large 25.02 in eu-central-1, eu-north-1, eu-west-1 and eu-west-3.",
+            "createdAt": "2025-04-03T00:00:00+00:00",
+            "updatedAt": "2025-04-07T16:34:00.921314+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.mistral.pixtral-large-2502-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/mistral.pixtral-large-2502-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/mistral.pixtral-large-2502-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/mistral.pixtral-large-2502-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/mistral.pixtral-large-2502-v1:0"
+                }
+            ],
+            "inferenceProfileId": "eu.mistral.pixtral-large-2502-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Nova Pro",
+            "description": "Routes requests to Nova Pro in eu-central-1, eu-north-1, eu-west-1 and eu-west-3.",
+            "createdAt": "2025-02-17T14:00:00+00:00",
+            "updatedAt": "2025-06-20T21:58:06.429031+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.amazon.nova-pro-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/amazon.nova-pro-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/amazon.nova-pro-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/amazon.nova-pro-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/amazon.nova-pro-v1:0"
+                }
+            ],
+            "inferenceProfileId": "eu.amazon.nova-pro-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Claude Sonnet 4",
+            "description": "Routes requests to Claude Sonnet 4 in eu-central-1, eu-north-1, eu-south-1, eu-south-2, eu-west-1 and eu-west-3.",
+            "createdAt": "2025-06-10T00:00:00+00:00",
+            "updatedAt": "2025-06-23T18:47:34.082268+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.anthropic.claude-sonnet-4-20250514-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/anthropic.claude-sonnet-4-20250514-v1:0"
+                }
+            ],
+            "inferenceProfileId": "eu.anthropic.claude-sonnet-4-20250514-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Cohere Embed v4",
+            "description": "Routes requests to Embed v4 in eu-north-1, eu-west-3, eu-south-1, eu-south-2, eu-west-1, eu-central-1.",
+            "createdAt": "2025-10-01T02:51:49.893643+00:00",
+            "updatedAt": "2025-10-01T02:51:49.893643+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.cohere.embed-v4:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/cohere.embed-v4:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/cohere.embed-v4:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/cohere.embed-v4:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/cohere.embed-v4:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/cohere.embed-v4:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/cohere.embed-v4:0"
+                }
+            ],
+            "inferenceProfileId": "eu.cohere.embed-v4:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "Global Cohere Embed v4",
+            "description": "Routes requests to Embed v4 globally across all supported AWS Regions.",
+            "createdAt": "2025-10-01T02:52:12+00:00",
+            "updatedAt": "2025-10-01T02:52:12+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.cohere.embed-v4:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/cohere.embed-v4:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/cohere.embed-v4:0"
+                }
+            ],
+            "inferenceProfileId": "global.cohere.embed-v4:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU TwelveLabs Pegasus v1.2",
+            "description": "Routes requests to Pegasus v1.2 in eu-north-1, eu-west-3, eu-south-1, eu-south-2, eu-west-1, eu-central-1.",
+            "createdAt": "2025-11-19T21:50:21.429603+00:00",
+            "updatedAt": "2025-11-19T21:50:21.429603+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.twelvelabs.pegasus-1-2-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/twelvelabs.pegasus-1-2-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/twelvelabs.pegasus-1-2-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/twelvelabs.pegasus-1-2-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/twelvelabs.pegasus-1-2-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/twelvelabs.pegasus-1-2-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/twelvelabs.pegasus-1-2-v1:0"
+                }
+            ],
+            "inferenceProfileId": "eu.twelvelabs.pegasus-1-2-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "GLOBAL TwelveLabs Pegasus v1.2",
+            "description": "Routes requests to Pegasus v1.2 globally across all supported AWS Regions.",
+            "createdAt": "2025-11-19T21:50:21.684909+00:00",
+            "updatedAt": "2025-11-19T21:50:21.684909+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.twelvelabs.pegasus-1-2-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/twelvelabs.pegasus-1-2-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/twelvelabs.pegasus-1-2-v1:0"
+                }
+            ],
+            "inferenceProfileId": "global.twelvelabs.pegasus-1-2-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Anthropic Claude Sonnet 4.5",
+            "description": "Routes requests to Anthropic Claude Sonnet 4.5 in eu-north-1, eu-west-3, eu-south-1, eu-south-2, eu-west-1 and eu-central-1.",
+            "createdAt": "2025-09-27T06:36:57.810691+00:00",
+            "updatedAt": "2025-11-20T00:59:24.037096+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+                }
+            ],
+            "inferenceProfileId": "eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "GLOBAL Amazon Nova 2 Lite",
+            "description": "Routes requests to Amazon Nova 2 Lite globally across all supported AWS Regions.",
+            "createdAt": "2025-11-04T01:09:00.013119+00:00",
+            "updatedAt": "2025-11-22T21:04:12.472229+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.amazon.nova-2-lite-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/amazon.nova-2-lite-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/amazon.nova-2-lite-v1:0"
+                }
+            ],
+            "inferenceProfileId": "global.amazon.nova-2-lite-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Amazon Nova 2 Lite",
+            "description": "Routes requests to Amazon Nova 2 Lite in eu-central-1, eu-north-1, eu-south-1, eu-south-2, eu-west-1 and eu-west-3.",
+            "createdAt": "2025-11-07T01:49:04.807205+00:00",
+            "updatedAt": "2025-11-22T21:04:20.524350+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.amazon.nova-2-lite-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/amazon.nova-2-lite-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/amazon.nova-2-lite-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/amazon.nova-2-lite-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/amazon.nova-2-lite-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/amazon.nova-2-lite-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/amazon.nova-2-lite-v1:0"
+                }
+            ],
+            "inferenceProfileId": "eu.amazon.nova-2-lite-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Anthropic Claude Opus 4.5",
+            "description": "Routes requests to Claude Opus 4.5 in eu-north-1, eu-west-3, eu-south-1, eu-south-2, eu-west-1, eu-central-1.",
+            "createdAt": "2025-12-10T00:50:52.014385+00:00",
+            "updatedAt": "2025-12-10T00:50:52.014385+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.anthropic.claude-opus-4-5-20251101-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-opus-4-5-20251101-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/anthropic.claude-opus-4-5-20251101-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/anthropic.claude-opus-4-5-20251101-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/anthropic.claude-opus-4-5-20251101-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-opus-4-5-20251101-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/anthropic.claude-opus-4-5-20251101-v1:0"
+                }
+            ],
+            "inferenceProfileId": "eu.anthropic.claude-opus-4-5-20251101-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "GLOBAL Anthropic Claude Opus 4.5",
+            "description": "Routes requests to Anthropic Claude Opus 4.5 globally across all supported AWS Regions.",
+            "createdAt": "2025-11-22T20:44:55.573597+00:00",
+            "updatedAt": "2025-12-15T23:32:52.937130+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.anthropic.claude-opus-4-5-20251101-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/anthropic.claude-opus-4-5-20251101-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-opus-4-5-20251101-v1:0"
+                }
+            ],
+            "inferenceProfileId": "global.anthropic.claude-opus-4-5-20251101-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Anthropic Claude Opus 4.6",
+            "description": "Routes requests to Claude Opus 4.6 in eu-north-1, eu-west-3, eu-south-1, eu-south-2, eu-west-1, eu-central-1.",
+            "createdAt": "2026-02-05T00:55:10.691102+00:00",
+            "updatedAt": "2026-02-05T00:55:10.691102+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.anthropic.claude-opus-4-6-v1",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-opus-4-6-v1"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/anthropic.claude-opus-4-6-v1"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/anthropic.claude-opus-4-6-v1"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/anthropic.claude-opus-4-6-v1"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-opus-4-6-v1"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/anthropic.claude-opus-4-6-v1"
+                }
+            ],
+            "inferenceProfileId": "eu.anthropic.claude-opus-4-6-v1",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Anthropic Claude Sonnet 4.6",
+            "description": "Routes requests to Claude Sonnet 4.6 in eu-north-1, eu-west-3, eu-south-1, eu-south-2, eu-west-1, eu-central-1.",
+            "createdAt": "2026-02-13T21:55:48.493424+00:00",
+            "updatedAt": "2026-02-13T21:55:48.493424+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.anthropic.claude-sonnet-4-6",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-sonnet-4-6"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/anthropic.claude-sonnet-4-6"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/anthropic.claude-sonnet-4-6"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/anthropic.claude-sonnet-4-6"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-sonnet-4-6"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/anthropic.claude-sonnet-4-6"
+                }
+            ],
+            "inferenceProfileId": "eu.anthropic.claude-sonnet-4-6",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "Global Anthropic Claude Sonnet 4.6",
+            "description": "Routes requests to Claude Sonnet 4.6 globally across all supported AWS Regions.",
+            "createdAt": "2026-02-13T21:55:48.605049+00:00",
+            "updatedAt": "2026-02-13T21:55:48.605049+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.anthropic.claude-sonnet-4-6",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/anthropic.claude-sonnet-4-6"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-sonnet-4-6"
+                }
+            ],
+            "inferenceProfileId": "global.anthropic.claude-sonnet-4-6",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Anthropic Claude Opus 4.7",
+            "description": "Routes requests to Anthropic Claude Opus 4.7 in eu-central-1, eu-north-1, eu-south-1, eu-south-2, eu-west-1 and eu-west-3.",
+            "createdAt": "2026-04-15T23:07:22.942908+00:00",
+            "updatedAt": "2026-04-16T15:07:13.728731+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.anthropic.claude-opus-4-7",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-opus-4-7"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/anthropic.claude-opus-4-7"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/anthropic.claude-opus-4-7"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/anthropic.claude-opus-4-7"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-opus-4-7"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/anthropic.claude-opus-4-7"
+                }
+            ],
+            "inferenceProfileId": "eu.anthropic.claude-opus-4-7",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "Global Anthropic Claude Opus 4.6",
+            "description": "Routes requests to Anthropic Claude Opus 4.6 globally across all supported AWS Regions.",
+            "createdAt": "2026-02-05T00:55:10.985008+00:00",
+            "updatedAt": "2026-04-21T17:54:45.270563+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.anthropic.claude-opus-4-6-v1",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/anthropic.claude-opus-4-6-v1"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-opus-4-6-v1"
+                }
+            ],
+            "inferenceProfileId": "global.anthropic.claude-opus-4-6-v1",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "Global Claude Sonnet 4.5",
+            "description": "Routes requests to Claude Sonnet 4.5 globally across all supported AWS Regions.",
+            "createdAt": "2025-09-27T06:37:44+00:00",
+            "updatedAt": "2026-04-21T20:34:28.942216+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-sonnet-4-5-20250929-v1:0"
+                }
+            ],
+            "inferenceProfileId": "global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "Global Anthropic Claude Haiku 4.5",
+            "description": "Routes requests to Anthropic Claude Haiku 4.5 globally across all supported AWS Regions.",
+            "createdAt": "2025-10-14T00:03:44+00:00",
+            "updatedAt": "2026-04-22T19:48:36.254179+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.anthropic.claude-haiku-4-5-20251001-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+                }
+            ],
+            "inferenceProfileId": "global.anthropic.claude-haiku-4-5-20251001-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "Global Anthropic Claude Opus 4.7",
+            "description": "Routes requests to Anthropic Claude Opus 4.7 globally across all supported AWS Regions.",
+            "createdAt": "2026-04-15T23:07:23.037061+00:00",
+            "updatedAt": "2026-05-15T17:29:42.222762+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.anthropic.claude-opus-4-7",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/anthropic.claude-opus-4-7"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-opus-4-7"
+                }
+            ],
+            "inferenceProfileId": "global.anthropic.claude-opus-4-7",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Anthropic Claude Opus 4.8",
+            "description": "Routes requests to Claude Opus 4.8 in eu-north-1, eu-west-3, eu-south-1, eu-south-2, eu-west-1, eu-central-1.",
+            "createdAt": "2026-05-27T22:09:57.926532+00:00",
+            "updatedAt": "2026-05-27T22:09:57.926532+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.anthropic.claude-opus-4-8",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-opus-4-8"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/anthropic.claude-opus-4-8"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/anthropic.claude-opus-4-8"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/anthropic.claude-opus-4-8"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-opus-4-8"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/anthropic.claude-opus-4-8"
+                }
+            ],
+            "inferenceProfileId": "eu.anthropic.claude-opus-4-8",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "Global Anthropic Claude Opus 4.8",
+            "description": "Routes requests to Claude Opus 4.8 globally across all supported AWS Regions.",
+            "createdAt": "2026-05-27T22:09:58.027549+00:00",
+            "updatedAt": "2026-05-27T22:09:58.027549+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.anthropic.claude-opus-4-8",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/anthropic.claude-opus-4-8"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-opus-4-8"
+                }
+            ],
+            "inferenceProfileId": "global.anthropic.claude-opus-4-8",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Anthropic Claude Fable 5",
+            "description": "Routes requests to Anthropic Claude Fable 5 in eu-central-1, eu-north-1, eu-south-1, eu-south-2, eu-west-1 and eu-west-3.",
+            "createdAt": "2026-06-09T17:06:55.139078+00:00",
+            "updatedAt": "2026-06-11T18:56:18.303499+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.anthropic.claude-fable-5",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-fable-5"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/anthropic.claude-fable-5"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/anthropic.claude-fable-5"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/anthropic.claude-fable-5"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-fable-5"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/anthropic.claude-fable-5"
+                }
+            ],
+            "inferenceProfileId": "eu.anthropic.claude-fable-5",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "Global Anthropic Claude Fable 5",
+            "description": "Routes requests to Anthropic Claude Fable 5 globally across all supported AWS Regions.",
+            "createdAt": "2026-06-09T17:06:55.316861+00:00",
+            "updatedAt": "2026-06-11T18:56:23.583739+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/global.anthropic.claude-fable-5",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:::foundation-model/anthropic.claude-fable-5"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-fable-5"
+                }
+            ],
+            "inferenceProfileId": "global.anthropic.claude-fable-5",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        },
+        {
+            "inferenceProfileName": "EU Anthropic Claude Haiku 4.5",
+            "description": "Routes requests to Anthropic Claude Haiku 4.5 in eu-west-1, eu-north-1, eu-west-3, eu-south-1, eu-south-2 and eu-central-1.",
+            "createdAt": "2025-10-14T00:03:00.320176+00:00",
+            "updatedAt": "2026-06-16T18:36:42.104090+00:00",
+            "inferenceProfileArn": "arn:aws:bedrock:eu-north-1:233338945344:inference-profile/eu.anthropic.claude-haiku-4-5-20251001-v1:0",
+            "models": [
+                {
+                    "modelArn": "arn:aws:bedrock:eu-north-1::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-3::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-1::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-south-2::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-west-1::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+                },
+                {
+                    "modelArn": "arn:aws:bedrock:eu-central-1::foundation-model/anthropic.claude-haiku-4-5-20251001-v1:0"
+                }
+            ],
+            "inferenceProfileId": "eu.anthropic.claude-haiku-4-5-20251001-v1:0",
+            "status": "ACTIVE",
+            "type": "SYSTEM_DEFINED"
+        }
+    ]
+}

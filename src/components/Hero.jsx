@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { prefersReducedMotion } from '../utils/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -9,38 +10,39 @@ export default function Hero() {
   const canvasRef = useRef(null);
   const contextRef = useRef(null);
   const imagesRef = useRef([]);
+  const eyebrowRef = useRef(null);
+  const headlineRef = useRef(null);
+  const subRef = useRef(null);
+  const actionsRef = useRef(null);
+  const scrollHintRef = useRef(null);
   const [loaded, setLoaded] = useState(false);
-  const totalFrames = 118; // Extracted frames
+  const totalFrames = 118;
 
+  // ─── PRELOAD FRAMES ───
   useEffect(() => {
-    // 1. Preload images with load error protection
     let loadedCount = 0;
     const images = [];
 
     const handleFrameLoad = () => {
       loadedCount++;
-      if (loadedCount === totalFrames) {
-        setLoaded(true);
-      }
+      if (loadedCount === totalFrames) setLoaded(true);
     };
-    
+
     for (let i = 0; i < totalFrames; i++) {
       const img = new Image();
       const frameNum = String(i + 1).padStart(4, '0');
       img.src = `/assets/sequence/frame_${frameNum}.webp`;
-      
       img.onload = handleFrameLoad;
       img.onerror = () => {
-        console.warn(`Failed to load frame_${frameNum}.webp - skipping to prevent page freeze.`);
+        console.warn(`Frame ${frameNum} failed — skipping`);
         handleFrameLoad();
       };
-      
       images.push(img);
     }
-    
     imagesRef.current = images;
   }, []);
 
+  // ─── SCROLL ANIMATION ───
   useEffect(() => {
     if (!loaded) return;
 
@@ -48,92 +50,113 @@ export default function Hero() {
     const context = canvas.getContext('2d');
     contextRef.current = context;
 
-    // Responsive Canvas Resizing using client bounding rect of container parent
     const resizeCanvas = () => {
       const dpr = window.devicePixelRatio || 1;
-      const parent = canvas.parentElement;
-      if (!parent) return;
-
-      const rect = parent.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
       renderFrame(0);
     };
 
     const renderFrame = (index) => {
       const img = imagesRef.current[index];
-      if (!img || !img.width || !img.height) return; // Protect against invalid/empty images
-      
-      // Draw image to cover canvas (object-fit: cover logic)
+      if (!img || !img.width || !img.height) return;
+
       const canvasRatio = canvas.width / canvas.height;
       const imgRatio = img.width / img.height;
-      
-      let drawWidth = canvas.width;
-      let drawHeight = canvas.height;
-      let offsetX = 0;
-      let offsetY = 0;
-      
+      let dw = canvas.width, dh = canvas.height, ox = 0, oy = 0;
+
       if (imgRatio > canvasRatio) {
-        drawWidth = canvas.height * imgRatio;
-        offsetX = (canvas.width - drawWidth) / 2;
+        dh = canvas.width / imgRatio;
+        oy = (canvas.height - dh) / 2;
       } else {
-        drawHeight = canvas.width / imgRatio;
-        offsetY = (canvas.height - drawHeight) / 2;
+        dw = canvas.height * imgRatio;
+        ox = (canvas.width - dw) / 2;
       }
-      
+
       context.clearRect(0, 0, canvas.width, canvas.height);
-      context.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = 'high';
+      context.drawImage(img, ox, oy, dw, dh);
     };
 
     window.addEventListener('resize', resizeCanvas);
-    resizeCanvas(); // initial draw
+    resizeCanvas();
 
-    // 2. Set up ScrollTrigger Animation
+    if (prefersReducedMotion()) {
+      renderFrame(0);
+      gsap.set('.hero-ui-layer', { opacity: 1 });
+      return () => window.removeEventListener('resize', resizeCanvas);
+    }
+
     const ctx = gsap.context(() => {
-      
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: '+=300%', // Pin for 3 times the screen height
-          scrub: 0.15, // Butter-smooth scroll catch-up
-          pin: true, // Native GSAP pinning locks the section in viewport
-          pinSpacing: true,
-        }
+      const frameObj = { frame: 0 };
+
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: '+=300%',
+        pin: true,
+        scrub: 1.8,        // Shopify-style inertia lag
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          const progress = self.progress;
+          const frame = Math.round(progress * (totalFrames - 1));
+          renderFrame(frame);
+
+          // ─── TEXT SYNC TO FRAME MILESTONES ───
+          // Frame 0–20: establishing shot, nothing visible
+          // Frame 20–50: eyebrow fades in
+          if (eyebrowRef.current) {
+            const eyeOp = gsap.utils.clamp(0, 1, (progress - 0.17) / 0.15);
+            const eyeY = gsap.utils.mapRange(0.17, 0.32, 20, 0, gsap.utils.clamp(0.17, 0.32, progress));
+            gsap.set(eyebrowRef.current, { opacity: eyeOp, y: eyeY });
+          }
+
+          // Frame 50–80: headline word-by-word
+          if (headlineRef.current) {
+            const words = headlineRef.current.querySelectorAll('.hero-word-wrap');
+            words.forEach((w, i) => {
+              const wordStart = 0.42 + i * 0.08;
+              const wordEnd = wordStart + 0.12;
+              const wordOp = gsap.utils.clamp(0, 1, (progress - wordStart) / (wordEnd - wordStart));
+              const wordY = gsap.utils.mapRange(wordStart, wordEnd, 30, 0, gsap.utils.clamp(wordStart, wordEnd, progress));
+              gsap.set(w, { opacity: wordOp, y: wordY });
+            });
+          }
+
+          // Frame 80–100: subtitle
+          if (subRef.current) {
+            const subOp = gsap.utils.clamp(0, 1, (progress - 0.68) / 0.15);
+            const subY = gsap.utils.mapRange(0.68, 0.83, 20, 0, gsap.utils.clamp(0.68, 0.83, progress));
+            gsap.set(subRef.current, { opacity: subOp, y: subY });
+          }
+
+          // Frame 100–117: CTA buttons slide up
+          if (actionsRef.current) {
+            const actOp = gsap.utils.clamp(0, 1, (progress - 0.85) / 0.1);
+            const actY = gsap.utils.mapRange(0.85, 0.95, 30, 0, gsap.utils.clamp(0.85, 0.95, progress));
+            gsap.set(actionsRef.current, { opacity: actOp, y: actY });
+          }
+
+          // Scroll hint fades out
+          if (scrollHintRef.current) {
+            gsap.set(scrollHintRef.current, { opacity: 1 - progress * 5 });
+          }
+        },
       });
 
-      // Frame scrubbing runs full duration (10s)
-      const frameObj = { frame: 0 };
-      tl.to(frameObj, {
-        frame: totalFrames - 1,
-        ease: 'none',
-        duration: 10,
-        onUpdate: () => {
-          const currentFrame = Math.round(frameObj.frame);
-          renderFrame(currentFrame);
-        }
-      }, 0);
-      
-      // UI fading out early (0 to 3.5s)
-      tl.to('.hero-ui-layer', {
-        opacity: 0,
-        y: -100,
-        filter: 'blur(10px)',
-        ease: 'power1.inOut',
-        duration: 3.5
-      }, 0);
-      
-      // Final Camera Tilt (8.5s to 10s)
-      tl.fromTo(canvas, {
-        scale: 1,
-        y: '0vh'
-      }, {
+      // ─── Camera tilt at end ───
+      gsap.fromTo(canvas, { scale: 1 }, {
         scale: 1.05,
-        y: '-8vh',
+        y: '-5vh',
         ease: 'power2.inOut',
-        duration: 1.5
-      }, 8.5);
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: '80% top',
+          end: '100% top',
+          scrub: 1.8,
+        },
+      });
 
     }, sectionRef);
 
@@ -142,8 +165,6 @@ export default function Hero() {
       ctx.revert();
     };
   }, [loaded]);
-
-  const headlineWords = ['A', 'Peaceful', 'Ascension.'];
 
   return (
     <section id="hero" ref={sectionRef} data-scene="hero">
@@ -154,38 +175,33 @@ export default function Hero() {
       )}
 
       <div className="hero-sticky-container">
-        
-        {/* Sequence Canvas Layer */}
         <div className="hero-canvas-container">
           <canvas ref={canvasRef} className="hero-canvas" />
-          
-          {/* Subtle noise/gradient to blend with site dark mode */}
-          <div className="hero-gradient-bg" aria-hidden="true" style={{ opacity: 0.2 }}>
-             <div className="hero-noise-overlay" />
+          <div className="hero-gradient-bg" aria-hidden="true" style={{ opacity: 0.15 }}>
+            <div className="hero-noise-overlay" />
           </div>
         </div>
-        
-        {/* UI Overlay Layer */}
+
         <div className="hero-ui-layer">
           <div className="hero-content">
-            <p className="hero-eyebrow" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+            <p ref={eyebrowRef} className="hero-eyebrow" style={{ opacity: 0, textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
               Modern AI Agency
             </p>
 
-            <h1 className="hero-headline">
-              {headlineWords.map((word, i) => (
-                <span className="hero-word-wrap" key={i}>
+            <h1 ref={headlineRef} className="hero-headline">
+              {['A', 'Peaceful', 'Ascension.'].map((word, i) => (
+                <span className="hero-word-wrap" key={i} style={{ opacity: 0 }}>
                   <span className="hero-word" style={{ textShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>{word}</span>
                 </span>
               ))}
             </h1>
 
-            <p className="hero-sub" style={{ textShadow: '0 4px 12px rgba(0,0,0,0.8)' }}>
+            <p ref={subRef} className="hero-sub" style={{ opacity: 0, textShadow: '0 4px 12px rgba(0,0,0,0.8)' }}>
               Transforming the world through cinematic <br />
               storytelling and intelligent design.
             </p>
 
-            <div className="hero-actions">
+            <div ref={actionsRef} className="hero-actions" style={{ opacity: 0 }}>
               <a href="#contact" className="btn-primary magnetic">
                 Explore the Future <span className="btn-arrow">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
@@ -196,14 +212,12 @@ export default function Hero() {
               </a>
             </div>
           </div>
-          
-          {/* Scroll indicator */}
-          <div className="hero-scroll-indicator" style={{ position: 'absolute', bottom: '4vh' }}>
+
+          <div ref={scrollHintRef} className="hero-scroll-indicator" style={{ position: 'absolute', bottom: '4vh' }}>
             <div className="scroll-line" style={{ background: 'var(--text-primary)', boxShadow: '0 0 8px rgba(255,255,255,0.5)' }} />
             <span style={{ color: 'var(--text-primary)', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>Scroll to Ascend</span>
           </div>
         </div>
-        
       </div>
     </section>
   );

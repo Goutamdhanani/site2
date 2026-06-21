@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitHeading from './SplitHeading';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -9,31 +10,31 @@ const steps = [
     num: '01',
     title: 'Discovery',
     desc: 'Deep dive into your business, audience, and goals. We map the competitive landscape and identify opportunities.',
-    color: '#8b5cf6'
+    color: 'var(--accent-ember)'
   },
   {
     num: '02',
     title: 'Strategy',
     desc: 'Architecture, user flows, and technical specifications. Every decision backed by data and experience.',
-    color: '#3b82f6'
+    color: 'var(--accent-amber)'
   },
   {
     num: '03',
     title: 'Design',
     desc: 'Pixel-perfect interfaces that balance beauty with conversion. Interactive prototypes before a single line of code.',
-    color: '#ec4899'
+    color: 'var(--accent-lacquer)'
   },
   {
     num: '04',
     title: 'Build',
     desc: 'Clean, performant code. Agile sprints with weekly demos. You see progress in real-time, not just at the end.',
-    color: '#14b8a6'
+    color: 'var(--accent-gold)'
   },
   {
     num: '05',
     title: 'Launch & Scale',
     desc: 'Deployment, monitoring, and continuous optimisation. We don\'t disappear after launch — we help you grow.',
-    color: '#f59e0b'
+    color: 'var(--accent-bright)'
   }
 ];
 
@@ -43,44 +44,31 @@ export default function Process() {
   useEffect(() => {
     const ctx = gsap.context(() => {
 
-      // ─── TITLE: Slides through depth ───
-      gsap.fromTo('.section-title-reveal', {
-        y: 100, opacity: 0, scale: 0.85, filter: 'blur(10px)',
-      }, {
-        y: 0, opacity: 1, scale: 1, filter: 'blur(0px)',
-        duration: 1.2, ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 75%',
-          once: true,
-        },
-      });
-
-      // ─── TIMELINE LINE: Draws in 3D space ───
+      // ─── TIMELINE LINE: Draws down as user scrolls ───
       const line = document.querySelector('.process-timeline-line');
       if (line) {
         gsap.fromTo(line, {
           scaleY: 0,
-          opacity: 0,
+          transformOrigin: 'top center',
         }, {
           scaleY: 1,
-          opacity: 1,
-          duration: 2,
-          ease: 'power2.inOut',
+          ease: 'none',
           scrollTrigger: {
             trigger: '.process-timeline',
-            start: 'top 80%',
-            end: 'bottom 40%',
-            scrub: 1,
+            start: 'top 60%',
+            end: 'bottom 80%',
+            scrub: true,
           },
         });
       }
 
-      // ─── STEPS: Each emerges as camera reaches it ───
+      // ─── STEPS & DOTS ───
+      const stepDots = gsap.utils.toArray('.process-step__dot');
+      
       gsap.utils.toArray('.process-step').forEach((step, i) => {
         const isEven = i % 2 === 0;
 
-        // Step content emerges from side with perspective warp
+        // Content reveal
         gsap.fromTo(step, {
           opacity: 0,
           x: isEven ? -80 : 80,
@@ -103,26 +91,22 @@ export default function Process() {
             start: 'top 88%',
             once: true,
           },
-          delay: i * 0.1,
+          stagger: 0.1,
         });
 
-        // Dot pulses with light when visible
-        const dot = step.querySelector('.process-step__dot');
+        // Each step dot pops in when the line reaches it
+        const dot = stepDots[i];
         if (dot) {
-          gsap.fromTo(dot, {
-            scale: 0,
-            opacity: 0,
-          }, {
-            scale: 1,
-            opacity: 1,
-            duration: 0.6,
-            ease: 'elastic.out(1, 0.5)',
-            scrollTrigger: {
-              trigger: step,
-              start: 'top 85%',
-              once: true,
-            },
-            delay: i * 0.1 + 0.3,
+          const triggerPosition = `${20 + i * (60 / Math.max(1, stepDots.length - 1))}%`;
+          ScrollTrigger.create({
+            trigger: '.process-timeline',
+            start: `${triggerPosition} 80%`,
+            onEnter: () => {
+              gsap.fromTo(dot,
+                { scale: 0 },
+                { scale: 1, duration: 0.4, ease: 'back.out(2)' }
+              );
+            }
           });
         }
 
@@ -151,7 +135,7 @@ export default function Process() {
       <div className="container">
         <div className="process-header">
           <p className="eyebrow">How We Work</p>
-          <h2 className="section-title-reveal process-big-title">Process</h2>
+          <SplitHeading text="Process" className="process-big-title" />
           <p className="process-subtitle">
             A proven framework that turns ideas into shipped products.
           </p>

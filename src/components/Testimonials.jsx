@@ -1,31 +1,32 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SplitHeading from './SplitHeading';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
-    quote: '"oddwebs rebuilt our entire revenue engine. 320% growth in 6 months. I recommend them to every founder I meet."',
+    quote: "'oddwebs rebuilt our entire revenue engine. 320% growth in 6 months. I recommend them to every founder I meet.'",
     name: 'Rahul Kumar',
     role: 'Founder, LunaCart',
     initials: 'RK',
-    color: '#8b5cf6',
+    color: 'var(--accent-ember)',
   },
   {
-    quote: '"I\'ve worked with 4 agencies before oddwebs. They\'re the only ones who actually care about your outcomes."',
+    quote: "'I've worked with 4 agencies before oddwebs. They're the only ones who actually care about your outcomes.'",
     name: 'Ananya Mehta',
     role: 'CEO, DataFlow',
     initials: 'AM',
     featured: true,
-    color: '#14b8a6',
+    color: 'var(--accent-gold)',
   },
   {
-    quote: '"They built our fintech MVP in 5 weeks. It directly helped us close our $2.4M seed round."',
+    quote: "'They built our fintech MVP in 5 weeks. It directly helped us close our $2.4M seed round.'",
     name: 'Vikram Patel',
     role: 'Co-Founder, Payze',
     initials: 'VP',
-    color: '#f59e0b',
+    color: 'var(--accent-bright)',
   }
 ];
 
@@ -35,55 +36,40 @@ export default function Testimonials() {
   useEffect(() => {
     const ctx = gsap.context(() => {
 
-      // ─── TITLE: Unmask reveal ───
-      gsap.fromTo('.section-title-reveal', {
-        y: 100, opacity: 0, scale: 0.85, filter: 'blur(10px)',
-        clipPath: 'inset(100% 0 0 0)',
-      }, {
-        y: 0, opacity: 1, scale: 1, filter: 'blur(0px)',
-        clipPath: 'inset(0% 0 0 0)',
-        duration: 1.4, ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 75%',
-          once: true,
-        },
-      });
-
-      // ─── TESTIMONIAL CARDS: Emerge from darkness with spotlight ───
-      gsap.utils.toArray('.testimonial-card').forEach((card, i) => {
-        // Each card emerges from a different angle
-        const rotations = [
-          { x: 15, y: -10 },
-          { x: -8, y: 5 },
-          { x: 12, y: 10 },
-        ];
-        const rot = rotations[i] || { x: 10, y: -5 };
-
-        gsap.fromTo(card, {
-          opacity: 0,
-          y: 100,
-          scale: 0.8,
-          rotateX: rot.x,
-          rotateY: rot.y,
-          filter: 'blur(8px) brightness(0.3)',
-          transformPerspective: 1200,
-        }, {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          rotateX: 0,
-          rotateY: 0,
-          filter: 'blur(0px) brightness(1)',
-          duration: 1.2,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 90%',
-            once: true,
+      // ─── TESTIMONIAL CARDS: 3D flip stagger from center ───
+      const cards = gsap.utils.toArray('.testimonial-card');
+      if (cards.length > 0) {
+        gsap.fromTo(cards,
+          {
+            opacity: 0,
+            rotateY: 15,
+            y: 40,
+            transformPerspective: 800,
+            transformOrigin: 'center center',
+            filter: 'blur(4px)',
           },
-          delay: i * 0.2,
-        });
+          {
+            opacity: 1,
+            rotateY: 0,
+            y: 0,
+            filter: 'blur(0px)',
+            duration: 0.8,
+            ease: 'power3.out',
+            stagger: {
+              each: 0.12,
+              from: 'center', // middle card first, then outward
+            },
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 70%',
+              toggleActions: 'play none none none',
+            },
+          }
+        );
+      }
+      
+      // Individual interactions
+      cards.forEach((card, i) => {
 
         // Parallax depth
         gsap.to(card, {
@@ -136,9 +122,7 @@ export default function Testimonials() {
       <div className="container">
         <div className="testimonials-header">
           <p className="eyebrow">Testimonials</p>
-          <h2 className="section-title-reveal testimonials-big-title">
-            Voices
-          </h2>
+          <SplitHeading text="Voices" className="testimonials-big-title" />
           <p className="testimonials-subtitle">
             Don't take our word for it — hear from our clients.
           </p>

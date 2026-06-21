@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
 
 export default function Navbar() {
@@ -18,7 +18,7 @@ export default function Navbar() {
       });
       gsap.fromTo('.nav-link', { opacity: 0, y: -10 }, {
         opacity: 1, y: 0,
-        duration: 0.5, stagger: 0.06,
+        duration: 0.5, stagger: 0.1,
         ease: 'power2.out', delay: 0.2,
       });
       gsap.fromTo('.nav-cta', { opacity: 0, scale: 0.88, filter: 'blur(4px)' }, {
