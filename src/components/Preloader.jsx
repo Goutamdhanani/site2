@@ -1,9 +1,10 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
 
 export default function Preloader({ onComplete }) {
   const ref = useRef(null);
   const completedRef = useRef(false);
+  const [statusText, setStatusText] = useState('ESTABLISHING SECURE COMMS...');
 
   const finish = useCallback(() => {
     if (completedRef.current) return;
@@ -25,11 +26,11 @@ export default function Preloader({ onComplete }) {
       return;
     }
 
-    // Safety fallback — if animations stall, force-complete after 4s
+    // Safety fallback
     const fallbackTimer = setTimeout(() => {
-      console.warn('Preloader fallback: force completing after 4s');
+      console.warn('Preloader fallback complete');
       finish();
-    }, 4000);
+    }, 4500);
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -39,91 +40,118 @@ export default function Preloader({ onComplete }) {
         },
       });
 
+      // ─── TEXT TIMELINE ───
+      // We step through messages to tell a psychological story
+      const messages = [
+        'CALIBRATING OPTICAL MESH...',
+        'GRAVITY WAVES STABILIZED...',
+        'PREPARING ASCENSION SITE...'
+      ];
+
+      messages.forEach((msg, idx) => {
+        tl.add(() => {
+          setStatusText(msg);
+          // Simple flicker reveal effect on text change
+          gsap.fromTo('.preloader-status-text', 
+            { opacity: 0.3, filter: 'blur(2px)' }, 
+            { opacity: 1, filter: 'blur(0px)', duration: 0.3, ease: 'power2.out' }
+          );
+        }, 0.6 + idx * 0.6);
+      });
+
+      // ─── VISUAL TIMELINE ───
       tl
-        .fromTo('.preloader-particles', {
+        // 1. Initial fade in of background nebula & scanner
+        .fromTo('.preloader-scenic-nebula', {
           opacity: 0,
+          scale: 0.8,
         }, {
-          opacity: 1,
-          duration: 0.3,
+          opacity: 0.3,
+          scale: 1,
+          duration: 1.2,
           ease: 'power2.out',
         }, 0)
 
-        .fromTo('.preloader-glow-ring', {
-          scale: 0.2,
+        // 2. Fade in the geometric portal crest
+        .fromTo('.preloader-logo-wrapper', {
           opacity: 0,
+          scale: 0.8,
+          filter: 'blur(10px)',
         }, {
+          opacity: 1,
           scale: 1,
-          opacity: 0.6,
-          duration: 0.8,
-          ease: 'power2.out',
+          filter: 'blur(0px)',
+          duration: 0.9,
+          ease: 'power3.out',
         }, 0.1)
 
-        .fromTo('.preloader-logo', {
-          opacity: 0,
-          scale: 0.2,
-          rotateY: 90,
-          filter: 'blur(20px)',
+        // 3. Keep the triangles rotating
+        .fromTo('.crest-triangle-1', {
+          transformOrigin: '50% 50%',
+          rotate: 0
         }, {
-          opacity: 1,
-          scale: 1,
-          rotateY: 0,
-          filter: 'blur(0px)',
-          duration: 1.0,
-          ease: 'elastic.out(1, 0.6)',
+          rotate: 360,
+          duration: 3.5,
+          ease: 'none',
+          repeat: -1
+        }, 0)
+
+        .fromTo('.crest-triangle-2', {
+          transformOrigin: '50% 50%',
+          rotate: 0
+        }, {
+          rotate: -360,
+          duration: 4.5,
+          ease: 'none',
+          repeat: -1
+        }, 0)
+
+        // 4. Progress rail reveal
+        .fromTo('.preloader-progress-bar', {
+          width: '0%',
+        }, {
+          width: '100%',
+          duration: 2.2,
+          ease: 'power1.inOut',
         }, 0.2)
 
-        .fromTo('.preloader-line', {
-          width: 0,
-          boxShadow: '0 0 0px var(--glow-ember)',
-        }, {
-          width: 120,
-          boxShadow: '0 0 20px var(--glow-ember)',
-          duration: 0.8,
-          ease: 'power4.inOut',
-        }, 0.6)
-
-        .fromTo('.preloader-counter', { opacity: 0 }, {
-          opacity: 1,
-          duration: 0.15,
-        }, 0.7)
-
-        .to('.preloader-counter-num', {
-          innerText: 100,
-          duration: 0.8,
-          ease: 'power2.inOut',
-          snap: { innerText: 1 },
-          onUpdate() {
-            const el = document.querySelector('.preloader-counter-num');
-            if (el) el.textContent = Math.round(gsap.getProperty(el, 'innerText'));
-          },
-        }, 0.7)
-
-        .to('.preloader-glow-ring', {
-          scale: 2.5,
+        // 5. Expand the core and start reveal mask
+        .to('.preloader-scenic-nebula', {
+          scale: 1.5,
           opacity: 0,
           duration: 0.6,
           ease: 'power2.in',
-        }, 1.4)
+        }, 2.1)
 
-        .to('.preloader-inner', {
+        .to('.preloader-logo-wrapper', {
+          scale: 1.3,
           opacity: 0,
-          scale: 0.85,
-          filter: 'blur(12px)',
+          filter: 'blur(8px)',
+          duration: 0.4,
+          ease: 'power2.in',
+        }, 2.2)
+
+        .to('.preloader-status-feed, .preloader-progress-rail', {
+          opacity: 0,
+          y: 10,
           duration: 0.3,
           ease: 'power2.in',
-        }, 1.5)
+        }, 2.2)
 
+        // Stargate portals reveal expand
         .to('.preloader-mask-circle', {
-          scale: 50,
+          scale: 55,
           duration: 0.9,
           ease: 'power4.inOut',
-        }, 1.7)
+        }, 2.3)
 
+        // Fade overlay
         .to('.preloader-overlay', {
           opacity: 0,
-          duration: 0.3,
+          duration: 0.35,
           ease: 'power2.out',
-        }, 2.2);
+        }, 2.8);
+
     }, ref);
 
     return () => {
@@ -135,38 +163,49 @@ export default function Preloader({ onComplete }) {
   return (
     <div id="preloader" ref={ref}>
       <div className="preloader-overlay">
-        {/* Background particles */}
-        <div className="preloader-particles" aria-hidden="true">
-          {Array.from({ length: 20 }, (_, i) => (
-            <span
-              key={i}
-              className="preloader-particle"
-              style={{
-                left: `${(i * 5) % 100}%`,
-                top: `${(i * 7 + 13) % 100}%`,
-                width: 2 + (i % 3),
-                height: 2 + (i % 3),
-                animationDelay: `${(i * 0.15) % 2}s`,
-                animationDuration: `${2 + (i % 3)}s`,
-              }}
-            />
-          ))}
+        {/* Scenic Nebula Core Glow */}
+        <div className="preloader-scenic-nebula" aria-hidden="true" />
+
+        {/* Visual scan scanner line */}
+        <div className="preloader-scanline" aria-hidden="true" />
+
+        {/* Geometric Sigil Mandala Logo */}
+        <div className="preloader-logo-wrapper">
+          <svg className="preloader-crest" viewBox="0 0 100 100">
+            <defs>
+              <linearGradient id="preloader-crest-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="var(--accent-ember)" />
+                <stop offset="100%" stopColor="var(--accent-amber)" />
+              </linearGradient>
+              <linearGradient id="preloader-crest-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="var(--accent-gold)" />
+                <stop offset="100%" stopColor="var(--accent-lacquer)" />
+              </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="4 4" />
+            
+            {/* Double rotating mandala triangles */}
+            <polygon points="50,16 79,68 21,68" fill="none" stroke="url(#preloader-crest-grad)" strokeWidth="1.5" className="crest-triangle-1" />
+            <polygon points="50,84 21,32 79,32" fill="none" stroke="url(#preloader-crest-grad-2)" strokeWidth="1.5" className="crest-triangle-2" />
+            
+            {/* Core central gravity pulse */}
+            <circle cx="50" cy="50" r="7" fill="var(--accent-ember)" className="crest-core" />
+          </svg>
         </div>
 
-        {/* Glow ring */}
-        <div className="preloader-glow-ring" aria-hidden="true" />
-
-        {/* Content */}
-        <div className="preloader-inner">
-          <div className="preloader-logo">OW</div>
-          <div className="preloader-line" />
-          <div className="preloader-counter">
-            <span className="preloader-counter-num">0</span>
-            <span className="preloader-counter-pct">%</span>
-          </div>
+        {/* Status Messages Telemetry */}
+        <div className="preloader-status-feed">
+          <span className="status-dot-blink" />
+          <span className="preloader-status-text">{statusText}</span>
         </div>
 
-        {/* Mask circle for reveal transition */}
+        {/* Horizontal Optical Progress Bar */}
+        <div className="preloader-progress-rail">
+          <div className="preloader-progress-bar" />
+        </div>
+
+        {/* Transition reveal mask */}
         <div className="preloader-mask-circle" aria-hidden="true" />
       </div>
     </div>

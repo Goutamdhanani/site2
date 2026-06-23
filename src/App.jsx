@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from '@studio-freight/lenis';
+import { prefersReducedMotion } from './utils/motion';
 
 import Preloader from './components/Preloader';
 import Navbar from './components/Navbar';
@@ -79,6 +80,97 @@ export default function App() {
     });
 
     // ─── ANCHOR LINK CLICK INTERCEPTOR FOR SMOOTH SCROLLING ───
+    const runPortalTeleport = (targetElement) => {
+      const overlay = document.querySelector('.teleport-portal-overlay');
+      const portal = document.querySelector('.teleport-portal');
+      const flash = document.querySelector('.teleport-flash');
+      const heroUI = document.querySelector('#hero .hero-ui-layer');
+      const heroCanvas = document.querySelector('#hero .hero-canvas-container');
+
+      if (!overlay || !portal || !flash) {
+        lenis.scrollTo(targetElement, {
+          offset: 0,
+          duration: 1.6,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        });
+        return;
+      }
+
+      // Disable scroll
+      lenis.stop();
+
+      // GSAP Timeline
+      const tl = gsap.timeline({
+        onComplete: () => {
+          // Reset Hero UI styles for scroll-back visibility
+          gsap.set(heroUI, { scale: 1, y: 0, opacity: 1, filter: 'none' });
+          gsap.set(heroCanvas, { scale: 1, opacity: 1, filter: 'none' });
+          gsap.set(overlay, { opacity: 0, pointerEvents: 'none' });
+          // Enable scroll
+          lenis.start();
+        }
+      });
+
+      // 1. Setup overlay visibility
+      tl.set(overlay, { opacity: 1, pointerEvents: 'auto' });
+
+      // 2. Zoom & fade out Hero components
+      tl.to([heroUI, heroCanvas], {
+        scale: 0.75,
+        opacity: 0,
+        filter: 'blur(20px) brightness(2.0)',
+        duration: 0.8,
+        ease: 'power2.inOut'
+      }, 0);
+
+      // 3. Expand portal circle from center
+      tl.to(portal, {
+        scale: 30,
+        opacity: 1,
+        duration: 0.9,
+        ease: 'power3.in'
+      }, 0);
+
+      // 4. White flash transition peak
+      tl.to(flash, {
+        opacity: 1,
+        duration: 0.15,
+        ease: 'power1.out'
+      }, 0.75);
+
+      // 5. Snap scroll and setup Case Studies target state
+      tl.add(() => {
+        lenis.scrollTo(targetElement, { immediate: true });
+        gsap.set(targetElement, {
+          scale: 0.85,
+          filter: 'blur(15px) brightness(1.6)',
+          transformOrigin: 'center center'
+        });
+      }, 0.85);
+
+      // 6. Fade out flash and reveal Case Studies with clean zoom-in
+      tl.to(flash, {
+        opacity: 0,
+        duration: 0.5,
+        ease: 'power2.inOut'
+      }, 0.9);
+
+      tl.to(portal, {
+        opacity: 0,
+        scale: 0,
+        duration: 0.5,
+        ease: 'power2.inOut'
+      }, 0.9);
+
+      tl.to(targetElement, {
+        scale: 1,
+        filter: 'blur(0px) brightness(1)',
+        clearProps: 'scale,filter,transformOrigin',
+        duration: 1.0,
+        ease: 'power3.out'
+      }, 0.9);
+    };
+
     const handleAnchorClick = (e) => {
       const link = e.target.closest('a');
       if (!link) return;
@@ -91,11 +183,15 @@ export default function App() {
         const targetElement = document.querySelector(targetId);
         if (targetElement) {
           e.preventDefault();
-          lenis.scrollTo(targetElement, {
-            offset: 0,
-            duration: 1.6,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-          });
+          if (targetId === '#work' && window.scrollY < window.innerHeight * 0.5) {
+            runPortalTeleport(targetElement);
+          } else {
+            lenis.scrollTo(targetElement, {
+              offset: 0,
+              duration: 1.6,
+              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            });
+          }
         }
       }
     };
@@ -211,23 +307,26 @@ export default function App() {
       // ─── TRANSITION 2: CaseStudies — Zoom-in reveal with blur dissolve ───
       const workEl = document.querySelector('[data-scene="work"]');
       if (workEl) {
-        gsap.fromTo(workEl, {
-          scale: 0.82,
-          opacity: 0,
-          filter: 'blur(16px) brightness(1.8)',
-          transformOrigin: 'center center',
-        }, {
-          scale: 1,
-          opacity: 1,
-          filter: 'blur(0px) brightness(1)',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: workEl,
-            start: 'top 95%',
-            end: 'top 45%',
-            scrub: 1.2,
-          },
-        });
+        const trackEl = workEl.querySelector('.cs-track');
+        if (trackEl) {
+          gsap.fromTo(trackEl, {
+            scale: 0.82,
+            opacity: 0,
+            filter: 'blur(16px) brightness(1.8)',
+            transformOrigin: 'center center',
+          }, {
+            scale: 1,
+            opacity: 1,
+            filter: 'blur(0px) brightness(1)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: workEl,
+              start: 'top 95%',
+              end: 'top 45%',
+              scrub: 1.2,
+            },
+          });
+        }
       }
 
       // ─── TRANSITION 3: Services — Split from center (horizontal wipe) ───
@@ -274,9 +373,10 @@ export default function App() {
       }
 
       // ─── TRANSITION 5: Process — Radial circle expand ───
-      const processEl = document.querySelector('[data-scene="process"]');
-      if (processEl) {
-        gsap.fromTo(processEl, {
+      const processWrapper = document.querySelector('.process-pin-wrapper');
+      const processSection = document.querySelector('#process');
+      if (processWrapper && processSection) {
+        gsap.fromTo(processSection, {
           clipPath: 'circle(0% at 50% 50%)',
           opacity: 0,
         }, {
@@ -284,7 +384,7 @@ export default function App() {
           opacity: 1,
           ease: 'none',
           scrollTrigger: {
-            trigger: processEl,
+            trigger: processWrapper,
             start: 'top 90%',
             end: 'top 30%',
             scrub: 1,
@@ -373,6 +473,12 @@ export default function App() {
       {/* Scroll progress bar */}
       <div className="scroll-bar" style={{ opacity: siteVisible ? 1 : 0 }} />
 
+      {/* Teleport Portal Overlay */}
+      <div className="teleport-portal-overlay" style={{ opacity: 0, pointerEvents: 'none' }}>
+        <div className="teleport-portal" />
+        <div className="teleport-flash" />
+      </div>
+
       {/* Layer 0: Animated atmospheric canvas — persistent, behind everything */}
       <Suspense fallback={null}>
         <AtmosphericCanvas />
@@ -392,8 +498,8 @@ export default function App() {
         {/* Scenes flow as one continuous spatial journey */}
         <main className="cinematic-main">
           <Hero />
-          <Marquee />
           <CaseStudies />
+          <Marquee />
           <Services />
           <Metrics />
           <Process />

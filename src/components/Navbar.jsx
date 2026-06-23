@@ -5,9 +5,10 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useRef(null);
-
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
+    const onScroll = () => {
+      setScrolled(window.scrollY > window.innerHeight * 2.8);
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
 
     // Nav entrance — subtle, doesn't compete with preloader

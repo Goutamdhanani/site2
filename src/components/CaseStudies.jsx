@@ -14,6 +14,8 @@ const projects = [
     metric: '+180%',
     metricLabel: 'AOV Increase',
     color: 'var(--accent-ember)',
+    image: '/assets/projects/project-1.png',
+    tags: ['E-COMMERCE', 'NEXT.JS', 'TAILWIND', 'STRIPE', 'AI AGENT', 'MOTION', 'UI/UX'],
   },
   {
     title: 'VaultPay',
@@ -23,6 +25,8 @@ const projects = [
     metric: '50K+',
     metricLabel: 'Daily Users',
     color: 'var(--accent-amber)',
+    image: '/assets/projects/project-2.png',
+    tags: ['FINTECH', 'REACT', 'GSAP', 'REDUX', 'CYBERSECURITY', 'CHARTS', 'UI/UX'],
   },
   {
     title: 'BiteBuddy',
@@ -32,6 +36,8 @@ const projects = [
     metric: '100K+',
     metricLabel: 'Daily Orders',
     color: 'var(--accent-lacquer)',
+    image: '/assets/projects/project-3.png',
+    tags: ['MOBILE APP', 'EXPO', 'NODE.JS', 'GOOGLE MAPS', 'REDIS', 'MOTION', 'UI/UX'],
   },
   {
     title: 'NestHub',
@@ -41,6 +47,8 @@ const projects = [
     metric: '$24M',
     metricLabel: 'Properties Sold',
     color: 'var(--accent-gold)',
+    image: '/assets/projects/project-4.png',
+    tags: ['REAL ESTATE', 'FASTAPI', 'POSTGRES', '3D TOURS', 'AI MODEL', 'REACT', 'UI/UX'],
   },
 ];
 
@@ -48,17 +56,120 @@ export default function CaseStudies() {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
 
+  const handleMouseMove = (e, card) => {
+    if (prefersReducedMotion()) return;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Normalize coordinates from -0.5 to 0.5
+    const normX = (x / rect.width) - 0.5;
+    const normY = (y / rect.height) - 0.5;
+
+    const imgWrapper = card.querySelector('.cs-card__image-wrapper');
+    const badge = card.querySelector('.cs-card__floating-badge');
+    const bgTitle = card.querySelector('.cs-card__bg-title');
+    const mouseGlow = card.querySelector('.cs-card__mouse-glow');
+
+    // 3D tilt image wrapper
+    gsap.to(imgWrapper, {
+      rotateY: normX * 14,
+      rotateX: -normY * 14,
+      transformPerspective: 1000,
+      duration: 0.4,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
+
+    // Translate badge in opposite direction for parallax depth
+    gsap.to(badge, {
+      x: normX * -25,
+      y: normY * -25,
+      rotateY: normX * 8,
+      rotateX: -normY * 8,
+      transformPerspective: 800,
+      duration: 0.5,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
+
+    // Shift background title slightly
+    gsap.to(bgTitle, {
+      x: normX * 35,
+      y: normY * 35,
+      duration: 0.6,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
+
+    // Move card mouse glow
+    if (mouseGlow) {
+      gsap.to(mouseGlow, {
+        left: `${x}px`,
+        top: `${y}px`,
+        opacity: 0.15,
+        duration: 0.3,
+        ease: 'power1.out',
+        overwrite: 'auto'
+      });
+    }
+  };
+
+  const handleMouseLeave = (card) => {
+    if (prefersReducedMotion()) return;
+    const imgWrapper = card.querySelector('.cs-card__image-wrapper');
+    const badge = card.querySelector('.cs-card__floating-badge');
+    const bgTitle = card.querySelector('.cs-card__bg-title');
+    const mouseGlow = card.querySelector('.cs-card__mouse-glow');
+
+    gsap.to(imgWrapper, {
+      rotateY: 0,
+      rotateX: 0,
+      duration: 0.8,
+      ease: 'elastic.out(1, 0.6)',
+      overwrite: 'auto'
+    });
+
+    gsap.to(badge, {
+      x: 0,
+      y: 0,
+      rotateY: 0,
+      rotateX: 0,
+      duration: 0.8,
+      ease: 'elastic.out(1, 0.6)',
+      overwrite: 'auto'
+    });
+
+    gsap.to(bgTitle, {
+      x: 0,
+      y: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
+
+    if (mouseGlow) {
+      gsap.to(mouseGlow, {
+        opacity: 0,
+        duration: 0.5,
+        overwrite: 'auto'
+      });
+    }
+  };
+
   useEffect(() => {
     if (prefersReducedMotion()) return;
 
-    const ctx = gsap.context(() => {
+    const mm = gsap.matchMedia();
+
+    // ─── DESKTOP HORIZONTAL SCROLL PINNING ───
+    mm.add("(min-width: 900px)", () => {
       const track = trackRef.current;
       const totalScroll = track.scrollWidth - window.innerWidth;
 
-      // ─── HORIZONTAL SCROLL PIN ───
       const horizontalTween = gsap.to(track, {
         x: -totalScroll,
-        ease: EASE.none,
+        ease: 'none',
         scrollTrigger: {
           trigger: sectionRef.current,
           start: 'top top',
@@ -69,95 +180,341 @@ export default function CaseStudies() {
           snap: {
             snapTo: 1 / (projects.length - 1),
             duration: { min: 0.3, max: 0.6 },
-            ease: EASE.inOut,
+            ease: 'power2.inOut',
           },
         },
       });
 
-      // ─── CARD CONTENT REVEALS ───
+      // Card reveals inside horizontal scroll
       gsap.utils.toArray('.cs-card').forEach((card) => {
+        const bgTitle = card.querySelector('.cs-card__bg-title');
+        const imgWrapper = card.querySelector('.cs-card__image-wrapper');
+        const img = card.querySelector('.cs-card__image');
+        const badge = card.querySelector('.cs-card__floating-badge');
         const content = card.querySelector('.cs-card__content');
-        if (!content) return;
-
-        gsap.fromTo(content.children,
-          { opacity: 0, x: 60, filter: 'blur(4px)' },
-          {
-            opacity: 1,
-            x: 0,
-            filter: 'blur(0px)',
-            duration: DUR.mid,
-            ease: EASE.out,
-            stagger: STAGGER.normal,
-            scrollTrigger: {
-              trigger: card,
-              containerAnimation: horizontalTween,
-              start: 'left 80%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        );
-
-        // Metric number scale pop
-        const metric = card.querySelector('.cs-card__metric-value');
-        if (metric) {
-          gsap.fromTo(metric,
-            { scale: 0.5, opacity: 0 },
+        
+        // 1. Shutter reveal (clip-path wipe)
+        if (imgWrapper) {
+          gsap.fromTo(imgWrapper,
+            { clipPath: 'polygon(0 0, 0 0, 0 100%, 0 100%)' },
             {
-              scale: 1,
-              opacity: 1,
-              duration: DUR.slow,
-              ease: EASE.back,
+              clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+              ease: 'power2.inOut',
               scrollTrigger: {
                 trigger: card,
                 containerAnimation: horizontalTween,
-                start: 'left 60%',
-                toggleActions: 'play none none reverse',
-              },
+                start: 'left 90%',
+                end: 'left 25%',
+                scrub: true,
+              }
+            }
+          );
+        }
+
+        // 2. Parallax zoom/drift on the mockup image itself
+        if (img) {
+          gsap.fromTo(img,
+            { xPercent: -8, scale: 1.12 },
+            {
+              xPercent: 8,
+              scale: 1.0,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: horizontalTween,
+                start: 'left 100%',
+                end: 'right 0%',
+                scrub: true,
+              }
+            }
+          );
+        }
+
+        // 3. Parallax scroll on the giant outline background title
+        if (bgTitle) {
+          gsap.fromTo(bgTitle,
+            { x: 120 },
+            {
+              x: -120,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: horizontalTween,
+                start: 'left 100%',
+                end: 'right 0%',
+                scrub: true,
+              }
+            }
+          );
+        }
+
+        // 4. Parallax scroll on the floating glass metric badge
+        if (badge) {
+          gsap.fromTo(badge,
+            { x: -50, rotate: -2 },
+            {
+              x: 30,
+              rotate: 2,
+              ease: 'power1.out',
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: horizontalTween,
+                start: 'left 90%',
+                end: 'left 30%',
+                scrub: true,
+              }
+            }
+          );
+        }
+
+        // 5. Content elements fade/slide stagger reveal
+        if (content) {
+          gsap.fromTo(content.children,
+            { opacity: 0, y: 40, filter: 'blur(4px)' },
+            {
+              opacity: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              stagger: 0.08,
+              ease: 'power2.out',
+              scrollTrigger: {
+                trigger: card,
+                containerAnimation: horizontalTween,
+                start: 'left 75%',
+                end: 'left 40%',
+                scrub: true,
+              }
             }
           );
         }
       });
+    });
 
-    }, sectionRef);
+    // ─── MOBILE VERTICAL STICKY CARDS DECK ───
+    mm.add("(max-width: 899px)", () => {
+      const cards = gsap.utils.toArray('.cs-card');
+      
+      cards.forEach((card, i) => {
+        const bgTitle = card.querySelector('.cs-card__bg-title');
+        const imgWrapper = card.querySelector('.cs-card__image-wrapper');
+        const img = card.querySelector('.cs-card__image');
+        const badge = card.querySelector('.cs-card__floating-badge');
+        const content = card.querySelector('.cs-card__content');
+        
+        // 1. Shutter reveal (top to bottom wipe) on mobile
+        if (imgWrapper) {
+          gsap.fromTo(imgWrapper,
+            { clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)' },
+            {
+              clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
+              ease: 'power1.inOut',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 85%',
+                end: 'top 40%',
+                scrub: true,
+              }
+            }
+          );
+        }
 
-    return () => ctx.revert();
+        // 2. Parallax vertical drift on mobile
+        if (img) {
+          gsap.fromTo(img,
+            { yPercent: -5 },
+            {
+              yPercent: 5,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+              }
+            }
+          );
+        }
+
+        // 3. Background title drift on mobile
+        if (bgTitle) {
+          gsap.fromTo(bgTitle,
+            { xPercent: 10 },
+            {
+              xPercent: -10,
+              ease: 'none',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+              }
+            }
+          );
+        }
+
+        // 4. Floating glass badge entrance
+        if (badge) {
+          gsap.fromTo(badge,
+            { scale: 0.8, opacity: 0 },
+            {
+              scale: 1,
+              opacity: 1,
+              duration: 0.6,
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 70%',
+                toggleActions: 'play none none reverse',
+              }
+            }
+          );
+        }
+
+        // 5. Content elements fade/slide
+        if (content) {
+          gsap.fromTo(content.children,
+            { opacity: 0, y: 30 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.6,
+              stagger: 0.08,
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 75%',
+                toggleActions: 'play none none reverse',
+              }
+            }
+          );
+        }
+
+        // 6. Card stacking depth animation (scale down & fade when covered by next card)
+        if (i < cards.length - 1) {
+          gsap.to(card, {
+            scale: 0.93,
+            opacity: 0.4,
+            y: -30,
+            filter: 'blur(3px)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: cards[i + 1],
+              start: 'top 85%',
+              end: 'top 15%',
+              scrub: true,
+            }
+          });
+        }
+      });
+    });
+
+    // Recalculate triggers
+    setTimeout(() => {
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+    }, 150);
+
+    return () => mm.revert();
   }, []);
 
   return (
     <section id="work" ref={sectionRef} data-scene="work" className="cs-section">
       <div ref={trackRef} className="cs-track">
         {projects.map((project, i) => (
-          <article key={i} className="cs-card" style={{ '--card-accent': project.color }}>
-            {/* Full-screen gradient background */}
+          <article
+            key={i}
+            className="cs-card"
+            style={{
+              '--card-accent': project.color,
+              zIndex: i + 1, // Stack cards correctly on mobile
+            }}
+            onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
+            onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
+          >
+            {/* Interactive mouse follow ambient glow */}
+            <div className="cs-card__mouse-glow" style={{ background: project.color }} />
+
+            {/* Full-screen background visual */}
             <div className="cs-card__bg">
-              <div className="cs-card__visual" style={{
-                background: `radial-gradient(ellipse at 30% 40%, ${project.color}22, transparent 60%), radial-gradient(ellipse at 70% 70%, ${project.color}11, transparent 50%)`,
-              }}>
+              <div
+                className="cs-card__visual"
+                style={{
+                  background: `radial-gradient(ellipse at 30% 40%, ${project.color}15, transparent 65%), radial-gradient(ellipse at 70% 70%, ${project.color}08, transparent 55%)`,
+                }}
+              >
                 <div className="cs-card__grid-lines" />
                 <div className="cs-card__orb" style={{ background: project.color }} />
               </div>
             </div>
 
-            {/* Content overlay */}
-            <div className="cs-card__content">
-              <div className="cs-card__meta">
-                <span className="cs-card__num">{String(i + 1).padStart(2, '0')}</span>
-                <span className="cs-card__category">{project.category}</span>
-                <span className="cs-card__year">{project.year}</span>
+            {/* Asymmetric Depth Sandwich Layout */}
+            <div className="cs-card__layout">
+              {/* Massive background typography overlapping behind the image */}
+              <div className="cs-card__bg-title-wrap">
+                <h2 className="cs-card__bg-title">{project.title}</h2>
               </div>
 
-              <h3 className="cs-card__title">{project.title}</h3>
-              <p className="cs-card__desc">{project.description}</p>
-
-              <div className="cs-card__metric">
-                <span className="cs-card__metric-value" style={{ color: project.color }}>{project.metric}</span>
-                <span className="cs-card__metric-label">{project.metricLabel}</span>
+              {/* Background rotating tag orbit */}
+              <div className="cs-card__tech-orbit">
+                <div className="cs-card__orbit-track">
+                  {[...project.tags, ...project.tags, ...project.tags].map((tag, idx) => (
+                    <span key={idx} className="cs-card__orbit-tag">
+                      {tag} <span className="cs-card__orbit-dot">•</span>
+                    </span>
+                  ))}
+                </div>
               </div>
 
-              <div className="cs-card__arrow">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              {/* Floating Image Showcase Frame */}
+              <div className="cs-card__showcase">
+                <div className="cs-card__image-wrapper">
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    className="cs-card__image"
+                    loading="lazy"
+                  />
+                  <div className="cs-card__image-glow" style={{ background: project.color }} />
+
+                  {/* Corner bracket reticles */}
+                  <div className="cs-card__corner cs-card__corner--tl" />
+                  <div className="cs-card__corner cs-card__corner--tr" />
+                  <div className="cs-card__corner cs-card__corner--bl" />
+                  <div className="cs-card__corner cs-card__corner--br" />
+                </div>
+
+                {/* Floating Glass Metric Badge (overlapping the image) */}
+                <div className="cs-card__floating-badge">
+                  <div className="cs-card__badge-glass" />
+                  <span className="cs-card__badge-val" style={{ color: project.color }}>
+                    {project.metric}
+                  </span>
+                  <span className="cs-card__badge-lbl">{project.metricLabel}</span>
+                </div>
+              </div>
+
+              {/* Foreground content blocks */}
+              <div className="cs-card__content">
+                <div className="cs-card__meta">
+                  <span className="cs-card__num">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="cs-card__category">{project.category}</span>
+                  <span className="cs-card__year">{project.year}</span>
+                </div>
+
+                <p className="cs-card__desc">{project.description}</p>
+
+                <div className="cs-card__actions">
+                  <div className="cs-card__arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M7 17L17 7M17 7H7M17 7V17"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <span className="cs-card__link-text">View Case Study</span>
+                </div>
               </div>
             </div>
           </article>
