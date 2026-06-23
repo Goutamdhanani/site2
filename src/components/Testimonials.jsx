@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SplitHeading from './SplitHeading';
+import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -34,6 +35,17 @@ export default function Testimonials() {
   const sectionRef = useRef(null);
 
   useEffect(() => {
+    if (isLite) {
+      // Show testimonial cards immediately on mobile
+      gsap.set('.testimonial-card', {
+        opacity: 1,
+        rotateY: 0,
+        y: 0,
+        filter: 'blur(0px)'
+      });
+      return;
+    }
+
     const ctx = gsap.context(() => {
 
       // ─── SCENIC PARALLAX ANIMATION ───

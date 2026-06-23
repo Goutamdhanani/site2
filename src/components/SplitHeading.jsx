@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { EASE, prefersReducedMotion } from '../utils/motion';
+import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,7 +12,7 @@ export default function SplitHeading({ text, className }) {
   useEffect(() => {
     const chars = ref.current.querySelectorAll('.split-char');
     
-    if (prefersReducedMotion()) {
+    if (prefersReducedMotion() || isLite) {
       gsap.set(chars, { opacity: 1, y: 0, rotateX: 0 });
       return;
     }

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from '../utils/motion';
+import { isLite } from '../utils/device';
 import SplitHeading from './SplitHeading';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -359,19 +360,27 @@ export default function Metrics() {
 
   // ─── SCROLL REVEALS & COUNT-UP ANIMATIONS ───
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const ctx = gsap.context(() => {
+    if (prefersReducedMotion || isLite) {
+      // Fallback for reduced motion / mobile: set values immediately
+      const statsEl = document.querySelectorAll('.stat-val-counter');
+      statsEl.forEach((el) => {
+        const target = parseFloat(el.dataset.target);
+        const decimals = parseInt(el.dataset.decimals) || 0;
+        el.textContent = target.toFixed(decimals);
+      });
+      // Force cards to be visible
+      const cards = document.querySelectorAll('.met-card');
+      gsap.set(cards, {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        rotateX: 0,
+        filter: 'blur(0px)'
+      });
+      return;
+    }
 
-      if (prefersReducedMotion) {
-        // Fallback for reduced motion
-        const statsEl = document.querySelectorAll('.stat-val-counter');
-        statsEl.forEach((el) => {
-          const target = parseFloat(el.dataset.target);
-          const decimals = parseInt(el.dataset.decimals) || 0;
-          el.textContent = target.toFixed(decimals);
-        });
-        return;
-      }
+    const ctx = gsap.context(() => {
 
       // Card reveals
       gsap.utils.toArray('.met-card').forEach((card, i) => {

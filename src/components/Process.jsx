@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from '../utils/motion';
+import { isLite } from '../utils/device';
 import SplitHeading from './SplitHeading';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -160,7 +161,7 @@ export default function Process() {
   const [rotation, setRotation] = useState(0);
 
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion() || isLite) return;
 
     const container = containerRef.current;
     const engine = engineRef.current;

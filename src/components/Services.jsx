@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { EASE, DUR, prefersReducedMotion } from '../utils/motion';
+import { isLite } from '../utils/device';
 import SplitHeading from './SplitHeading';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -130,7 +131,7 @@ function ServiceRow({ service, index, activeService, setActiveService }) {
   const isActive = activeService === index;
 
   useEffect(() => {
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion() || isLite) return;
 
     const ctx = gsap.context(() => {
       ScrollTrigger.create({

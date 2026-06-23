@@ -6651,4 +6651,236 @@ html, body, .cinematic-wrapper {
 }
 
 
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE + REDUCED MOTION PERFORMANCE OVERRIDES
+   Kill expensive GPU operations on mobile: backdrop-filter, blur,
+   heavy box-shadow, CSS keyframe animations. Fix hero positioning.
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 900px), (prefers-reduced-motion: reduce) {
 
+  /* ─── HERO: Fix positioning — must NOT be fixed on mobile ─── */
+  .hero-canvas-container {
+    position: absolute !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+  }
+
+  .hero-ui-layer {
+    position: absolute !important;
+  }
+
+  #hero {
+    overflow: hidden !important;
+  }
+
+  .hero-sticky-container {
+    overflow: hidden !important;
+  }
+
+  /* ─── Kill ALL blur filters on mobile GPUs ─── */
+  .atmos-grad-blob {
+    filter: blur(40px) !important;
+  }
+
+  .atmos-grad-blob--deep {
+    filter: blur(40px) !important;
+  }
+
+  .blob {
+    filter: blur(40px) !important;
+    animation: none !important;
+  }
+
+  .hero-gradient-orb {
+    filter: blur(40px) !important;
+    animation: none !important;
+  }
+
+  .cs-card__orb {
+    filter: blur(60px) !important;
+  }
+
+  .cs-card__mouse-glow {
+    display: none !important;
+  }
+
+  /* ─── Kill backdrop-filter everywhere ─── */
+  .glass-card,
+  .cs-card__badge-glass,
+  footer {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  nav#navbar.scrolled {
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+  }
+
+  /* ─── Kill heavy box-shadows ─── */
+  .teleport-portal {
+    box-shadow: none !important;
+  }
+
+  /* ─── Hide teleport overlay entirely on mobile ─── */
+  .teleport-portal-overlay {
+    display: none !important;
+  }
+
+  /* ─── Restore native cursor ─── */
+  body {
+    cursor: auto !important;
+  }
+
+  .btn-primary,
+  .btn-ghost,
+  .btn-outline,
+  .nav-link,
+  .nav-cta {
+    cursor: pointer !important;
+  }
+
+  /* ─── Kill film grain entirely on mobile ─── */
+  .film-grain {
+    display: none !important;
+  }
+
+  /* ─── Kill noise grain pseudo-element ─── */
+  body::before {
+    display: none !important;
+  }
+
+  /* ─── Stop ALL CSS keyframe animations ─── */
+  .atmos-particle {
+    animation: none !important;
+    display: none !important;
+  }
+
+  .atmos-aurora {
+    filter: none !important;
+    display: none !important;
+  }
+
+  /* ─── Hide atmospheric canvas entirely on mobile — too many compositing layers ─── */
+  .atmospheric-container {
+    display: none !important;
+  }
+
+  /* ─── Kill 3D perspective/preserve-3d — causes compositing on mobile ─── */
+  .cs-card {
+    perspective: none !important;
+    transform-style: flat !important;
+  }
+
+  .cs-card__layout {
+    transform-style: flat !important;
+  }
+
+  [data-scene] {
+    transform-style: flat !important;
+  }
+
+  /* ─── CaseStudies mobile: no clip-path, no filter scrub on cards ─── */
+  .cs-card__image-wrapper {
+    clip-path: none !important;
+  }
+
+  /* ─── Services: no clip-path animation on rows ─── */
+  .sv-row {
+    clip-path: none !important;
+    opacity: 1 !important;
+  }
+
+  /* ─── Marquee: no filter blur on scroll ─── */
+  .marquee-strip {
+    filter: none !important;
+  }
+
+  /* ─── Ensure all sections visible and no will-change overhead ─── */
+  [data-scene] {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+    clip-path: none !important;
+    will-change: auto !important;
+  }
+
+  /* ─── CaseStudies section: auto height on mobile ─── */
+  .cs-section {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .cs-track {
+    flex-direction: column !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .cs-card {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 80vh;
+  }
+
+  .cs-card__layout {
+    height: auto !important;
+    min-height: 70vh;
+  }
+
+  /* ─── Process section mobile layout: static vertical list ─── */
+  .process-pin-wrapper {
+    height: auto !important;
+    overflow: visible !important;
+  }
+  .pr-section {
+    height: auto !important;
+    padding: var(--space-3xl) 0 !important;
+  }
+  .process-grid {
+    grid-template-columns: 1fr !important;
+    gap: var(--space-xl) !important;
+  }
+  .process-engine-col {
+    display: none !important;
+  }
+  .process-cards-col {
+    width: 100% !important;
+    height: auto !important;
+  }
+  .cards-viewport-frame {
+    width: 100% !important;
+    height: auto !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    overflow: visible !important;
+  }
+  .cards-viewport-frame::before {
+    display: none !important;
+  }
+  .engine-scanner-overlay,
+  .engine-core-label {
+    display: none !important;
+  }
+  .pr-scroll-cards {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--space-xl) !important;
+    height: auto !important;
+  }
+  .pr-hud-card {
+    position: relative !important;
+    inset: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    background: radial-gradient(circle at center, rgba(11, 7, 5, 0.4) 0%, rgba(0, 0, 0, 0.9) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: var(--radius-xl) !important;
+    padding: var(--space-xl) !important;
+    height: auto !important;
+    min-height: auto !important;
+  }
+}

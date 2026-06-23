@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
+import { isLite } from '../utils/device';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -7,7 +8,8 @@ export default function Navbar() {
   const navRef = useRef(null);
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > window.innerHeight * 2.8);
+      const threshold = isLite ? window.innerHeight * 0.8 : window.innerHeight * 2.8;
+      setScrolled(window.scrollY > threshold);
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 

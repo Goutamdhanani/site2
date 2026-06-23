@@ -1,7 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { isLite } from '../utils/device';
 
 export default function CustomCursor() {
+  if (isLite) return null;
+
   const dotRef = useRef(null);
   const ringRef = useRef(null);
   const trailsRef = useRef([]);
@@ -11,7 +14,7 @@ export default function CustomCursor() {
   const raf = useRef(null);
 
   useEffect(() => {
-    if ('ontouchstart' in window || window.innerWidth < 900) return;
+    if (isLite) return;
 
     const dot = dotRef.current;
     const ringEl = ringRef.current;
@@ -80,13 +83,13 @@ export default function CustomCursor() {
     };
 
     // Attach to interactive elements
+    let interactables = [];
     const attachListeners = () => {
-      const interactables = document.querySelectorAll('a, button, [data-cursor], .service-row, .project-card, .testimonial-card, .stat-card');
+      interactables = Array.from(document.querySelectorAll('a, button, [data-cursor], .service-row, .project-card, .testimonial-card, .stat-card'));
       interactables.forEach(el => {
         el.addEventListener('mouseenter', handleHoverIn);
         el.addEventListener('mouseleave', handleHoverOut);
       });
-      return interactables;
     };
 
     // Delayed attach for DOM readiness
@@ -94,13 +97,18 @@ export default function CustomCursor() {
       attachListeners();
     }, 1000);
 
-    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mousemove', onMove, { passive: true });
     raf.current = requestAnimationFrame(animate);
 
     return () => {
       clearTimeout(timer);
       document.removeEventListener('mousemove', onMove);
       if (raf.current) cancelAnimationFrame(raf.current);
+      // Clean up hover listeners
+      interactables.forEach(el => {
+        el.removeEventListener('mouseenter', handleHoverIn);
+        el.removeEventListener('mouseleave', handleHoverOut);
+      });
     };
   }, []);
 

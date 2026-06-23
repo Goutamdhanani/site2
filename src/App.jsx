@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef, lazy, Suspense } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from '@studio-freight/lenis';
-import { prefersReducedMotion } from './utils/motion';
+import { isLite } from './utils/device';
 
 import Preloader from './components/Preloader';
 import Navbar from './components/Navbar';
@@ -33,183 +32,190 @@ export default function App() {
     });
   };
 
-  // ─── LENIS SMOOTH SCROLL ───
+  // ─── LENIS SMOOTH SCROLL (desktop only) ───
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+    // Lite mode: skip Lenis entirely — use native scroll
+    if (isLite) return;
 
-    const lenis = new Lenis({
-      duration: 1.8,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: 'vertical',
-      gestureDirection: 'vertical',
-      smooth: true,
-      smoothTouch: false,
-      touchMultiplier: 2,
-    });
+    // Dynamic import Lenis only when needed (desktop)
+    let lenis = null;
+    let onTick = null;
+    let handleAnchorClick = null;
 
-    lenisRef.current = lenis;
-
-    lenis.on('scroll', ScrollTrigger.update);
-
-    // ─── VELOCITY-BASED DISTORTION ───
-    lenis.on('scroll', ({ velocity }) => {
-      const absVel = Math.min(Math.abs(velocity), 5);
-      const norm = absVel / 5; // 0→1
-
-      // Marquee skews with velocity
-      const marquee = document.querySelector('.marquee-strip');
-      if (marquee) {
-        gsap.to(marquee, {
-          skewX: velocity * 1.2,
-          duration: 0.3,
-          ease: 'power2.out',
-          overwrite: 'auto',
-        });
-      }
-
-      // Background blobs stretch with velocity
-      gsap.utils.toArray('.atmos-grad-blob').forEach(blob => {
-        gsap.to(blob, {
-          scaleY: 1 + norm * 0.3,
-          duration: 0.4,
-          ease: 'power2.out',
-          overwrite: 'auto',
-        });
+    import('@studio-freight/lenis').then(({ default: Lenis }) => {
+      lenis = new Lenis({
+        duration: 1.1,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        smoothTouch: false,
+        touchMultiplier: 2,
       });
-    });
 
-    // ─── ANCHOR LINK CLICK INTERCEPTOR FOR SMOOTH SCROLLING ───
-    const runPortalTeleport = (targetElement) => {
-      const overlay = document.querySelector('.teleport-portal-overlay');
-      const portal = document.querySelector('.teleport-portal');
-      const flash = document.querySelector('.teleport-flash');
-      const heroUI = document.querySelector('#hero .hero-ui-layer');
-      const heroCanvas = document.querySelector('#hero .hero-canvas-container');
+      lenisRef.current = lenis;
 
-      if (!overlay || !portal || !flash) {
-        lenis.scrollTo(targetElement, {
-          offset: 0,
-          duration: 1.6,
-          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        });
-        return;
-      }
+      lenis.on('scroll', ScrollTrigger.update);
 
-      // Disable scroll
-      lenis.stop();
+      // ─── VELOCITY-BASED DISTORTION (desktop only) ───
+      lenis.on('scroll', ({ velocity }) => {
+        const absVel = Math.min(Math.abs(velocity), 5);
+        const norm = absVel / 5; // 0→1
 
-      // GSAP Timeline
-      const tl = gsap.timeline({
-        onComplete: () => {
-          // Reset Hero UI styles for scroll-back visibility
-          gsap.set(heroUI, { scale: 1, y: 0, opacity: 1, filter: 'none' });
-          gsap.set(heroCanvas, { scale: 1, opacity: 1, filter: 'none' });
-          gsap.set(overlay, { opacity: 0, pointerEvents: 'none' });
-          // Enable scroll
-          lenis.start();
+        // Marquee skews with velocity
+        const marquee = document.querySelector('.marquee-strip');
+        if (marquee) {
+          gsap.to(marquee, {
+            skewX: velocity * 1.2,
+            duration: 0.3,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          });
         }
+
+        // Background blobs stretch with velocity
+        gsap.utils.toArray('.atmos-grad-blob').forEach(blob => {
+          gsap.to(blob, {
+            scaleY: 1 + norm * 0.3,
+            duration: 0.4,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          });
+        });
       });
 
-      // 1. Setup overlay visibility
-      tl.set(overlay, { opacity: 1, pointerEvents: 'auto' });
+      // ─── ANCHOR LINK CLICK INTERCEPTOR FOR SMOOTH SCROLLING ───
+      const runPortalTeleport = (targetElement) => {
+        const overlay = document.querySelector('.teleport-portal-overlay');
+        const portal = document.querySelector('.teleport-portal');
+        const flash = document.querySelector('.teleport-flash');
+        const heroUI = document.querySelector('#hero .hero-ui-layer');
+        const heroCanvas = document.querySelector('#hero .hero-canvas-container');
 
-      // 2. Zoom & fade out Hero components
-      tl.to([heroUI, heroCanvas], {
-        scale: 0.75,
-        opacity: 0,
-        filter: 'blur(20px) brightness(2.0)',
-        duration: 0.8,
-        ease: 'power2.inOut'
-      }, 0);
+        if (!overlay || !portal || !flash) {
+          lenis.scrollTo(targetElement, {
+            offset: 0,
+            duration: 1.6,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          });
+          return;
+        }
 
-      // 3. Expand portal circle from center
-      tl.to(portal, {
-        scale: 30,
-        opacity: 1,
-        duration: 0.9,
-        ease: 'power3.in'
-      }, 0);
+        // Disable scroll
+        lenis.stop();
 
-      // 4. White flash transition peak
-      tl.to(flash, {
-        opacity: 1,
-        duration: 0.15,
-        ease: 'power1.out'
-      }, 0.75);
-
-      // 5. Snap scroll and setup Case Studies target state
-      tl.add(() => {
-        lenis.scrollTo(targetElement, { immediate: true });
-        gsap.set(targetElement, {
-          scale: 0.85,
-          filter: 'blur(15px) brightness(1.6)',
-          transformOrigin: 'center center'
+        // GSAP Timeline
+        const tl = gsap.timeline({
+          onComplete: () => {
+            // Reset Hero UI styles for scroll-back visibility
+            gsap.set(heroUI, { scale: 1, y: 0, opacity: 1, filter: 'none' });
+            gsap.set(heroCanvas, { scale: 1, opacity: 1, filter: 'none' });
+            gsap.set(overlay, { opacity: 0, pointerEvents: 'none' });
+            // Enable scroll
+            lenis.start();
+          }
         });
-      }, 0.85);
 
-      // 6. Fade out flash and reveal Case Studies with clean zoom-in
-      tl.to(flash, {
-        opacity: 0,
-        duration: 0.5,
-        ease: 'power2.inOut'
-      }, 0.9);
+        // 1. Setup overlay visibility
+        tl.set(overlay, { opacity: 1, pointerEvents: 'auto' });
 
-      tl.to(portal, {
-        opacity: 0,
-        scale: 0,
-        duration: 0.5,
-        ease: 'power2.inOut'
-      }, 0.9);
+        // 2. Zoom & fade out Hero components
+        tl.to([heroUI, heroCanvas], {
+          scale: 0.75,
+          opacity: 0,
+          filter: 'blur(20px) brightness(2.0)',
+          duration: 0.8,
+          ease: 'power2.inOut'
+        }, 0);
 
-      tl.to(targetElement, {
-        scale: 1,
-        filter: 'blur(0px) brightness(1)',
-        clearProps: 'scale,filter,transformOrigin',
-        duration: 1.0,
-        ease: 'power3.out'
-      }, 0.9);
-    };
+        // 3. Expand portal circle from center
+        tl.to(portal, {
+          scale: 30,
+          opacity: 1,
+          duration: 0.9,
+          ease: 'power3.in'
+        }, 0);
 
-    const handleAnchorClick = (e) => {
-      const link = e.target.closest('a');
-      if (!link) return;
+        // 4. White flash transition peak
+        tl.to(flash, {
+          opacity: 1,
+          duration: 0.15,
+          ease: 'power1.out'
+        }, 0.75);
 
-      const href = link.getAttribute('href');
-      if (href && href.startsWith('#')) {
-        const targetId = href;
-        if (targetId === '#') return;
+        // 5. Snap scroll and setup Case Studies target state
+        tl.add(() => {
+          lenis.scrollTo(targetElement, { immediate: true });
+          gsap.set(targetElement, {
+            scale: 0.85,
+            filter: 'blur(15px) brightness(1.6)',
+            transformOrigin: 'center center'
+          });
+        }, 0.85);
 
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-          e.preventDefault();
-          if (targetId === '#work' && window.scrollY < window.innerHeight * 0.5) {
-            runPortalTeleport(targetElement);
-          } else {
-            lenis.scrollTo(targetElement, {
-              offset: 0,
-              duration: 1.6,
-              easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            });
+        // 6. Fade out flash and reveal Case Studies with clean zoom-in
+        tl.to(flash, {
+          opacity: 0,
+          duration: 0.5,
+          ease: 'power2.inOut'
+        }, 0.9);
+
+        tl.to(portal, {
+          opacity: 0,
+          scale: 0,
+          duration: 0.5,
+          ease: 'power2.inOut'
+        }, 0.9);
+
+        tl.to(targetElement, {
+          scale: 1,
+          filter: 'blur(0px) brightness(1)',
+          clearProps: 'scale,filter,transformOrigin',
+          duration: 1.0,
+          ease: 'power3.out'
+        }, 0.9);
+      };
+
+      handleAnchorClick = (e) => {
+        const link = e.target.closest('a');
+        if (!link) return;
+
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('#')) {
+          const targetId = href;
+          if (targetId === '#') return;
+
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            e.preventDefault();
+            if (targetId === '#work' && window.scrollY < window.innerHeight * 0.5) {
+              runPortalTeleport(targetElement);
+            } else {
+              lenis.scrollTo(targetElement, {
+                offset: 0,
+                duration: 1.6,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+              });
+            }
           }
         }
-      }
-    };
+      };
 
-    document.addEventListener('click', handleAnchorClick);
+      document.addEventListener('click', handleAnchorClick);
 
-    const onTick = (time) => lenis.raf(time * 1000);
-    gsap.ticker.add(onTick);
-    gsap.ticker.lagSmoothing(0);
+      onTick = (time) => lenis.raf(time * 1000);
+      gsap.ticker.add(onTick);
+      gsap.ticker.lagSmoothing(0);
+    });
 
     return () => {
-      gsap.ticker.remove(onTick);
-      document.removeEventListener('click', handleAnchorClick);
-      lenis.destroy();
+      if (onTick) gsap.ticker.remove(onTick);
+      if (handleAnchorClick) document.removeEventListener('click', handleAnchorClick);
+      if (lenis) lenis.destroy();
     };
   }, []);
 
-  // ─── AWWWARDS-LEVEL SECTION TRANSITIONS + GLOBAL EFFECTS ───
+  // ─── SECTION TRANSITIONS + GLOBAL EFFECTS ───
   useEffect(() => {
     if (!siteVisible) return;
 
@@ -225,9 +231,8 @@ export default function App() {
       };
       window.addEventListener('scroll', onScroll, { passive: true });
 
-      // ─── MAGNETIC BUTTONS ───
-      const isMobile = 'ontouchstart' in window || window.innerWidth < 900;
-      if (!isMobile) {
+      // ─── MAGNETIC BUTTONS (desktop only) ───
+      if (!isLite) {
         const btns = document.querySelectorAll('.magnetic');
         btns.forEach(btn => {
           const move = (e) => {
@@ -261,14 +266,14 @@ export default function App() {
         });
       });
 
-      // ─── EYEBROW LABELS: Line draws + tracking animation ───
+      // ─── EYEBROW LABELS ───
       gsap.utils.toArray('.eyebrow').forEach(el => {
         if (el.closest('#hero')) return;
         gsap.fromTo(el, {
-          x: -30, opacity: 0, filter: 'blur(4px)',
+          x: -30, opacity: 0,
           letterSpacing: '0.25em',
         }, {
-          x: 0, opacity: 1, filter: 'blur(0px)',
+          x: 0, opacity: 1,
           letterSpacing: '0.12em',
           duration: 0.9,
           ease: 'power3.out',
@@ -281,180 +286,191 @@ export default function App() {
       });
 
       // ═══════════════════════════════════════════════════════
-      //  AWWWARDS SECTION TRANSITIONS
-      //  Each section has a unique scroll-driven entrance
+      //  SECTION TRANSITIONS
+      //  Desktop: cinematic blur/clip-path/filter transitions
+      //  Lite: cheap opacity + translateY (transform/opacity only)
       // ═══════════════════════════════════════════════════════
 
-      // ─── TRANSITION 1: Marquee — Clip-path unmask from bottom ───
-      const marqueeEl = document.querySelector('[data-scene="marquee"]');
-      if (marqueeEl) {
-        gsap.fromTo(marqueeEl, {
-          clipPath: 'inset(100% 0 0 0)',
-          opacity: 0.5,
-        }, {
-          clipPath: 'inset(0% 0 0 0)',
-          opacity: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: marqueeEl,
-            start: 'top 95%',
-            end: 'top 60%',
-            scrub: 1,
-          },
-        });
-      }
+      if (!isLite) {
+        // ─── DESKTOP TRANSITIONS (original cinematic effects) ───
 
-      // ─── TRANSITION 2: CaseStudies — Zoom-in reveal with blur dissolve ───
-      const workEl = document.querySelector('[data-scene="work"]');
-      if (workEl) {
-        const trackEl = workEl.querySelector('.cs-track');
-        if (trackEl) {
-          gsap.fromTo(trackEl, {
-            scale: 0.82,
+        // TRANSITION 1: Marquee — Clip-path unmask from bottom
+        const marqueeEl = document.querySelector('[data-scene="marquee"]');
+        if (marqueeEl) {
+          gsap.fromTo(marqueeEl, {
+            clipPath: 'inset(100% 0 0 0)',
+            opacity: 0.5,
+          }, {
+            clipPath: 'inset(0% 0 0 0)',
+            opacity: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: marqueeEl,
+              start: 'top 95%',
+              end: 'top 60%',
+              scrub: 1,
+            },
+          });
+        }
+
+        // TRANSITION 2: CaseStudies — Zoom-in reveal with blur dissolve
+        const workEl = document.querySelector('[data-scene="work"]');
+        if (workEl) {
+          const trackEl = workEl.querySelector('.cs-track');
+          if (trackEl) {
+            gsap.fromTo(trackEl, {
+              scale: 0.82,
+              opacity: 0,
+              filter: 'blur(16px) brightness(1.8)',
+              transformOrigin: 'center center',
+            }, {
+              scale: 1,
+              opacity: 1,
+              filter: 'blur(0px) brightness(1)',
+              ease: 'none',
+              scrollTrigger: {
+                trigger: workEl,
+                start: 'top 95%',
+                end: 'top 45%',
+                scrub: 1.2,
+              },
+            });
+          }
+        }
+
+        // TRANSITION 3: Services — Split from center (horizontal wipe)
+        const servicesEl = document.querySelector('[data-scene="services"]');
+        if (servicesEl) {
+          gsap.fromTo(servicesEl, {
+            clipPath: 'inset(0 50% 0 50%)',
             opacity: 0,
-            filter: 'blur(16px) brightness(1.8)',
-            transformOrigin: 'center center',
+          }, {
+            clipPath: 'inset(0 0% 0 0%)',
+            opacity: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: servicesEl,
+              start: 'top 90%',
+              end: 'top 40%',
+              scrub: 1,
+            },
+          });
+        }
+
+        // TRANSITION 4: Metrics — 3D Page flip rotation
+        const metricsEl = document.querySelector('[data-scene="metrics"]');
+        if (metricsEl) {
+          gsap.fromTo(metricsEl, {
+            rotateX: -10,
+            scale: 0.88,
+            opacity: 0,
+            transformOrigin: 'center bottom',
+            filter: 'blur(8px)',
+          }, {
+            rotateX: 0,
+            scale: 1,
+            opacity: 1,
+            filter: 'blur(0px)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: metricsEl,
+              start: 'top 90%',
+              end: 'top 40%',
+              scrub: 1,
+            },
+          });
+        }
+
+        // TRANSITION 5: Process — Radial circle expand
+        const processWrapper = document.querySelector('.process-pin-wrapper');
+        const processSection = document.querySelector('#process');
+        if (processWrapper && processSection) {
+          gsap.fromTo(processSection, {
+            clipPath: 'circle(0% at 50% 50%)',
+            opacity: 0,
+          }, {
+            clipPath: 'circle(150% at 50% 50%)',
+            opacity: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: processWrapper,
+              start: 'top 90%',
+              end: 'top 30%',
+              scrub: 1,
+            },
+          });
+        }
+
+        // TRANSITION 6: Testimonials — Vertical blinds reveal
+        const testimonialsEl = document.querySelector('[data-scene="testimonials"]');
+        if (testimonialsEl) {
+          gsap.fromTo(testimonialsEl, {
+            clipPath: 'inset(0 0 100% 0)',
+            y: 80,
+            opacity: 0,
+            filter: 'blur(6px)',
+          }, {
+            clipPath: 'inset(0 0 0% 0)',
+            y: 0,
+            opacity: 1,
+            filter: 'blur(0px)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: testimonialsEl,
+              start: 'top 90%',
+              end: 'top 35%',
+              scrub: 1,
+            },
+          });
+        }
+
+        // TRANSITION 7: FinalCTA — Zoom + white flash
+        const ctaEl = document.querySelector('[data-scene="cta"]');
+        if (ctaEl) {
+          gsap.fromTo(ctaEl, {
+            scale: 0.7,
+            opacity: 0,
+            filter: 'blur(20px) brightness(2.5)',
           }, {
             scale: 1,
             opacity: 1,
             filter: 'blur(0px) brightness(1)',
             ease: 'none',
             scrollTrigger: {
-              trigger: workEl,
-              start: 'top 95%',
-              end: 'top 45%',
+              trigger: ctaEl,
+              start: 'top 85%',
+              end: 'top 30%',
               scrub: 1.2,
             },
           });
         }
-      }
 
-      // ─── TRANSITION 3: Services — Split from center (horizontal wipe) ───
-      const servicesEl = document.querySelector('[data-scene="services"]');
-      if (servicesEl) {
-        gsap.fromTo(servicesEl, {
-          clipPath: 'inset(0 50% 0 50%)',
-          opacity: 0,
-        }, {
-          clipPath: 'inset(0 0% 0 0%)',
-          opacity: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: servicesEl,
-            start: 'top 90%',
-            end: 'top 40%',
-            scrub: 1,
-          },
-        });
-      }
+        // TRANSITION 8: Footer — Rise from depth
+        const footerEl = document.querySelector('[data-scene="footer"]');
+        if (footerEl) {
+          gsap.fromTo(footerEl, {
+            y: 100,
+            opacity: 0,
+            filter: 'blur(8px)',
+          }, {
+            y: 0,
+            opacity: 1,
+            filter: 'blur(0px)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: footerEl,
+              start: 'top 95%',
+              end: 'top 60%',
+              scrub: 1,
+            },
+          });
+        }
 
-      // ─── TRANSITION 4: Metrics — 3D Page flip rotation ───
-      const metricsEl = document.querySelector('[data-scene="metrics"]');
-      if (metricsEl) {
-        gsap.fromTo(metricsEl, {
-          rotateX: -10,
-          scale: 0.88,
-          opacity: 0,
-          transformOrigin: 'center bottom',
-          filter: 'blur(8px)',
-        }, {
-          rotateX: 0,
-          scale: 1,
-          opacity: 1,
-          filter: 'blur(0px)',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: metricsEl,
-            start: 'top 90%',
-            end: 'top 40%',
-            scrub: 1,
-          },
-        });
-      }
-
-      // ─── TRANSITION 5: Process — Radial circle expand ───
-      const processWrapper = document.querySelector('.process-pin-wrapper');
-      const processSection = document.querySelector('#process');
-      if (processWrapper && processSection) {
-        gsap.fromTo(processSection, {
-          clipPath: 'circle(0% at 50% 50%)',
-          opacity: 0,
-        }, {
-          clipPath: 'circle(150% at 50% 50%)',
-          opacity: 1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: processWrapper,
-            start: 'top 90%',
-            end: 'top 30%',
-            scrub: 1,
-          },
-        });
-      }
-
-      // ─── TRANSITION 6: Testimonials — Vertical blinds reveal ───
-      const testimonialsEl = document.querySelector('[data-scene="testimonials"]');
-      if (testimonialsEl) {
-        gsap.fromTo(testimonialsEl, {
-          clipPath: 'inset(0 0 100% 0)',
-          y: 80,
-          opacity: 0,
-          filter: 'blur(6px)',
-        }, {
-          clipPath: 'inset(0 0 0% 0)',
-          y: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: testimonialsEl,
-            start: 'top 90%',
-            end: 'top 35%',
-            scrub: 1,
-          },
-        });
-      }
-
-      // ─── TRANSITION 7: FinalCTA — Zoom + white flash ───
-      const ctaEl = document.querySelector('[data-scene="cta"]');
-      if (ctaEl) {
-        gsap.fromTo(ctaEl, {
-          scale: 0.7,
-          opacity: 0,
-          filter: 'blur(20px) brightness(2.5)',
-        }, {
-          scale: 1,
-          opacity: 1,
-          filter: 'blur(0px) brightness(1)',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: ctaEl,
-            start: 'top 85%',
-            end: 'top 30%',
-            scrub: 1.2,
-          },
-        });
-      }
-
-      // ─── TRANSITION 8: Footer — Rise from depth ───
-      const footerEl = document.querySelector('[data-scene="footer"]');
-      if (footerEl) {
-        gsap.fromTo(footerEl, {
-          y: 100,
-          opacity: 0,
-          filter: 'blur(8px)',
-        }, {
-          y: 0,
-          opacity: 1,
-          filter: 'blur(0px)',
-          ease: 'none',
-          scrollTrigger: {
-            trigger: footerEl,
-            start: 'top 95%',
-            end: 'top 60%',
-            scrub: 1,
-          },
-        });
+      } else {
+        // ─── LITE MODE: No section transitions needed ───
+        // CSS @media (max-width: 900px) forces all [data-scene] to
+        // opacity:1, transform:none, filter:none, clip-path:none.
+        // Sections are visible natively — zero GSAP overhead on scroll.
       }
 
       // Refresh ScrollTrigger after all content mounts
@@ -463,6 +479,34 @@ export default function App() {
     });
 
     return () => ctx.revert();
+  }, [siteVisible]);
+
+  // ─── REFRESH SCROLLTRIGGER ON LAYOUT SHIFTS (images, fonts) ───
+  useEffect(() => {
+    if (!siteVisible) return;
+
+    // Refresh when fonts are loaded and layout shifts occur
+    if (document.fonts) {
+      document.fonts.ready.then(() => {
+        ScrollTrigger.refresh();
+      });
+    }
+
+    // Refresh when images finish loading (capturing phase)
+    const handleImageLoad = () => {
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener('load', handleImageLoad, true);
+
+    // Occasional periodic refreshes during initial seconds to catch late renders
+    const intervals = [500, 1000, 2000, 4000].map(delay => 
+      setTimeout(() => ScrollTrigger.refresh(), delay)
+    );
+
+    return () => {
+      window.removeEventListener('load', handleImageLoad, true);
+      intervals.forEach(clearTimeout);
+    };
   }, [siteVisible]);
 
   return (

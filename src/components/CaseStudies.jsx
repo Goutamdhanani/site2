@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { EASE, DUR, STAGGER, prefersReducedMotion } from '../utils/motion';
+import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -270,11 +271,10 @@ export default function CaseStudies() {
         // 5. Content elements fade/slide stagger reveal
         if (content) {
           gsap.fromTo(content.children,
-            { opacity: 0, y: 40, filter: 'blur(4px)' },
+            { opacity: 0, y: 40 },
             {
               opacity: 1,
               y: 0,
-              filter: 'blur(0px)',
               stagger: 0.08,
               ease: 'power2.out',
               scrollTrigger: {
@@ -290,118 +290,50 @@ export default function CaseStudies() {
       });
     });
 
-    // ─── MOBILE VERTICAL STICKY CARDS DECK ───
+    // ─── MOBILE VERTICAL CARDS (simplified — no scrub, no filter, no clip-path) ───
     mm.add("(max-width: 899px)", () => {
+      // On lite mode: skip all GSAP on mobile cards for butter-smooth native scroll
+      if (isLite) return;
+
       const cards = gsap.utils.toArray('.cs-card');
       
       cards.forEach((card, i) => {
-        const bgTitle = card.querySelector('.cs-card__bg-title');
-        const imgWrapper = card.querySelector('.cs-card__image-wrapper');
-        const img = card.querySelector('.cs-card__image');
         const badge = card.querySelector('.cs-card__floating-badge');
         const content = card.querySelector('.cs-card__content');
-        
-        // 1. Shutter reveal (top to bottom wipe) on mobile
-        if (imgWrapper) {
-          gsap.fromTo(imgWrapper,
-            { clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)' },
-            {
-              clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
-              ease: 'power1.inOut',
-              scrollTrigger: {
-                trigger: card,
-                start: 'top 85%',
-                end: 'top 40%',
-                scrub: true,
-              }
-            }
-          );
-        }
 
-        // 2. Parallax vertical drift on mobile
-        if (img) {
-          gsap.fromTo(img,
-            { yPercent: -5 },
-            {
-              yPercent: 5,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: card,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: true,
-              }
-            }
-          );
-        }
-
-        // 3. Background title drift on mobile
-        if (bgTitle) {
-          gsap.fromTo(bgTitle,
-            { xPercent: 10 },
-            {
-              xPercent: -10,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: card,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: true,
-              }
-            }
-          );
-        }
-
-        // 4. Floating glass badge entrance
+        // Simple badge entrance
         if (badge) {
           gsap.fromTo(badge,
-            { scale: 0.8, opacity: 0 },
-            {
-              scale: 1,
-              opacity: 1,
-              duration: 0.6,
-              scrollTrigger: {
-                trigger: card,
-                start: 'top 70%',
-                toggleActions: 'play none none reverse',
-              }
-            }
-          );
-        }
-
-        // 5. Content elements fade/slide
-        if (content) {
-          gsap.fromTo(content.children,
-            { opacity: 0, y: 30 },
+            { opacity: 0, y: 20 },
             {
               opacity: 1,
               y: 0,
               duration: 0.6,
-              stagger: 0.08,
               scrollTrigger: {
                 trigger: card,
                 start: 'top 75%',
-                toggleActions: 'play none none reverse',
+                once: true,
               }
             }
           );
         }
 
-        // 6. Card stacking depth animation (scale down & fade when covered by next card)
-        if (i < cards.length - 1) {
-          gsap.to(card, {
-            scale: 0.93,
-            opacity: 0.4,
-            y: -30,
-            filter: 'blur(3px)',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: cards[i + 1],
-              start: 'top 85%',
-              end: 'top 15%',
-              scrub: true,
+        // Simple content fade
+        if (content) {
+          gsap.fromTo(content.children,
+            { opacity: 0, y: 20 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.5,
+              stagger: 0.06,
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 75%',
+                once: true,
+              }
             }
-          });
+          );
         }
       });
     });

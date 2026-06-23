@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -32,34 +33,36 @@ export default function Marquee() {
         });
       }
 
-      // ─── SCROLL: Marquee skews and distorts as camera passes ───
-      gsap.to(stripRef.current, {
-        skewX: -6,
-        scaleX: 1.1,
-        filter: 'blur(2px)',
-        opacity: 0.4,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: stripRef.current,
-          start: 'top 60%',
-          end: 'bottom 20%',
-          scrub: 1.5,
-        },
-      });
-
-      // Individual items drift at different speeds for depth
-      gsap.utils.toArray('.marquee-track span:not(.marquee-dot)').forEach((span, i) => {
-        gsap.to(span, {
-          y: (i % 2 === 0 ? -1 : 1) * 20,
+      // ─── Desktop-only: Marquee distortion on scroll ───
+      if (!isLite) {
+        gsap.to(stripRef.current, {
+          skewX: -6,
+          scaleX: 1.1,
+          filter: 'blur(2px)',
+          opacity: 0.4,
           ease: 'none',
           scrollTrigger: {
             trigger: stripRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1,
+            start: 'top 60%',
+            end: 'bottom 20%',
+            scrub: 1.5,
           },
         });
-      });
+
+        // Individual items drift at different speeds for depth
+        gsap.utils.toArray('.marquee-track span:not(.marquee-dot)').forEach((span, i) => {
+          gsap.to(span, {
+            y: (i % 2 === 0 ? -1 : 1) * 20,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: stripRef.current,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 1,
+            },
+          });
+        });
+      }
 
     }, stripRef);
 

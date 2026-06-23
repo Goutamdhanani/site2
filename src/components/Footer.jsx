@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -8,6 +9,18 @@ export default function Footer() {
   const footerRef = useRef(null);
 
   useEffect(() => {
+    if (isLite) {
+      // Force footer elements visible immediately on mobile
+      gsap.set('.footer-brand, .footer-tagline, .footer-col, .footer-bottom', {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        scale: 1,
+        filter: 'blur(0px)'
+      });
+      return;
+    }
+
     const ctx = gsap.context(() => {
 
       // ─── FOOTER: Content emerges from below ───

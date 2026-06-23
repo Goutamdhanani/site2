@@ -1,20 +1,21 @@
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
 /*  ──────────────────────────────────────────────────────────
     ATMOSPHERIC CANVAS — Pure CSS + GSAP animated background
-    No static images. Everything is procedurally generated.
+    Lite mode: static gradient only, no loops, no particles.
     ────────────────────────────────────────────────────────── */
 
 export default function AtmosphericCanvas() {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return;
+    // In lite mode skip all GSAP — the static CSS gradient is enough
+    if (isLite) return;
 
     const ctx = gsap.context(() => {
       // ─── GRADIENT BLOBS: Slow organic drift ───
@@ -86,7 +87,20 @@ export default function AtmosphericCanvas() {
     return () => ctx.revert();
   }, []);
 
-  // Generate particles deterministically
+  // ─── LITE MODE: static gradient, no particles, no aurora ───
+  if (isLite) {
+    return (
+      <div ref={containerRef} className="atmospheric-container" aria-hidden="true">
+        <div className="atmos-space-base" />
+        {/* Only 2 static blobs for ambient color — no animation */}
+        <div className="atmos-grad-blob atmos-grad-blob--ember" style={{ opacity: 0.5 }} />
+        <div className="atmos-grad-blob atmos-grad-blob--amber" style={{ opacity: 0.4 }} />
+        <div className="atmos-vignette-layer" style={{ opacity: 0.7 }} />
+      </div>
+    );
+  }
+
+  // ─── FULL MODE: all blobs, aurora, 35 particles ───
   const particles = Array.from({ length: 35 }, (_, i) => ({
     left: ((i * 37 + 13) % 100),
     size: 1.5 + (i % 4) * 0.8,

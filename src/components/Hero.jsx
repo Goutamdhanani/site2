@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from '../utils/motion';
+import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -160,7 +161,72 @@ function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) 
   }
 }
 
-export default function Hero() {
+/* ═══════════════════════════════════════════════════════════
+   HERO — LITE MODE (static poster, immediate text)
+   ═══════════════════════════════════════════════════════════ */
+function HeroLite() {
+  return (
+    <section id="hero" data-scene="hero">
+      <div className="hero-sticky-container">
+        <div className="hero-canvas-container">
+          {/* Static poster — loads instantly, no 118-frame sequence */}
+          <img
+            src="/assets/sequence/frame_0001.webp"
+            alt="Hero visual"
+            className="hero-canvas"
+            style={{
+              width: '100vw',
+              height: '100vh',
+              objectFit: 'cover',
+              display: 'block',
+            }}
+            fetchPriority="high"
+          />
+          <div className="hero-gradient-bg" aria-hidden="true" style={{ opacity: 0.15 }}>
+            <div className="hero-noise-overlay" />
+          </div>
+        </div>
+
+        <div className="hero-ui-layer">
+          <div className="hero-content">
+            <p className="hero-eyebrow" style={{ opacity: 1, textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+              Modern AI Agency
+            </p>
+
+            <h1 className="hero-headline">
+              {['A', 'Peaceful', 'Ascension.'].map((word, i) => (
+                <span className="hero-word-wrap" key={i} style={{ opacity: 1 }}>
+                  <span className="hero-word" style={{ textShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>{word}</span>
+                </span>
+              ))}
+            </h1>
+
+            <p className="hero-sub" style={{ opacity: 1, textShadow: '0 4px 12px rgba(0,0,0,0.8)' }}>
+              Transforming the world through cinematic <br />
+              storytelling and intelligent design.
+            </p>
+
+            <div className="hero-actions" style={{ opacity: 1 }}>
+              <a href="#contact" className="btn-primary magnetic">
+                Explore the Future <span className="btn-arrow">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </span>
+              </a>
+              <a href="#work" className="btn-ghost magnetic">
+                <span style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>Discover More</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO — FULL MODE (118-frame canvas, scroll-scrub, exit FX)
+   ═══════════════════════════════════════════════════════════ */
+function HeroFull() {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
   const overlayCanvasRef = useRef(null);
@@ -205,28 +271,47 @@ export default function Hero() {
     context.drawImage(img, ox, oy, dw, dh);
   }, []);
 
-  // ─── PRELOAD FRAMES ───
+  // ─── DEFERRED PRELOAD FRAMES (after first paint) ───
   useEffect(() => {
-    let loadedCount = 0;
-    const images = [];
+    // Defer heavy preload to after first paint using requestIdleCallback
+    const startPreload = () => {
+      let loadedCount = 0;
+      const images = [];
 
-    const handleFrameLoad = () => {
-      loadedCount++;
-      if (loadedCount === totalFrames) setLoaded(true);
+      const handleFrameLoad = () => {
+        loadedCount++;
+        if (loadedCount === totalFrames) setLoaded(true);
+      };
+
+      for (let i = 0; i < totalFrames; i++) {
+        const img = new Image();
+        const frameNum = String(i + 1).padStart(4, '0');
+        img.src = `/assets/sequence/frame_${frameNum}.webp`;
+        img.onload = handleFrameLoad;
+        img.onerror = () => {
+          console.warn(`Frame ${frameNum} failed — skipping`);
+          handleFrameLoad();
+        };
+        images.push(img);
+      }
+      imagesRef.current = images;
     };
 
-    for (let i = 0; i < totalFrames; i++) {
-      const img = new Image();
-      const frameNum = String(i + 1).padStart(4, '0');
-      img.src = `/assets/sequence/frame_${frameNum}.webp`;
-      img.onload = handleFrameLoad;
-      img.onerror = () => {
-        console.warn(`Frame ${frameNum} failed — skipping`);
-        handleFrameLoad();
-      };
-      images.push(img);
+    // Use requestIdleCallback where available, else fall back to after 'load'
+    if ('requestIdleCallback' in window) {
+      const id = requestIdleCallback(startPreload, { timeout: 3000 });
+      return () => cancelIdleCallback(id);
+    } else {
+      // Fallback: wait for page load + small delay
+      const onLoad = () => setTimeout(startPreload, 100);
+      if (document.readyState === 'complete') {
+        const timer = setTimeout(startPreload, 100);
+        return () => clearTimeout(timer);
+      } else {
+        window.addEventListener('load', onLoad);
+        return () => window.removeEventListener('load', onLoad);
+      }
     }
-    imagesRef.current = images;
   }, []);
 
   // ─── SCROLL ANIMATION + EXIT TRANSITION ───
@@ -239,9 +324,9 @@ export default function Hero() {
     contextRef.current = context;
     const overlayCtx = overlay?.getContext('2d');
 
-    // ─── CANVAS SIZING ───
+    // ─── CANVAS SIZING (DPR capped at 2) ───
     const resizeCanvas = () => {
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = window.innerWidth + 'px';
@@ -257,7 +342,7 @@ export default function Hero() {
       renderFrame(currentFrameRef.current);
     };
 
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas, { passive: true });
     resizeCanvas();
 
     if (prefersReducedMotion()) {
@@ -444,4 +529,11 @@ export default function Hero() {
       </div>
     </section>
   );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   HERO — Route to lite or full based on device capability
+   ═══════════════════════════════════════════════════════════ */
+export default function Hero() {
+  return isLite ? <HeroLite /> : <HeroFull />;
 }

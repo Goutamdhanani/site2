@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SplitHeading from './SplitHeading';
+import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,6 +37,16 @@ export default function FinalCTA() {
   };
 
   useEffect(() => {
+    if (isLite) {
+      // Set all elements fully visible immediately on mobile to prevent rendering delays
+      gsap.set('.cta-singularity-portal', { scale: 1.3, opacity: 0.15 });
+      gsap.set('.cta-console-panel', { y: 0, opacity: 1, scale: 1, filter: 'blur(0px)' });
+      gsap.set('.cta-big-title', { opacity: 1, y: 0, filter: 'blur(0px)' });
+      gsap.set('.cta-subtitle', { opacity: 1, y: 0 });
+      gsap.set('.cta-spec-builder, .cta-actions', { opacity: 1, y: 0 });
+      return;
+    }
+
     const ctx = gsap.context(() => {
 
       // ─── VISUAL EFFECTS: Singularity Pulse ───
