@@ -6507,10 +6507,11 @@ html, body, .cinematic-wrapper {
     display: flex;
     align-items: center;
     border-radius: 16px;
-    background: rgba(18, 12, 9, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    box-shadow: 0 -20px 40px -10px rgba(0, 0, 0, 0.8);
+    background: #0c0806 !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: 0 -20px 40px -10px rgba(0, 0, 0, 0.95) !important;
     transform-origin: center top;
   }
 
@@ -6882,5 +6883,126 @@ html, body, .cinematic-wrapper {
     padding: var(--space-xl) !important;
     height: auto !important;
     min-height: auto !important;
+  }
+
+  /* ─── Services mobile overrides ─── */
+  .sv-mobile-section-header {
+    margin-bottom: var(--space-2xl);
+    text-align: left;
+  }
+  .sv-mobile-cards-feed {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    width: 100%;
+  }
+  .sv-mobile-card {
+    position: relative;
+    background: #0c0806 !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: var(--radius-xl) !important;
+    padding: var(--space-xl) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
+    transition: border-color 0.5s ease, box-shadow 0.5s ease !important;
+    height: auto !important;
+    width: 100% !important;
+    overflow: visible !important;
+  }
+  .sv-mobile-card--active {
+    border-color: var(--service-color) !important;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 30px color-mix(in srgb, var(--service-color) 12%, transparent) !important;
+  }
+  .sv-mobile-card-header {
+    display: flex !important;
+    align-items: center !important;
+    gap: var(--space-md) !important;
+    margin-bottom: var(--space-md) !important;
+  }
+  .sv-mobile-num {
+    font-family: var(--font-mono) !important;
+    font-size: 0.9rem !important;
+    color: var(--text-muted) !important;
+    transition: color 0.4s ease !important;
+  }
+  .sv-mobile-card--active .sv-mobile-num {
+    color: var(--service-color) !important;
+    font-weight: var(--weight-bold) !important;
+  }
+  .sv-mobile-title {
+    font-family: var(--font-display) !important;
+    font-size: 1.5rem !important;
+    font-weight: var(--weight-bold) !important;
+    margin: 0 !important;
+    color: var(--text-secondary) !important;
+    transition: color 0.4s ease !important;
+  }
+  .sv-mobile-card--active .sv-mobile-title {
+    color: var(--text-primary) !important;
+  }
+  .sv-mobile-desc {
+    font-size: 0.95rem !important;
+    color: var(--text-secondary) !important;
+    line-height: var(--leading-normal) !important;
+    margin-bottom: var(--space-lg) !important;
+  }
+  .sv-mobile-mockup-wrapper {
+    position: relative !important;
+    width: 100% !important;
+    margin-bottom: var(--space-lg) !important;
+  }
+  .hologram-chamber-mobile {
+    position: relative !important;
+    width: 100% !important;
+    height: 200px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    background: radial-gradient(circle at center, rgba(18, 12, 10, 0.5) 0%, rgba(8, 5, 4, 0.9) 100%) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    perspective: 1000px !important;
+    transform-style: preserve-3d !important;
+    transition: border-color 0.5s ease !important;
+  }
+  .sv-mobile-card--active .hologram-chamber-mobile {
+    border-color: var(--service-color) !important;
+  }
+  .hologram-chamber-mobile .sv-mockup {
+    transform: scale(0.85) !important;
+    position: absolute !important;
+    inset: auto !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.5s ease, visibility 0.5s !important;
+  }
+  .hologram-chamber-mobile .sv-mockup.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  .sv-mobile-details {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--space-md) !important;
+    margin-bottom: var(--space-lg) !important;
+  }
+  .sv-mobile-details-section {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  /* ─── Mobile View App-Clean Layout overrides ─── */
+  section {
+    padding: var(--space-2xl) 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important;
+  }
+  #hero {
+    padding: 0 !important;
+    border-bottom: none !important;
+  }
+  .container {
+    padding-left: var(--space-md) !important;
+    padding-right: var(--space-md) !important;
   }
 }

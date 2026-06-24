@@ -125,6 +125,249 @@ function TerminalConsole({ logs, isActive }) {
   );
 }
 
+// ─── REUSABLE MOCKUPS ───
+
+function WebMockup({ active }) {
+  return (
+    <div className={`sv-mockup sv-mockup--web ${active ? 'active' : ''}`}>
+      <div className="web-editor-layer">
+        <div className="web-header">
+          <span className="dot dot--red"></span>
+          <span className="dot dot--yellow"></span>
+          <span className="dot dot--green"></span>
+          <span className="web-tab">index.tsx</span>
+        </div>
+        <div className="web-editor-body">
+          <div className="code-line line-1"></div>
+          <div className="code-line line-2"></div>
+          <div className="code-line line-3"></div>
+          <div className="code-line line-4"></div>
+          <div className="code-line line-5"></div>
+        </div>
+      </div>
+
+      <div className="web-wireframe-layer">
+        <div className="wf-grid-lines">
+          <div className="wf-line-h"></div>
+          <div className="wf-line-v"></div>
+        </div>
+        <div className="wf-box"></div>
+        <div className="wf-circle"></div>
+      </div>
+
+      <div className="web-dashboard-layer">
+        <div className="dash-card">
+          <div className="dash-top">
+            <span className="dash-title">PROD SERVER</span>
+            <span className="dash-status">99.9%</span>
+          </div>
+          <svg className="dash-chart" viewBox="0 0 100 30">
+            <defs>
+              <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="var(--accent-ember)" stopOpacity="0.4" />
+                <stop offset="100%" stopColor="var(--accent-ember)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path d="M0,25 Q15,5 30,22 T60,8 T90,20 L100,20 L100,30 L0,30 Z" fill="url(#chartGrad)" />
+            <path d="M0,25 Q15,5 30,22 T60,8 T90,20 L100,20" fill="none" stroke="var(--accent-ember)" strokeWidth="1.5" />
+          </svg>
+          <div className="dash-vitals">
+            <span className="vital-num">18ms</span>
+            <span className="vital-label">latency</span>
+          </div>
+        </div>
+      </div>
+      <div className="mockup-glow" />
+    </div>
+  );
+}
+
+function MobileMockup({ active }) {
+  return (
+    <div className={`sv-mockup sv-mockup--mobile ${active ? 'active' : ''}`}>
+      <div className="phone-base">
+        <div className="phone-notch"></div>
+        <div className="phone-bezel-glow"></div>
+        <div className="phone-screen-grid"></div>
+      </div>
+
+      <div className="phone-player-layer">
+        <div className="player-widget">
+          <div className="player-disc">
+            <div className="player-disc-inner"></div>
+          </div>
+          <div className="player-info">
+            <div className="player-track">Track 04.wav</div>
+            <div className="player-progress">
+              <div className="progress-bar-fill"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="phone-chart-layer">
+        <div className="chart-widget">
+          <div className="widget-header">
+            <span className="dot dot--orange"></span>
+            <span className="widget-label">Daily Installs</span>
+          </div>
+          <div className="widget-bars">
+            <div className="wbar bar-1"></div>
+            <div className="wbar bar-2"></div>
+            <div className="wbar bar-3"></div>
+            <div className="wbar bar-4"></div>
+          </div>
+        </div>
+      </div>
+
+      <div className="phone-chat-layer">
+        <div className="chat-bubble">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--accent-amber)" style={{ marginRight: '4px' }}>
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+          <span>App deployed.</span>
+        </div>
+      </div>
+
+      <div className="mockup-glow" />
+    </div>
+  );
+}
+
+function UiUxMockup({ active }) {
+  return (
+    <div className={`sv-mockup sv-mockup--uiux ${active ? 'active' : ''}`}>
+      <div className="vector-grid-layer">
+        <div className="artboard-grid"></div>
+      </div>
+
+      <div className="vector-curve-layer">
+        <svg className="bezier-svg" viewBox="0 0 160 160">
+          <defs>
+            <linearGradient id="bezierGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="var(--accent-gold)" />
+              <stop offset="100%" stopColor="var(--accent-amber)" />
+            </linearGradient>
+          </defs>
+          <line x1="20" y1="80" x2="50" y2="30" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2 2" />
+          <line x1="140" y1="80" x2="110" y2="130" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2 2" />
+          <path d="M20,80 C50,30 110,130 140,80" fill="none" stroke="url(#bezierGrad)" strokeWidth="2.5" />
+          <circle cx="20" cy="80" r="4.5" fill="var(--bg-primary)" stroke="var(--accent-gold)" strokeWidth="2" />
+          <circle cx="50" cy="30" r="3.5" fill="var(--accent-gold)" />
+          <circle cx="140" cy="80" r="4.5" fill="var(--bg-primary)" stroke="var(--accent-gold)" strokeWidth="2" />
+          <circle cx="110" cy="130" r="3.5" fill="var(--accent-gold)" />
+        </svg>
+      </div>
+
+      <div className="vector-chips-layer">
+        <div className="color-chip chip-1"></div>
+        <div className="color-chip chip-2"></div>
+        <div className="color-chip chip-3"></div>
+      </div>
+
+      <div className="vector-layers-layer">
+        <div className="layers-widget">
+          <div className="layer-item active-item">Path Node</div>
+          <div className="layer-item">Dot Grid</div>
+          <div className="layer-item">Artboard</div>
+        </div>
+      </div>
+
+      <div className="vector-pen-layer">
+        <svg className="pen-tool-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" strokeWidth="2">
+          <path d="M12 2L2 22l10-6 10 6L12 2z"/>
+        </svg>
+      </div>
+
+      <div className="mockup-glow" />
+    </div>
+  );
+}
+
+function CmsMockup({ active }) {
+  return (
+    <div className={`sv-mockup sv-mockup--cms ${active ? 'active' : ''}`}>
+      <div className="database-cylinder-layer">
+        <div className="cylinder-ring ring-top"></div>
+        <div className="cylinder-ring ring-mid"></div>
+        <div className="cylinder-ring ring-bot"></div>
+      </div>
+
+      <div className="database-automation-layer">
+        <svg className="circuit-lines" viewBox="0 0 160 160">
+          <defs>
+            <linearGradient id="circuitGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="var(--accent-lacquer)" />
+              <stop offset="100%" stopColor="var(--accent-ember)" />
+            </linearGradient>
+          </defs>
+          <path d="M80,80 H40 V45" fill="none" stroke="url(#circuitGrad)" strokeWidth="2" className="circuit-path" />
+          <path d="M80,80 H120 V50" fill="none" stroke="url(#circuitGrad)" strokeWidth="2" className="circuit-path" />
+          <path d="M80,80 V125 H115" fill="none" stroke="url(#circuitGrad)" strokeWidth="2" className="circuit-path" />
+        </svg>
+
+        <div className="auto-node node-shopify">S</div>
+        <div className="auto-node node-webflow">W</div>
+        <div className="auto-node node-api">API</div>
+        
+        <div className="pulse pulse-1"></div>
+        <div className="pulse pulse-2"></div>
+        <div className="pulse pulse-3"></div>
+      </div>
+
+      <div className="mockup-glow" />
+    </div>
+  );
+}
+
+function SeoMockup({ active }) {
+  return (
+    <div className={`sv-mockup sv-mockup--seo ${active ? 'active' : ''}`}>
+      <div className="speed-particles-layer">
+        <div className="speed-line line-p1"></div>
+        <div className="speed-line line-p2"></div>
+        <div className="speed-line line-p3"></div>
+      </div>
+
+      <div className="speed-gauge-layer">
+        <div className="gauge-housing">
+          <svg className="gauge-svg" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="6" />
+            <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent-bright)" strokeWidth="6" 
+              strokeDasharray="251.2" strokeDashoffset="50.2" strokeLinecap="round" className="gauge-progress-circle" />
+          </svg>
+          <div className="gauge-indicator-needle"></div>
+          <div className="gauge-score-value">100</div>
+        </div>
+      </div>
+
+      <div className="speed-audit-layer">
+        <div className="audit-card">
+          <div className="audit-row">
+            <span className="audit-check">✓</span>
+            <span className="audit-metric">LCP</span>
+            <span className="audit-val">0.6s</span>
+          </div>
+          <div className="audit-row">
+            <span className="audit-check">✓</span>
+            <span className="audit-metric">CLS</span>
+            <span className="audit-val">0.00</span>
+          </div>
+          <div className="audit-row">
+            <span className="audit-check">✓</span>
+            <span className="audit-metric">FID</span>
+            <span className="audit-val">12ms</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mockup-glow" />
+    </div>
+  );
+}
+
+// ─── DESKTOP COMPONENTS ───
+
 function ServiceRow({ service, index, activeService, setActiveService }) {
   const rowRef = useRef(null);
   const numRef = useRef(null);
@@ -206,7 +449,6 @@ function ServiceRow({ service, index, activeService, setActiveService }) {
             </div>
           </div>
 
-          {/* Active typewriter compilation simulator */}
           <TerminalConsole logs={service.logs} isActive={isActive} />
         </div>
       </div>
@@ -215,16 +457,14 @@ function ServiceRow({ service, index, activeService, setActiveService }) {
   );
 }
 
-export default function Services() {
+function ServicesFull() {
   const sectionRef = useRef(null);
-  const itemsRef = useRef(null);
   const showcaseRef = useRef(null);
   const [activeService, setActiveService] = useState(0);
 
   useEffect(() => {
     if (prefersReducedMotion()) return;
 
-    // Scroll spy: update active index as user scrolls past rows on mobile/desktop
     const rows = gsap.utils.toArray('.sv-row');
     const triggers = [];
 
@@ -250,12 +490,12 @@ export default function Services() {
   const handleMouseMove = (e) => {
     if (prefersReducedMotion() || !showcaseRef.current) return;
     const rect = showcaseRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
-    const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
 
     gsap.to(showcaseRef.current, {
-      '--rx': y * 35, // Tilt X
-      '--ry': x * -35, // Tilt Y
+      '--rx': y * 35,
+      '--ry': x * -35,
       duration: 0.8,
       ease: 'power2.out',
       overwrite: 'auto',
@@ -276,7 +516,6 @@ export default function Services() {
   return (
     <section id="services" ref={sectionRef} data-scene="services" className="sv-section">
       <div className="container sv-grid">
-        {/* Left Sticky Column — Sci-fi Hologram chamber */}
         <div className="sv-sticky-wrapper">
           <div className="sv-sticky">
             <span className="sv-label eyebrow">WHAT WE DO</span>
@@ -285,7 +524,6 @@ export default function Services() {
               Engineering Awwwards-grade digital interfaces designed to command market attention.
             </p>
 
-            {/* 3D Holographic Chamber */}
             <div 
               ref={showcaseRef}
               className="hologram-chamber" 
@@ -297,19 +535,16 @@ export default function Services() {
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
             >
-              {/* Holographic grid scan lines */}
               <div className="holo-grid-lines" />
               <div className="holo-scanner-ring ring-1" />
               <div className="holo-scanner-ring ring-2" />
               <div className="holo-laser-line" />
 
-              {/* HUD interface borders */}
               <div className="holo-hud-corner corner-tl"></div>
               <div className="holo-hud-corner corner-tr"></div>
               <div className="holo-hud-corner corner-bl"></div>
               <div className="holo-hud-corner corner-br"></div>
 
-              {/* Sci-fi metrics console overlay */}
               <div className="holo-hud-stats">
                 <div className="hud-stat-row">
                   <span className="hud-stat-dot pulsing"></span>
@@ -326,235 +561,16 @@ export default function Services() {
                 </div>
               </div>
 
-              {/* Web Dev Mockup (0) */}
-              <div className={`sv-mockup sv-mockup--web ${activeService === 0 ? 'active' : ''}`}>
-                <div className="web-editor-layer">
-                  <div className="web-header">
-                    <span className="dot dot--red"></span>
-                    <span className="dot dot--yellow"></span>
-                    <span className="dot dot--green"></span>
-                    <span className="web-tab">index.tsx</span>
-                  </div>
-                  <div className="web-editor-body">
-                    <div className="code-line line-1"></div>
-                    <div className="code-line line-2"></div>
-                    <div className="code-line line-3"></div>
-                    <div className="code-line line-4"></div>
-                    <div className="code-line line-5"></div>
-                  </div>
-                </div>
-
-                <div className="web-wireframe-layer">
-                  <div className="wf-grid-lines">
-                    <div className="wf-line-h"></div>
-                    <div className="wf-line-v"></div>
-                  </div>
-                  <div className="wf-box"></div>
-                  <div className="wf-circle"></div>
-                </div>
-
-                <div className="web-dashboard-layer">
-                  <div className="dash-card">
-                    <div className="dash-top">
-                      <span className="dash-title">PROD SERVER</span>
-                      <span className="dash-status">99.9%</span>
-                    </div>
-                    <svg className="dash-chart" viewBox="0 0 100 30">
-                      <defs>
-                        <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="var(--accent-ember)" stopOpacity="0.4" />
-                          <stop offset="100%" stopColor="var(--accent-ember)" stopOpacity="0" />
-                        </linearGradient>
-                      </defs>
-                      <path d="M0,25 Q15,5 30,22 T60,8 T90,20 L100,20 L100,30 L0,30 Z" fill="url(#chartGrad)" />
-                      <path d="M0,25 Q15,5 30,22 T60,8 T90,20 L100,20" fill="none" stroke="var(--accent-ember)" strokeWidth="1.5" />
-                    </svg>
-                    <div className="dash-vitals">
-                      <span className="vital-num">18ms</span>
-                      <span className="vital-label">latency</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="mockup-glow" />
-              </div>
-
-              {/* Mobile Dev Mockup (1) */}
-              <div className={`sv-mockup sv-mockup--mobile ${activeService === 1 ? 'active' : ''}`}>
-                <div className="phone-base">
-                  <div className="phone-notch"></div>
-                  <div className="phone-bezel-glow"></div>
-                  <div className="phone-screen-grid"></div>
-                </div>
-
-                <div className="phone-player-layer">
-                  <div className="player-widget">
-                    <div className="player-disc">
-                      <div className="player-disc-inner"></div>
-                    </div>
-                    <div className="player-info">
-                      <div className="player-track">Track 04.wav</div>
-                      <div className="player-progress">
-                        <div className="progress-bar-fill"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="phone-chart-layer">
-                  <div className="chart-widget">
-                    <div className="widget-header">
-                      <span className="dot dot--orange"></span>
-                      <span className="widget-label">Daily Installs</span>
-                    </div>
-                    <div className="widget-bars">
-                      <div className="wbar bar-1"></div>
-                      <div className="wbar bar-2"></div>
-                      <div className="wbar bar-3"></div>
-                      <div className="wbar bar-4"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="phone-chat-layer">
-                  <div className="chat-bubble">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--accent-amber)" style={{ marginRight: '4px' }}>
-                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                    </svg>
-                    <span>App deployed.</span>
-                  </div>
-                </div>
-
-                <div className="mockup-glow" />
-              </div>
-
-              {/* Brand & UI/UX Mockup (2) */}
-              <div className={`sv-mockup sv-mockup--uiux ${activeService === 2 ? 'active' : ''}`}>
-                <div className="vector-grid-layer">
-                  <div className="artboard-grid"></div>
-                </div>
-
-                <div className="vector-curve-layer">
-                  <svg className="bezier-svg" viewBox="0 0 160 160">
-                    <defs>
-                      <linearGradient id="bezierGrad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="var(--accent-gold)" />
-                        <stop offset="100%" stopColor="var(--accent-amber)" />
-                      </linearGradient>
-                    </defs>
-                    <line x1="20" y1="80" x2="50" y2="30" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2 2" />
-                    <line x1="140" y1="80" x2="110" y2="130" stroke="rgba(255,255,255,0.2)" strokeWidth="1" strokeDasharray="2 2" />
-                    <path d="M20,80 C50,30 110,130 140,80" fill="none" stroke="url(#bezierGrad)" strokeWidth="2.5" />
-                    <circle cx="20" cy="80" r="4.5" fill="var(--bg-primary)" stroke="var(--accent-gold)" strokeWidth="2" />
-                    <circle cx="50" cy="30" r="3.5" fill="var(--accent-gold)" />
-                    <circle cx="140" cy="80" r="4.5" fill="var(--bg-primary)" stroke="var(--accent-gold)" strokeWidth="2" />
-                    <circle cx="110" cy="130" r="3.5" fill="var(--accent-gold)" />
-                  </svg>
-                </div>
-
-                <div className="vector-chips-layer">
-                  <div className="color-chip chip-1"></div>
-                  <div className="color-chip chip-2"></div>
-                  <div className="color-chip chip-3"></div>
-                </div>
-
-                <div className="vector-layers-layer">
-                  <div className="layers-widget">
-                    <div className="layer-item active-item">Path Node</div>
-                    <div className="layer-item">Dot Grid</div>
-                    <div className="layer-item">Artboard</div>
-                  </div>
-                </div>
-
-                <div className="vector-pen-layer">
-                  <svg className="pen-tool-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" strokeWidth="2">
-                    <path d="M12 2L2 22l10-6 10 6L12 2z"/>
-                  </svg>
-                </div>
-
-                <div className="mockup-glow" />
-              </div>
-
-              {/* CMS & Automation Mockup (3) */}
-              <div className={`sv-mockup sv-mockup--cms ${activeService === 3 ? 'active' : ''}`}>
-                <div className="database-cylinder-layer">
-                  <div className="cylinder-ring ring-top"></div>
-                  <div className="cylinder-ring ring-mid"></div>
-                  <div className="cylinder-ring ring-bot"></div>
-                </div>
-
-                <div className="database-automation-layer">
-                  <svg className="circuit-lines" viewBox="0 0 160 160">
-                    <defs>
-                      <linearGradient id="circuitGrad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="var(--accent-lacquer)" />
-                        <stop offset="100%" stopColor="var(--accent-ember)" />
-                      </linearGradient>
-                    </defs>
-                    <path d="M80,80 H40 V45" fill="none" stroke="url(#circuitGrad)" strokeWidth="2" className="circuit-path" />
-                    <path d="M80,80 H120 V50" fill="none" stroke="url(#circuitGrad)" strokeWidth="2" className="circuit-path" />
-                    <path d="M80,80 V125 H115" fill="none" stroke="url(#circuitGrad)" strokeWidth="2" className="circuit-path" />
-                  </svg>
-
-                  <div className="auto-node node-shopify">S</div>
-                  <div className="auto-node node-webflow">W</div>
-                  <div className="auto-node node-api">API</div>
-                  
-                  <div className="pulse pulse-1"></div>
-                  <div className="pulse pulse-2"></div>
-                  <div className="pulse pulse-3"></div>
-                </div>
-
-                <div className="mockup-glow" />
-              </div>
-
-              {/* SEO & Performance Mockup (4) */}
-              <div className={`sv-mockup sv-mockup--seo ${activeService === 4 ? 'active' : ''}`}>
-                <div className="speed-particles-layer">
-                  <div className="speed-line line-p1"></div>
-                  <div className="speed-line line-p2"></div>
-                  <div className="speed-line line-p3"></div>
-                </div>
-
-                <div className="speed-gauge-layer">
-                  <div className="gauge-housing">
-                    <svg className="gauge-svg" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="6" />
-                      <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent-bright)" strokeWidth="6" 
-                        strokeDasharray="251.2" strokeDashoffset="50.2" strokeLinecap="round" className="gauge-progress-circle" />
-                    </svg>
-                    <div className="gauge-indicator-needle"></div>
-                    <div className="gauge-score-value">100</div>
-                  </div>
-                </div>
-
-                <div className="speed-audit-layer">
-                  <div className="audit-card">
-                    <div className="audit-row">
-                      <span className="audit-check">✓</span>
-                      <span className="audit-metric">LCP</span>
-                      <span className="audit-val">0.6s</span>
-                    </div>
-                    <div className="audit-row">
-                      <span className="audit-check">✓</span>
-                      <span className="audit-metric">CLS</span>
-                      <span className="audit-val">0.00</span>
-                    </div>
-                    <div className="audit-row">
-                      <span className="audit-check">✓</span>
-                      <span className="audit-metric">FID</span>
-                      <span className="audit-val">12ms</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mockup-glow" />
-              </div>
+              <WebMockup active={activeService === 0} />
+              <MobileMockup active={activeService === 1} />
+              <UiUxMockup active={activeService === 2} />
+              <CmsMockup active={activeService === 3} />
+              <SeoMockup active={activeService === 4} />
             </div>
           </div>
         </div>
 
-        {/* Right Scrolling Column — Interactive Command Cards */}
-        <div className="sv-items" ref={itemsRef}>
+        <div className="sv-items">
           {services.map((s, i) => (
             <ServiceRow
               key={i}
@@ -568,4 +584,128 @@ export default function Services() {
       </div>
     </section>
   );
+}
+
+// ─── MOBILE COMPONENTS ───
+
+function ServiceCardMobile({ service, index }) {
+  const cardRef = useRef(null);
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    const trigger = ScrollTrigger.create({
+      trigger: cardRef.current,
+      start: 'top 60%',
+      end: 'bottom 40%',
+      onToggle: (self) => {
+        setIsActive(self.isActive);
+      }
+    });
+
+    gsap.fromTo(cardRef.current,
+      { opacity: 0, y: 35 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: cardRef.current,
+          start: 'top 85%',
+          once: true
+        }
+      }
+    );
+
+    return () => trigger.kill();
+  }, []);
+
+  return (
+    <div 
+      ref={cardRef} 
+      className={`sv-mobile-card ${isActive ? 'sv-mobile-card--active' : ''}`}
+      style={{ '--service-color': service.color }}
+    >
+      <div className="sv-mobile-card-header">
+        <span className="sv-mobile-num">{String(index + 1).padStart(2, '0')}</span>
+        <h3 className="sv-mobile-title">{service.title}</h3>
+      </div>
+
+      <p className="sv-mobile-desc">{service.desc}</p>
+
+      <div className="sv-mobile-mockup-wrapper">
+        <div 
+          className="hologram-chamber-mobile"
+          style={{ '--active-color': service.color }}
+        >
+          <div className="holo-grid-lines" />
+          <div className="holo-scanner-ring ring-1" />
+          <div className="holo-scanner-ring ring-2" />
+          <div className="holo-laser-line" />
+          
+          {index === 0 && <WebMockup active={isActive} />}
+          {index === 1 && <MobileMockup active={isActive} />}
+          {index === 2 && <UiUxMockup active={isActive} />}
+          {index === 3 && <CmsMockup active={isActive} />}
+          {index === 4 && <SeoMockup active={isActive} />}
+        </div>
+      </div>
+
+      <div className="sv-mobile-details">
+        <div className="sv-mobile-details-section">
+          <span className="sv-details-label">Capabilities</span>
+          <div className="sv-tags">
+            {service.tags.map((tag, j) => (
+              <span key={j} className="sv-tag">{tag}</span>
+            ))}
+          </div>
+        </div>
+
+        <div className="sv-mobile-details-section">
+          <span className="sv-details-label">Tech Stack</span>
+          <div className="sv-tools">
+            {service.tools.map((tool, j) => (
+              <span key={j} className="sv-tool-chip">{tool}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <TerminalConsole logs={service.logs} isActive={isActive} />
+    </div>
+  );
+}
+
+function ServicesLite() {
+  const sectionRef = useRef(null);
+
+  return (
+    <section id="services" ref={sectionRef} data-scene="services" className="sv-section">
+      <div className="container">
+        <div className="sv-mobile-section-header">
+          <span className="sv-label eyebrow">WHAT WE DO</span>
+          <SplitHeading text="Services" className="sv-heading" />
+          <p className="sv-sub">
+            Engineering Awwwards-grade digital interfaces designed to command market attention.
+          </p>
+        </div>
+
+        <div className="sv-mobile-cards-feed">
+          {services.map((service, index) => (
+            <ServiceCardMobile 
+              key={index} 
+              service={service} 
+              index={index} 
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── ROUTER ───
+
+export default function Services() {
+  return isLite ? <ServicesLite /> : <ServicesFull />;
 }

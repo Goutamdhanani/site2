@@ -196,6 +196,29 @@ export default function Process() {
     };
   }, []);
 
+  // Mobile-specific scroll tracking for process steps
+  useEffect(() => {
+    if (!isLite) return;
+
+    const cards = gsap.utils.toArray('.pr-hud-card');
+    const triggers = cards.map((card, idx) => {
+      return ScrollTrigger.create({
+        trigger: card,
+        start: 'top 55%',
+        end: 'bottom 45%',
+        onToggle: (self) => {
+          if (self.isActive) {
+            setActiveStep(idx);
+          }
+        }
+      });
+    });
+
+    return () => {
+      triggers.forEach(t => t.kill());
+    };
+  }, []);
+
   return (
     <div ref={containerRef} className="process-pin-wrapper">
       <section id="process" data-scene="process" className="pr-section">

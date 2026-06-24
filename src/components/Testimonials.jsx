@@ -36,12 +36,22 @@ export default function Testimonials() {
 
   useEffect(() => {
     if (isLite) {
-      // Show testimonial cards immediately on mobile
-      gsap.set('.testimonial-card', {
-        opacity: 1,
-        rotateY: 0,
-        y: 0,
-        filter: 'blur(0px)'
+      // Clean fade-in reveal on mobile scroll
+      gsap.utils.toArray('.testimonial-card').forEach((card) => {
+        gsap.fromTo(card, {
+          opacity: 0,
+          y: 35
+        }, {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: card,
+            start: 'top 90%',
+            once: true
+          }
+        });
       });
       return;
     }

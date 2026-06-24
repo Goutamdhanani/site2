@@ -292,33 +292,66 @@ export default function CaseStudies() {
 
     // ─── MOBILE VERTICAL CARDS (simplified — no scrub, no filter, no clip-path) ───
     mm.add("(max-width: 899px)", () => {
-      // On lite mode: skip all GSAP on mobile cards for butter-smooth native scroll
-      if (isLite) return;
-
       const cards = gsap.utils.toArray('.cs-card');
       
       cards.forEach((card, i) => {
         const badge = card.querySelector('.cs-card__floating-badge');
         const content = card.querySelector('.cs-card__content');
+        const img = card.querySelector('.cs-card__image');
 
-        // Simple badge entrance
-        if (badge) {
-          gsap.fromTo(badge,
-            { opacity: 0, y: 20 },
+        // 1. Smooth card reveal
+        gsap.fromTo(card,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 85%',
+              once: true,
+            }
+          }
+        );
+
+        // 2. Parallax drift on the mockup image inside the card
+        if (img) {
+          gsap.fromTo(img,
+            { yPercent: -8 },
             {
-              opacity: 1,
-              y: 0,
-              duration: 0.6,
+              yPercent: 8,
+              ease: 'none',
               scrollTrigger: {
                 trigger: card,
-                start: 'top 75%',
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: true,
+              }
+            }
+          );
+        }
+
+        // 3. Simple badge entrance
+        if (badge) {
+          gsap.fromTo(badge,
+            { opacity: 0, scale: 0.8, rotate: -3 },
+            {
+              opacity: 1,
+              scale: 1,
+              rotate: 0,
+              duration: 0.6,
+              ease: 'back.out(1.2)',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 70%',
                 once: true,
               }
             }
           );
         }
 
-        // Simple content fade
+        // 4. Simple content fade
         if (content) {
           gsap.fromTo(content.children,
             { opacity: 0, y: 20 },

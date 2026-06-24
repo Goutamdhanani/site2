@@ -360,8 +360,8 @@ export default function Metrics() {
 
   // ─── SCROLL REVEALS & COUNT-UP ANIMATIONS ───
   useEffect(() => {
-    if (prefersReducedMotion || isLite) {
-      // Fallback for reduced motion / mobile: set values immediately
+    if (prefersReducedMotion) {
+      // Fallback for reduced motion: set values immediately
       const statsEl = document.querySelectorAll('.stat-val-counter');
       statsEl.forEach((el) => {
         const target = parseFloat(el.dataset.target);
@@ -381,7 +381,51 @@ export default function Metrics() {
     }
 
     const ctx = gsap.context(() => {
+      if (isLite) {
+        // ─── MOBILE LITE CHEAP REVEALS & COUNT-UPS ───
+        // Card reveals (simple opacity + y)
+        gsap.utils.toArray('.met-card').forEach((card) => {
+          gsap.fromTo(card, {
+            y: 30,
+            opacity: 0,
+          }, {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 88%',
+              once: true,
+            }
+          });
+        });
 
+        // Number counters count-up
+        const numbers = gsap.utils.toArray('.stat-val-counter');
+        numbers.forEach((el) => {
+          const target = parseFloat(el.dataset.target);
+          const decimals = parseInt(el.dataset.decimals) || 0;
+
+          gsap.fromTo({ val: 0 }, { val: 0 }, {
+            val: target,
+            duration: 1.8,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 85%',
+              once: true,
+            },
+            onUpdate() {
+              el.textContent = this.targets()[0].val.toFixed(decimals);
+            },
+          });
+        });
+
+        return;
+      }
+
+      // ─── DESKTOP CINEMATIC REVEALS & COUNT-UPS ───
       // Card reveals
       gsap.utils.toArray('.met-card').forEach((card, i) => {
         gsap.fromTo(card, {

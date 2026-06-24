@@ -6,8 +6,6 @@ import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
-
-
 /**
  * Apply scroll-driven transition effects using CSS filters (GPU-accelerated)
  * and a lightweight overlay canvas for the scan line + particles.
@@ -31,12 +29,10 @@ function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) 
 
   // ─── Continuous mapping for CSS Filters ───
   if (p < 0.25) {
-    // 0.00 -> 0.25: Edge scan (desaturate, contrast bump)
     const phaseP = p / 0.25;
     saturate = lerp(1, 0.6, phaseP);
     contrast = lerp(1, 1.1, phaseP);
   } else if (p < 0.35) {
-    // 0.25 -> 0.35: Negative flash spike. Peak at 0.30
     saturate = 0.6;
     const phaseP = (p - 0.25) / 0.10;
     const bell = Math.sin(phaseP * Math.PI);
@@ -44,15 +40,13 @@ function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) 
     brightness = 1 + bell * 0.8;
     contrast = 1.1 + bell * 0.3;
   } else if (p < 0.55) {
-    // 0.35 -> 0.55: Fracture/Dim
     const phaseP = (p - 0.35) / 0.20;
-    const eased = phaseP * phaseP; // ease-in
+    const eased = phaseP * phaseP;
     brightness = lerp(1, 0.3, eased);
     blur = lerp(0, 4, eased);
     saturate = lerp(0.6, 0.2, eased);
     contrast = 1.1;
   } else if (p < 0.75) {
-    // 0.55 -> 0.75: Bloom burst
     const phaseP = (p - 0.55) / 0.20;
     const bell = Math.sin(phaseP * Math.PI);
     const baseBrightness = lerp(0.3, 0.8, phaseP);
@@ -61,9 +55,8 @@ function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) 
     saturate = lerp(0.2, 0.8, phaseP);
     contrast = lerp(1.1, 1.0, phaseP);
   } else {
-    // 0.75 -> 1.00: Reassembly
     const phaseP = (p - 0.75) / 0.25;
-    const eased = phaseP * phaseP * (3 - 2 * phaseP); // smoothstep
+    const eased = phaseP * phaseP * (3 - 2 * phaseP);
     brightness = lerp(0.8, 1.02, eased);
     contrast = lerp(1.0, 1.05, eased);
     saturate = lerp(0.8, 1.0, eased);
@@ -100,7 +93,7 @@ function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) 
 
   // ─── OVERLAY: Particle dust (0.35 -> 1.0) ───
   if (p > 0.35) {
-    const pPhase = (p - 0.35) / 0.65; // 0 to 1 over the remaining time
+    const pPhase = (p - 0.35) / 0.65;
     const bell = Math.sin(pPhase * Math.PI); 
 
     overlayCtx.save();
@@ -161,72 +154,7 @@ function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) 
   }
 }
 
-/* ═══════════════════════════════════════════════════════════
-   HERO — LITE MODE (static poster, immediate text)
-   ═══════════════════════════════════════════════════════════ */
-function HeroLite() {
-  return (
-    <section id="hero" data-scene="hero">
-      <div className="hero-sticky-container">
-        <div className="hero-canvas-container">
-          {/* Static poster — loads instantly, no 118-frame sequence */}
-          <img
-            src="/assets/sequence/frame_0001.webp"
-            alt="Hero visual"
-            className="hero-canvas"
-            style={{
-              width: '100vw',
-              height: '100vh',
-              objectFit: 'cover',
-              display: 'block',
-            }}
-            fetchPriority="high"
-          />
-          <div className="hero-gradient-bg" aria-hidden="true" style={{ opacity: 0.15 }}>
-            <div className="hero-noise-overlay" />
-          </div>
-        </div>
-
-        <div className="hero-ui-layer">
-          <div className="hero-content">
-            <p className="hero-eyebrow" style={{ opacity: 1, textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-              Modern AI Agency
-            </p>
-
-            <h1 className="hero-headline">
-              {['A', 'Peaceful', 'Ascension.'].map((word, i) => (
-                <span className="hero-word-wrap" key={i} style={{ opacity: 1 }}>
-                  <span className="hero-word" style={{ textShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>{word}</span>
-                </span>
-              ))}
-            </h1>
-
-            <p className="hero-sub" style={{ opacity: 1, textShadow: '0 4px 12px rgba(0,0,0,0.8)' }}>
-              Transforming the world through cinematic <br />
-              storytelling and intelligent design.
-            </p>
-
-            <div className="hero-actions" style={{ opacity: 1 }}>
-              <a href="#contact" className="btn-primary magnetic">
-                Explore the Future <span className="btn-arrow">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </span>
-              </a>
-              <a href="#work" className="btn-ghost magnetic">
-                <span style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>Discover More</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════
-   HERO — FULL MODE (118-frame canvas, scroll-scrub, exit FX)
-   ═══════════════════════════════════════════════════════════ */
-function HeroFull() {
+export default function Hero() {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
   const overlayCanvasRef = useRef(null);
@@ -239,9 +167,9 @@ function HeroFull() {
   const scrollHintRef = useRef(null);
   const currentFrameRef = useRef(0);
   const [loaded, setLoaded] = useState(false);
-  const totalFrames = 118;
 
-  // Where the frame sequence ends and exit transition begins (0→1 of scroll)
+  // Mobile optimization: Cap preloaded frames to 30 on mobile/lite mode, 118 on desktop
+  const totalFrames = isLite ? 30 : 118;
   const EXIT_START = 0.78;
 
   // ─── RENDER FRAME ───
@@ -267,13 +195,44 @@ function HeroFull() {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.imageSmoothingEnabled = true;
-    context.imageSmoothingQuality = 'high';
+    context.imageSmoothingQuality = isLite ? 'medium' : 'high';
     context.drawImage(img, ox, oy, dw, dh);
   }, []);
 
   // ─── DEFERRED PRELOAD FRAMES (after first paint) ───
   useEffect(() => {
-    // Defer heavy preload to after first paint using requestIdleCallback
+    // 1. Load and render first frame immediately on mount to prevent blank canvas
+    const firstImg = new Image();
+    firstImg.src = '/assets/sequence/frame_0001.webp';
+    firstImg.onload = () => {
+      if (imagesRef.current.length === 0) {
+        imagesRef.current[0] = firstImg;
+      }
+      const canvas = canvasRef.current;
+      const context = canvas?.getContext('2d');
+      if (canvas && context && currentFrameRef.current === 0) {
+        const dpr = Math.min(window.devicePixelRatio || 1, isLite ? 1.5 : 2);
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+
+        const imgRatio = firstImg.width / firstImg.height;
+        const canvasRatio = canvas.width / canvas.height;
+        let dw = canvas.width, dh = canvas.height, ox = 0, oy = 0;
+        if (imgRatio > canvasRatio) {
+          dw = canvas.height * imgRatio;
+          ox = (canvas.width - dw) / 2;
+        } else {
+          dh = canvas.width / imgRatio;
+          oy = (canvas.height - dh) / 2;
+        }
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.drawImage(firstImg, ox, oy, dw, dh);
+      }
+    };
+
+    // 2. Preload remaining frames
     const startPreload = () => {
       let loadedCount = 0;
       const images = [];
@@ -283,9 +242,19 @@ function HeroFull() {
         if (loadedCount === totalFrames) setLoaded(true);
       };
 
+      const frameStep = isLite ? Math.ceil(118 / totalFrames) : 1;
+
       for (let i = 0; i < totalFrames; i++) {
+        // Reuse first frame if already loaded
+        if (i === 0 && imagesRef.current[0]) {
+          images.push(imagesRef.current[0]);
+          handleFrameLoad();
+          continue;
+        }
         const img = new Image();
-        const frameNum = String(i + 1).padStart(4, '0');
+        const originalFrameNum = isLite ? (i * frameStep + 1) : (i + 1);
+        const clampedFrameNum = Math.min(originalFrameNum, 118);
+        const frameNum = String(clampedFrameNum).padStart(4, '0');
         img.src = `/assets/sequence/frame_${frameNum}.webp`;
         img.onload = handleFrameLoad;
         img.onerror = () => {
@@ -297,12 +266,10 @@ function HeroFull() {
       imagesRef.current = images;
     };
 
-    // Use requestIdleCallback where available, else fall back to after 'load'
     if ('requestIdleCallback' in window) {
       const id = requestIdleCallback(startPreload, { timeout: 3000 });
       return () => cancelIdleCallback(id);
     } else {
-      // Fallback: wait for page load + small delay
       const onLoad = () => setTimeout(startPreload, 100);
       if (document.readyState === 'complete') {
         const timer = setTimeout(startPreload, 100);
@@ -312,7 +279,47 @@ function HeroFull() {
         return () => window.removeEventListener('load', onLoad);
       }
     }
-  }, []);
+  }, [totalFrames]);
+
+  // ─── MOBILE ENTRANCE ANIMATIONS (Immediate & Preload Auto-play) ───
+  useEffect(() => {
+    if (!isLite) return;
+
+    // Fade in text immediately on mount so the screen is never blank
+    const tl = gsap.timeline({
+      defaults: { duration: 0.9, ease: 'power3.out' }
+    });
+
+    tl.fromTo(eyebrowRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0 }, 0.1);
+    
+    const words = headlineRef.current?.querySelectorAll('.hero-word-wrap') || [];
+    if (words.length > 0) {
+      tl.fromTo(words, 
+        { opacity: 0, y: 20 }, 
+        { opacity: 1, y: 0, stagger: 0.08 }, 
+        0.2
+      );
+    }
+    
+    tl.fromTo(subRef.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0 }, 0.5);
+    tl.fromTo(actionsRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0 }, 0.7);
+    tl.fromTo(scrollHintRef.current, { opacity: 0 }, { opacity: 1 }, 1.0);
+  }, [isLite]);
+
+  useEffect(() => {
+    if (!isLite || !loaded) return;
+
+    // Play the 3D model entrance rotation spin once the frames are ready in memory
+    const animObj = { frame: 0 };
+    gsap.to(animObj, {
+      frame: totalFrames - 1,
+      duration: 1.6,
+      ease: 'power2.out',
+      onUpdate: () => {
+        renderFrame(Math.round(animObj.frame));
+      }
+    });
+  }, [loaded, isLite, totalFrames, renderFrame]);
 
   // ─── SCROLL ANIMATION + EXIT TRANSITION ───
   useEffect(() => {
@@ -320,13 +327,18 @@ function HeroFull() {
 
     const canvas = canvasRef.current;
     const overlay = overlayCanvasRef.current;
-    const context = canvas.getContext('2d', { willReadFrequently: true });
+    const context = canvas.getContext('2d', { willReadFrequently: isLite });
     contextRef.current = context;
     const overlayCtx = overlay?.getContext('2d');
 
-    // ─── CANVAS SIZING (DPR capped at 2) ───
+    // ─── CANVAS SIZING (Ignore mobile height-only changes to prevent scroll-jank!) ───
+    let lastWidth = window.innerWidth;
     const resizeCanvas = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      if (isLite && window.innerWidth === lastWidth) return;
+      lastWidth = window.innerWidth;
+
+      const maxDpr = isLite ? 1.5 : 2;
+      const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = window.innerWidth + 'px';
@@ -351,21 +363,26 @@ function HeroFull() {
       return () => window.removeEventListener('resize', resizeCanvas);
     }
 
+    if (isLite) {
+      // Size canvas and listen to resize on mobile, but do NOT run pinning/ScrollTrigger
+      return () => {
+        window.removeEventListener('resize', resizeCanvas);
+      };
+    }
+
     // ─── SINGLE UNIFIED SCROLL TRIGGER ───
     const ctx = gsap.context(() => {
-
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top top',
-        end: '+=180%',   // Smooth pinning duration (1.8x viewport height)
+        end: isLite ? '+=120%' : '+=180%',   // Shorter scroll pin on mobile for app-like clean flow
         pin: true,
-        scrub: 1.2,
+        scrub: isLite ? 0.8 : 1.2,           // Snappier response on mobile
         anticipatePin: 1,
         onUpdate: (self) => {
           const progress = self.progress;
 
           // ═══ FRAME SEQUENCE (0 → EXIT_START) ═══
-          // Map scroll 0→EXIT_START to full frame range
           const frameProgress = Math.min(1, progress / EXIT_START);
           const frame = Math.round(frameProgress * (totalFrames - 1));
           currentFrameRef.current = frame;
@@ -406,30 +423,37 @@ function HeroFull() {
           }
 
           // ═══ EXIT TRANSITION (EXIT_START → 1.0) ═══
-          if (progress > EXIT_START && overlayCtx) {
+          if (progress > EXIT_START) {
             const exitProgress = (progress - EXIT_START) / (1 - EXIT_START);
 
-            // Show overlay
-            overlay.style.opacity = '1';
-
-            // Fade out UI layer elements during exit
-            const textFade = Math.max(0, 1 - exitProgress * 2.5);
-            if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: textFade });
-            if (headlineRef.current) gsap.set(headlineRef.current, { opacity: textFade });
-            if (subRef.current) gsap.set(subRef.current, { opacity: textFade });
-            if (actionsRef.current) gsap.set(actionsRef.current, { opacity: textFade });
-
-            // Apply the scroll-driven cinematic transition
-            applyScrollTransition(canvas, overlayCtx, overlay, exitProgress);
-
-            // Smoothly fade out the canvas container at the end of transition to blend with CaseStudies
-            const containerOpacity = Math.max(0, 1 - Math.max(0, (exitProgress - 0.5) / 0.5));
-            const canvasContainer = document.querySelector('.hero-canvas-container');
-            if (canvasContainer) {
-              canvasContainer.style.opacity = containerOpacity;
+            if (isLite) {
+              // Mobile: High-performance opacity fade (no heavy filters or overlay context operations)
+              const canvasContainer = document.querySelector('.hero-canvas-container');
+              if (canvasContainer) {
+                canvasContainer.style.opacity = Math.max(0, 1 - exitProgress * 1.5);
+              }
+              const textFade = Math.max(0, 1 - exitProgress * 2.0);
+              if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: textFade });
+              if (headlineRef.current) gsap.set(headlineRef.current, { opacity: textFade });
+              if (subRef.current) gsap.set(subRef.current, { opacity: textFade });
+              if (actionsRef.current) gsap.set(actionsRef.current, { opacity: textFade });
+            } else {
+              // Desktop: original cinematic effects
+              overlay.style.opacity = '1';
+              const textFade = Math.max(0, 1 - exitProgress * 2.5);
+              if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: textFade });
+              if (headlineRef.current) gsap.set(headlineRef.current, { opacity: textFade });
+              if (subRef.current) gsap.set(subRef.current, { opacity: textFade });
+              if (actionsRef.current) gsap.set(actionsRef.current, { opacity: textFade });
+              applyScrollTransition(canvas, overlayCtx, overlay, exitProgress);
+              const containerOpacity = Math.max(0, 1 - Math.max(0, (exitProgress - 0.5) / 0.5));
+              const canvasContainer = document.querySelector('.hero-canvas-container');
+              if (canvasContainer) {
+                canvasContainer.style.opacity = containerOpacity;
+              }
             }
           } else {
-            // Normal state — no filters, overlay hidden
+            // Reset transition styles
             canvas.style.filter = 'none';
             if (overlay) overlay.style.opacity = '0';
             if (overlayCtx) overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
@@ -441,20 +465,21 @@ function HeroFull() {
         },
       });
 
-      // ─── Camera tilt near end of frame sequence ───
-      gsap.fromTo(canvas, { scale: 1 }, {
-        scale: 1.05,
-        y: '-5vh',
-        ease: 'power2.inOut',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: '60% top',
-          end: '78% top',
-          scrub: 1.8,
-        },
-      });
+      // Camera tilt near end of frame sequence (desktop only for performance)
+      if (!isLite) {
+        gsap.fromTo(canvas, { scale: 1 }, {
+          scale: 1.05,
+          y: '-5vh',
+          ease: 'power2.inOut',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: '60% top',
+            end: '78% top',
+            scrub: 1.8,
+          },
+        });
+      }
 
-      // Force GSAP to recalculate all triggers on the page now that this pin exists
       setTimeout(() => {
         ScrollTrigger.sort();
         ScrollTrigger.refresh();
@@ -466,11 +491,11 @@ function HeroFull() {
       window.removeEventListener('resize', resizeCanvas);
       ctx.revert();
     };
-  }, [loaded, renderFrame]);
+  }, [loaded, renderFrame, totalFrames]);
 
   return (
     <section id="hero" ref={sectionRef} data-scene="hero">
-      {!loaded && (
+      {!loaded && !isLite && (
         <div className="hero-loading-overlay">
           <span>Loading Sequence...</span>
         </div>
@@ -479,12 +504,14 @@ function HeroFull() {
       <div className="hero-sticky-container">
         <div className="hero-canvas-container">
           <canvas ref={canvasRef} className="hero-canvas" />
-          {/* FX Overlay — hidden by default, shown only during exit transition */}
-          <canvas
-            ref={overlayCanvasRef}
-            className="hero-fx-canvas"
-            aria-hidden="true"
-          />
+          {/* FX Overlay — hidden by default, desktop only */}
+          {!isLite && (
+            <canvas
+              ref={overlayCanvasRef}
+              className="hero-fx-canvas"
+              aria-hidden="true"
+            />
+          )}
           <div className="hero-gradient-bg" aria-hidden="true" style={{ opacity: 0.15 }}>
             <div className="hero-noise-overlay" />
           </div>
@@ -529,11 +556,4 @@ function HeroFull() {
       </div>
     </section>
   );
-}
-
-/* ═══════════════════════════════════════════════════════════
-   HERO — Route to lite or full based on device capability
-   ═══════════════════════════════════════════════════════════ */
-export default function Hero() {
-  return isLite ? <HeroLite /> : <HeroFull />;
 }

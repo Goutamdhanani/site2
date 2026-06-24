@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { gsap } from 'gsap';
+import { isLite } from '../utils/device';
 
 export default function Preloader({ onComplete }) {
   const ref = useRef(null);
@@ -30,7 +31,7 @@ export default function Preloader({ onComplete }) {
     const fallbackTimer = setTimeout(() => {
       console.warn('Preloader fallback complete');
       finish();
-    }, 4500);
+    }, isLite ? 1500 : 4500);
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -39,6 +40,10 @@ export default function Preloader({ onComplete }) {
           finish();
         },
       });
+
+      if (isLite) {
+        tl.timeScale(3.2); // Speed up timeline on mobile for instant feel
+      }
 
       // ─── TEXT TIMELINE ───
       // We step through messages to tell a psychological story
