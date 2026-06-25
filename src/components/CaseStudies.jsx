@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { EASE, DUR, STAGGER, prefersReducedMotion } from '../utils/motion';
@@ -8,45 +8,45 @@ gsap.registerPlugin(ScrollTrigger);
 
 const projects = [
   {
-    title: 'LuxeThread',
+    title: 'LunaCart',
     category: 'E-Commerce',
     year: '2026',
-    description: 'A high-converting luxury fashion platform that increased AOV by 180% through personalized AI recommendations.',
-    metric: '+180%',
-    metricLabel: 'AOV Increase',
+    description: 'Luxury fashion commerce experience built to increase conversion and average order value.',
+    metric: '+320%',
+    metricLabel: 'Revenue Growth',
     color: 'var(--accent-ember)',
     image: '/assets/projects/project-1.png',
     tags: ['E-COMMERCE', 'NEXT.JS', 'TAILWIND', 'STRIPE', 'AI AGENT', 'MOTION', 'UI/UX'],
   },
   {
-    title: 'VaultPay',
-    category: 'Fintech',
+    title: 'DataFlow',
+    category: 'Analytics Platform',
     year: '2025',
-    description: 'Enterprise banking dashboard serving 50K+ daily active users with real-time analytics.',
-    metric: '50K+',
-    metricLabel: 'Daily Users',
+    description: 'Enterprise analytics platform redesigned for clarity, retention, and performance.',
+    metric: '-45%',
+    metricLabel: 'Churn Reduction',
     color: 'var(--accent-amber)',
     image: '/assets/projects/project-2.png',
     tags: ['FINTECH', 'REACT', 'GSAP', 'REDUX', 'CYBERSECURITY', 'CHARTS', 'UI/UX'],
   },
   {
-    title: 'BiteBuddy',
-    category: 'Mobile App',
+    title: 'Payze',
+    category: 'Fintech MVP',
     year: '2026',
-    description: 'Food delivery platform handling 100K+ orders per day across 3 countries.',
-    metric: '100K+',
-    metricLabel: 'Daily Orders',
+    description: 'Fintech MVP built to look trustworthy, launch fast, and support fundraising.',
+    metric: '$2.4M',
+    metricLabel: 'Seed Funding',
     color: 'var(--accent-lacquer)',
     image: '/assets/projects/project-3.png',
     tags: ['MOBILE APP', 'EXPO', 'NODE.JS', 'GOOGLE MAPS', 'REDIS', 'MOTION', 'UI/UX'],
   },
   {
-    title: 'NestHub',
-    category: 'Real Estate',
+    title: 'VoyageAI',
+    category: 'Automation Platform',
     year: '2025',
-    description: 'AI-powered property matching platform with 3D virtual tours and smart valuations.',
-    metric: '$24M',
-    metricLabel: 'Properties Sold',
+    description: 'Automation platform for enterprise workflows and LLM execution.',
+    metric: '80%',
+    metricLabel: 'Manual Work Removed',
     color: 'var(--accent-gold)',
     image: '/assets/projects/project-4.png',
     tags: ['REAL ESTATE', 'FASTAPI', 'POSTGRES', '3D TOURS', 'AI MODEL', 'REACT', 'UI/UX'],
@@ -158,7 +158,7 @@ export default function CaseStudies() {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (prefersReducedMotion()) return;
 
     const mm = gsap.matchMedia();
@@ -179,7 +179,7 @@ export default function CaseStudies() {
           scrub: 1.5,
           anticipatePin: 1,
           snap: {
-            snapTo: 1 / (projects.length - 1),
+            snapTo: 1 / projects.length,
             duration: { min: 0.3, max: 0.6 },
             ease: 'power2.inOut',
           },
@@ -383,13 +383,47 @@ export default function CaseStudies() {
   return (
     <section id="work" ref={sectionRef} data-scene="work" className="cs-section">
       <div ref={trackRef} className="cs-track">
+        {/* Title Slide */}
+        <article
+          className="cs-card cs-card--title"
+          style={{
+            '--card-accent': 'var(--accent-ember)',
+            zIndex: 1,
+          }}
+        >
+          <div className="cs-card__bg">
+            <div
+              className="cs-card__visual"
+              style={{
+                background: `radial-gradient(ellipse at 30% 40%, var(--accent-ember)10, transparent 65%)`,
+              }}
+            >
+              <div className="cs-card__grid-lines" />
+            </div>
+          </div>
+
+          <div className="cs-card__layout" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '6vw', height: '100%' }}>
+            <div className="cs-card__content" style={{ opacity: 1, transform: 'none', maxWidth: '600px' }}>
+              <p className="eyebrow" style={{ color: 'var(--accent-ember)', letterSpacing: '0.25em', marginBottom: '20px' }}>
+                Selected Work
+              </p>
+              <h2 className="display-lg" style={{ fontSize: 'var(--text-display-lg)', fontWeight: 'var(--weight-black)', color: 'var(--text-primary)', lineHeight: 1.15, marginBottom: '24px' }}>
+                Real projects with real results.
+              </h2>
+              <p className="body-lg" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>
+                Not fake “concept universes.”
+              </p>
+            </div>
+          </div>
+        </article>
+
         {projects.map((project, i) => (
           <article
             key={i}
             className="cs-card"
             style={{
               '--card-accent': project.color,
-              zIndex: i + 1, // Stack cards correctly on mobile
+              zIndex: i + 2, // Stack cards correctly on mobile
             }}
             onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
             onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}

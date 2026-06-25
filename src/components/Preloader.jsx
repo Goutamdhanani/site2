@@ -5,7 +5,7 @@ import { isLite } from '../utils/device';
 export default function Preloader({ onComplete }) {
   const ref = useRef(null);
   const completedRef = useRef(false);
-  const [statusText, setStatusText] = useState('ESTABLISHING SECURE COMMS...');
+  const [statusText, setStatusText] = useState('LOADING SYSTEM...');
 
   const finish = useCallback(() => {
     if (completedRef.current) return;
@@ -46,11 +46,10 @@ export default function Preloader({ onComplete }) {
       }
 
       // ─── TEXT TIMELINE ───
-      // We step through messages to tell a psychological story
       const messages = [
-        'CALIBRATING OPTICAL MESH...',
-        'GRAVITY WAVES STABILIZED...',
-        'PREPARING ASCENSION SITE...'
+        'LOADING SECURE SYSTEM...',
+        'OPTIMIZING PERFORMANCE...',
+        'PREPARING APPLICATION...'
       ];
 
       messages.forEach((msg, idx) => {
@@ -90,68 +89,67 @@ export default function Preloader({ onComplete }) {
           ease: 'power3.out',
         }, 0.1)
 
-        // 3. Keep the triangles rotating
-        .fromTo('.crest-triangle-1', {
-          transformOrigin: '50% 50%',
-          rotate: 0
-        }, {
-          rotate: 360,
-          duration: 3.5,
-          ease: 'none',
-          repeat: -1
-        }, 0)
+      // 3. Keep the triangles rotating independently of the timeline so it can finish
+      gsap.fromTo('.crest-triangle-1', {
+        transformOrigin: '50% 50%',
+        rotate: 0
+      }, {
+        rotate: 360,
+        duration: 3.5,
+        ease: 'none',
+        repeat: -1
+      });
+      gsap.fromTo('.crest-triangle-2', {
+        transformOrigin: '50% 50%',
+        rotate: 0
+      }, {
+        rotate: -360,
+        duration: 4.5,
+        ease: 'none',
+        repeat: -1
+      });
 
-        .fromTo('.crest-triangle-2', {
-          transformOrigin: '50% 50%',
-          rotate: 0
-        }, {
-          rotate: -360,
-          duration: 4.5,
-          ease: 'none',
-          repeat: -1
-        }, 0)
+      // 4. Progress rail reveal
+      tl.fromTo('.preloader-progress-bar', {
+        width: '0%',
+      }, {
+        width: '100%',
+        duration: 2.2,
+        ease: 'power1.inOut',
+      }, 0.2)
 
-        // 4. Progress rail reveal
-        .fromTo('.preloader-progress-bar', {
-          width: '0%',
-        }, {
-          width: '100%',
-          duration: 2.2,
-          ease: 'power1.inOut',
-        }, 0.2)
+      // 5. Expand the core and start reveal mask
+      .to('.preloader-scenic-nebula', {
+        scale: 1.5,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.in',
+      }, 2.1)
 
-        // 5. Expand the core and start reveal mask
-        .to('.preloader-scenic-nebula', {
-          scale: 1.5,
-          opacity: 0,
-          duration: 0.6,
-          ease: 'power2.in',
-        }, 2.1)
+      .to('.preloader-logo-wrapper', {
+        scale: 1.3,
+        opacity: 0,
+        filter: 'blur(8px)',
+        duration: 0.4,
+        ease: 'power2.in',
+      }, 2.2)
 
-        .to('.preloader-logo-wrapper', {
-          scale: 1.3,
-          opacity: 0,
-          filter: 'blur(8px)',
-          duration: 0.4,
-          ease: 'power2.in',
-        }, 2.2)
+      .to('.preloader-status-feed, .preloader-progress-rail', {
+        opacity: 0,
+        y: 10,
+        duration: 0.3,
+        ease: 'power2.in',
+      }, 2.2)
 
-        .to('.preloader-status-feed, .preloader-progress-rail', {
-          opacity: 0,
-          y: 10,
-          duration: 0.3,
-          ease: 'power2.in',
-        }, 2.2)
+      // Stargate portals reveal expand
+      .to('.preloader-mask-circle', {
+        scale: 55,
+        duration: 0.9,
+        ease: 'power4.inOut',
+      }, 2.3)
 
-        // Stargate portals reveal expand
-        .to('.preloader-mask-circle', {
-          scale: 55,
-          duration: 0.9,
-          ease: 'power4.inOut',
-        }, 2.3)
-
-        // Fade overlay
-        .to('.preloader-overlay', {
+      // Fade overlay
+      .to('.preloader-overlay', {
           opacity: 0,
           duration: 0.35,
           ease: 'power2.out',

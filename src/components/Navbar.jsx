@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
 import { isLite } from '../utils/device';
 
-export default function Navbar() {
+export default function Navbar({ currentView, onViewChange }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const navRef = useRef(null);
@@ -42,21 +42,29 @@ export default function Navbar() {
     <>
       <nav id="navbar" ref={navRef} className={scrolled ? 'scrolled' : ''} data-hero-nav>
         <div className="nav-container">
-          <a href="/" className="nav-logo">
+          <a href="#home" onClick={(e) => { e.preventDefault(); onViewChange('home'); }} className="nav-logo">
             <span className="nav-logo-mark">OW</span>
             <span className="nav-logo-word">oddwebs</span>
           </a>
 
           <ul className="nav-links">
-            <li><a href="#work" className="nav-link">Work</a></li>
-            <li><a href="#services" className="nav-link">Services</a></li>
-            <li><a href="#about" className="nav-link">About</a></li>
-            <li><a href="#process" className="nav-link">Process</a></li>
-            <li><a href="#testimonials" className="nav-link">Insights</a></li>
+            <li>
+              <a 
+                href="#portfolio" 
+                className={`nav-link ${currentView === 'portfolio' ? 'active' : ''}`}
+                onClick={(e) => { e.preventDefault(); onViewChange('portfolio'); }}
+              >
+                Our Work
+              </a>
+            </li>
+            <li><a href="#services" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('home', '#services'); }}>Services</a></li>
+            <li><a href="#about" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('home', '#about'); }}>Results</a></li>
+            <li><a href="#process" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('home', '#process'); }}>Process</a></li>
+            <li><a href="#testimonials" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('home', '#testimonials'); }}>About</a></li>
           </ul>
 
-          <a href="#contact" className="nav-cta magnetic">
-            Book a Call <span className="nav-cta-arrow">↗</span>
+          <a href="#demo" onClick={(e) => { e.preventDefault(); onViewChange('demo'); }} className="nav-cta magnetic">
+            Schedule Free Demo <span className="nav-cta-arrow">↗</span>
           </a>
 
           <button
@@ -71,12 +79,12 @@ export default function Navbar() {
       </nav>
 
       <div className={`mobile-menu ${menuOpen ? 'active' : ''}`}>
-        <a href="#work" onClick={closeMenu}>Work</a>
-        <a href="#services" onClick={closeMenu}>Services</a>
-        <a href="#about" onClick={closeMenu}>About</a>
-        <a href="#process" onClick={closeMenu}>Process</a>
-        <a href="#testimonials" onClick={closeMenu}>Insights</a>
-        <a href="#contact" onClick={closeMenu}>Contact</a>
+        <a href="#portfolio" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('portfolio'); }}>Our Work</a>
+        <a href="#services" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#services'); }}>Services</a>
+        <a href="#about" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#about'); }}>Results</a>
+        <a href="#process" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#process'); }}>Process</a>
+        <a href="#testimonials" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#testimonials'); }}>About</a>
+        <a href="#demo" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('demo'); }}>Schedule Free Demo</a>
       </div>
     </>
   );

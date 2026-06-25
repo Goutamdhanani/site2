@@ -5,7 +5,7 @@ import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Footer() {
+export default function Footer({ currentView, onViewChange }) {
   const footerRef = useRef(null);
 
   useEffect(() => {
@@ -80,7 +80,7 @@ export default function Footer() {
             <span className="nav-logo-word">oddwebs</span>
           </div>
           <p className="footer-tagline">
-            Building digital powerhouses<br />for founders and brands worldwide.
+            Building websites, apps, and AI systems that help founders grow.
           </p>
         </div>
 
@@ -88,36 +88,33 @@ export default function Footer() {
           <div className="footer-col">
             <p className="footer-col-label">Services</p>
             <ul>
-              <li><a href="#">Web Development</a></li>
-              <li><a href="#">Mobile Apps</a></li>
-              <li><a href="#">AI &amp; Automation</a></li>
-              <li><a href="#">UI/UX Design</a></li>
-              <li><a href="#">Growth &amp; SEO</a></li>
+              <li><a href="#services" onClick={(e) => { e.preventDefault(); onViewChange('home', '#services'); }}>Web Development</a></li>
+              <li><a href="#services" onClick={(e) => { e.preventDefault(); onViewChange('home', '#services'); }}>Mobile Apps</a></li>
+              <li><a href="#services" onClick={(e) => { e.preventDefault(); onViewChange('home', '#services'); }}>AI &amp; Automation</a></li>
+              <li><a href="#services" onClick={(e) => { e.preventDefault(); onViewChange('home', '#services'); }}>UI/UX Design</a></li>
+              <li><a href="#services" onClick={(e) => { e.preventDefault(); onViewChange('home', '#services'); }}>SEO &amp; Performance</a></li>
             </ul>
           </div>
           <div className="footer-col">
             <p className="footer-col-label">Company</p>
             <ul>
-              <li><a href="#">About</a></li>
-              <li><a href="#">Our Work</a></li>
-              <li><a href="#">Process</a></li>
-              <li><a href="#">Insights</a></li>
-              <li><a href="#">Careers</a></li>
+              <li><a href="#portfolio" onClick={(e) => { e.preventDefault(); onViewChange('portfolio'); }}>Work</a></li>
+              <li><a href="#process" onClick={(e) => { e.preventDefault(); onViewChange('home', '#process'); }}>Process</a></li>
+              <li><a href="#testimonials" onClick={(e) => { e.preventDefault(); onViewChange('home', '#testimonials'); }}>About</a></li>
+              <li><a href="#demo" onClick={(e) => { e.preventDefault(); onViewChange('demo'); }}>Schedule Free Demo</a></li>
             </ul>
           </div>
           <div className="footer-col">
-            <p className="footer-col-label">Connect</p>
+            <p className="footer-col-label">Contact</p>
             <ul>
-              <li><a href="https://instagram.com/oddwebs" target="_blank" rel="noopener noreferrer">@oddwebs</a></li>
-              <li><a href="https://www.oddwebs.com" target="_blank" rel="noopener noreferrer">www.oddwebs.com</a></li>
               <li><a href="mailto:hello@oddwebs.com">hello@oddwebs.com</a></li>
+              <li><a href="https://instagram.com/oddwebs" target="_blank" rel="noopener noreferrer">@oddwebs</a></li>
             </ul>
           </div>
         </div>
 
         <div className="footer-bottom">
           <p>© 2025 oddwebs. All rights reserved.</p>
-          <p>Privacy Policy · Terms</p>
         </div>
       </div>
     </footer>

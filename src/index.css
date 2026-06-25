@@ -7006,3 +7006,1374 @@ html, body, .cinematic-wrapper {
     padding-right: var(--space-md) !important;
   }
 }
+
+/* ──────────────────────────────────────────────────────────
+   Dedicated 3D Our Work Portfolio Page Styles
+   ────────────────────────────────────────────────────────── */
+.portfolio-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  padding: 120px 0 80px;
+  overflow: hidden;
+  background: var(--bg-primary);
+  z-index: 2;
+}
+
+.portfolio-bg-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70vw;
+  height: 70vw;
+  background: radial-gradient(circle, var(--active-color) 0%, transparent 60%);
+  opacity: 0.15;
+  filter: blur(140px);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 1.0s ease-in-out;
+}
+
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+  gap: 30px;
+  position: relative;
+  z-index: 3;
+}
+
+.pt-header-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.pt-title {
+  font-weight: var(--weight-black);
+  margin-bottom: 12px;
+  line-height: 1.0;
+}
+
+.pt-subtitle {
+  color: var(--text-secondary);
+  max-width: 52ch;
+  line-height: 1.5;
+}
+
+.pt-controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.pt-btn-orbit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  padding: 10px 18px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.35s ease;
+}
+
+.pt-btn-orbit:hover, .pt-btn-orbit.active {
+  background: color-mix(in srgb, var(--btn-accent) 15%, transparent);
+  border-color: var(--btn-accent);
+  box-shadow: 0 0 25px color-mix(in srgb, var(--btn-accent) 30%, transparent);
+}
+
+.pt-btn-orbit .orbit-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  display: inline-block;
+  transition: background 0.35s ease;
+}
+
+.pt-btn-orbit.active .orbit-dot {
+  background: var(--btn-accent);
+  box-shadow: 0 0 8px var(--btn-accent);
+  animation: pulse-node 1.5s infinite;
+}
+
+/* 3D Stage Viewport */
+.pt-viewport-frame {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  border: 1px solid var(--border);
+  background: radial-gradient(circle at center, rgba(255,255,255,0.01) 0%, transparent 85%);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  margin-bottom: 40px;
+  z-index: 2;
+}
+
+.pt-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+}
+
+.pt-viewport.grabbing {
+  cursor: grabbing;
+}
+
+.pt-stage {
+  position: relative;
+  width: 320px;
+  height: 380px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.pt-card-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 320px;
+  height: 380px;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  backface-visibility: visible;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease, opacity 0.5s ease;
+  user-select: none;
+  opacity: 0.25;
+}
+
+.pt-card-face.active {
+  opacity: 1;
+  border-color: var(--card-theme);
+  box-shadow: 0 15px 45px rgba(0,0,0,0.7), 0 0 35px color-mix(in srgb, var(--card-theme) 18%, transparent);
+}
+
+.pt-card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,255,255,0.06), transparent 50%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.pt-card-face:hover .pt-card-glow {
+  opacity: 1;
+}
+
+.pt-card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.pt-card-img-wrap {
+  width: 100%;
+  aspect-ratio: 16/10;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.pt-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  filter: saturate(0.85);
+  transition: filter 0.5s ease;
+}
+
+.pt-card-face.active:hover .pt-card-img {
+  filter: saturate(1.1);
+}
+
+.pt-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.pt-card-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.pt-card-metric-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.pt-badge-val {
+  font-family: var(--font-display);
+  font-weight: var(--weight-black);
+  color: var(--card-theme);
+  font-size: 16px;
+  line-height: 1.0;
+}
+
+.pt-badge-lbl {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 3px;
+}
+
+/* Floor Grid */
+.pt-stage-grid {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 600px;
+  height: 600px;
+  margin-left: -300px;
+  margin-top: -300px;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  transform: rotateX(90deg) translateZ(190px);
+  mask-image: radial-gradient(circle, black, transparent 70%);
+  -webkit-mask-image: radial-gradient(circle, black, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Arrow controls */
+.pt-arrow-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--border-light);
+  background: rgba(11, 7, 5, 0.65);
+  backdrop-filter: blur(12px);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 5;
+  transition: all 0.35s ease;
+}
+
+.pt-arrow-btn:hover {
+  color: var(--text-primary);
+  border-color: var(--text-primary);
+  box-shadow: 0 0 15px rgba(255,255,255,0.1);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.pt-arrow-prev { left: 24px; }
+.pt-arrow-next { right: 24px; }
+
+/* Dynamic details overlay panel */
+.pt-details-panel {
+  position: relative;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  z-index: 3;
+  transition: border-color 0.8s var(--ease-out-expo);
+}
+
+.pt-details-panel::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--active-border);
+  border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+  transition: background 0.8s var(--ease-out-expo);
+}
+
+.pt-details-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.pt-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.pt-label-num {
+  color: var(--active-border);
+  font-weight: var(--weight-bold);
+}
+
+.pt-category {
+  color: var(--text-secondary);
+}
+
+.pt-year {
+  color: var(--text-muted);
+}
+
+.pt-details-title {
+  font-size: clamp(24px, 3.5vw, 40px);
+  font-weight: var(--weight-black);
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+.pt-details-desc {
+  color: var(--text-secondary);
+  line-height: var(--leading-loose);
+  margin-bottom: 28px;
+}
+
+.pt-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pt-tag-chip {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+}
+
+.pt-sidebar-metric-box {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: border-color 0.8s var(--ease-out-expo);
+}
+
+.pt-sidebar-lbl {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.pt-sidebar-val {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: var(--weight-black);
+  line-height: 1.0;
+  margin-bottom: 6px;
+}
+
+.pt-sidebar-lbl-metric {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* Responsiveness overrides for Portfolio 3D page */
+@media (max-width: 900px) {
+  .portfolio-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .pt-details-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .pt-viewport-frame {
+    height: 400px;
+  }
+  .pt-stage {
+    width: 220px;
+    height: 280px;
+  }
+  .pt-card-face {
+    width: 220px;
+    height: 280px;
+  }
+  .pt-card-img-wrap {
+    aspect-ratio: 16/11;
+  }
+  .pt-card-name {
+    font-size: 17px;
+  }
+  .pt-badge-val {
+    font-size: 14px;
+  }
+  .pt-details-panel {
+    padding: 24px;
+  }
+  .pt-arrow-prev { left: 8px; }
+  .pt-arrow-next { right: 8px; }
+}
+
+/* ==========================================================================
+   SCHEDULE FREE DEMO BOOKING FLOW WIZARD
+   ========================================================================== */
+
+.booking-flow-wrapper {
+  position: relative;
+  min-height: 100vh;
+  padding: 140px 0 100px;
+  background-color: var(--bg-primary);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.booking-container {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+.booking-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.booking-header .pt-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-family: var(--font-display);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  margin-top: 12px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--cream) 30%, var(--accent-ember) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.booking-header .pt-subtitle {
+  color: var(--text-secondary);
+  max-width: 540px;
+  margin: 0 auto 32px;
+}
+
+/* Progress rail and bar */
+.booking-progress-rail {
+  width: 100%;
+  max-width: 480px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.booking-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-amber), var(--accent-ember));
+  box-shadow: 0 0 12px var(--glow-ember);
+  transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Step container and content wrapper */
+.bf-step-container {
+  background: rgba(18, 12, 9, 0.45);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 48px;
+  backdrop-filter: blur(30px) saturate(120%);
+  -webkit-backdrop-filter: blur(30px) saturate(120%);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.8),
+    0 0 100px rgba(249, 87, 56, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.bf-step-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  pointer-events: none;
+}
+
+.bf-step-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: var(--weight-bold);
+  margin-bottom: 12px;
+  letter-spacing: var(--tracking-tight);
+}
+
+/* STEP 1: Services selection chips */
+.bf-grid-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.bf-chip-button {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.bf-chip-button::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(249, 87, 56, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.bf-chip-button:hover {
+  border-color: var(--border-hover);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+.bf-chip-button.active {
+  border-color: var(--accent-ember);
+  background: rgba(249, 87, 56, 0.04);
+  box-shadow: 0 0 20px rgba(249, 87, 56, 0.15), inset 0 0 10px rgba(249, 87, 56, 0.05);
+}
+
+.bf-chip-button.active::after {
+  opacity: 1;
+}
+
+.bf-chip-button .chip-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: inline-block;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.bf-chip-button.active .chip-indicator {
+  background: var(--accent-ember);
+  box-shadow: 0 0 8px var(--accent-ember);
+}
+
+/* Actions bar at bottom of step cards */
+.bf-actions-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  margin-top: 24px;
+}
+
+/* Textarea and input elements */
+.bf-input-group {
+  margin-bottom: 24px;
+}
+
+.bf-textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-primary);
+  line-height: 1.6;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+.bf-textarea:focus {
+  outline: none;
+  border-color: var(--accent-ember);
+  box-shadow: 0 0 15px var(--glow-ember-dim);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.bf-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.bf-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.bf-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.bf-input:focus {
+  outline: none;
+  border-color: var(--accent-ember);
+  box-shadow: 0 0 15px var(--glow-ember-dim);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.bf-input.readonly {
+  background: rgba(255, 255, 255, 0.01) !important;
+  color: var(--text-secondary);
+  border-color: var(--border);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.bf-select {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--text-primary);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba%28240, 240, 245, 0.6%29' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 16px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.bf-select:focus {
+  outline: none;
+  border-color: var(--accent-ember);
+  box-shadow: 0 0 15px var(--glow-ember-dim);
+}
+
+.bf-select option {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* STEP 4: Calendar & Slots */
+.bf-calendar-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+
+.bf-inner-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+/* Date card grids */
+.bf-dates-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.bf-date-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  user-select: none;
+}
+
+.bf-date-card:hover {
+  border-color: var(--border-hover);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+.bf-date-card.active {
+  border-color: var(--accent-ember);
+  background: rgba(249, 87, 56, 0.06);
+  box-shadow: 0 0 20px rgba(249, 87, 56, 0.15), inset 0 0 8px rgba(249, 87, 56, 0.05);
+}
+
+.bf-date-weekday {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: var(--tracking-wide);
+  margin-bottom: 6px;
+}
+
+.bf-date-card.active .bf-date-weekday {
+  color: var(--accent-ember);
+}
+
+.bf-date-day {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.bf-date-month {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+/* Slots card grids */
+.bf-slots-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.bf-slot-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.bf-slot-card:hover {
+  border-color: var(--border-hover);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.bf-slot-card.active {
+  border-color: var(--accent-ember);
+  background: rgba(249, 87, 56, 0.06);
+  color: var(--text-primary);
+  box-shadow: 0 0 15px rgba(249, 87, 56, 0.15);
+}
+
+.bf-slots-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+  height: calc(100% - 40px);
+}
+
+/* STEP 5: Success & Glassmorphic Ticket Pass */
+.bf-success-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bf-success-heading .pt-details-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.75rem);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+}
+
+.bf-success-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(249, 87, 56, 0.1);
+  border: 1px solid rgba(249, 87, 56, 0.2);
+  box-shadow: 0 0 30px rgba(249, 87, 56, 0.15);
+}
+
+.bf-success-heading .max-ch {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Glassmorphic ticket card */
+.bf-pass-card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.01));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 32px;
+  margin: 40px auto;
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 
+              0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+              0 0 40px rgba(249, 87, 56, 0.15);
+  overflow: hidden;
+}
+
+/* Ticket side cutout punches */
+.bf-pass-card::before,
+.bf-pass-card::after {
+  content: '';
+  position: absolute;
+  top: 76px; /* align with dashed border */
+  width: 16px;
+  height: 16px;
+  background-color: var(--bg-primary);
+  border-radius: 50%;
+  z-index: 5;
+}
+
+.bf-pass-card::before {
+  left: -8px;
+  box-shadow: inset -1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+.bf-pass-card::after {
+  right: -8px;
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Holographic dynamic sweep effect */
+.bf-pass-holo {
+  position: absolute;
+  inset: -100%;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.03) 30%,
+    rgba(249, 87, 56, 0.08) 40%,
+    rgba(238, 155, 0, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 60%,
+    transparent 70%
+  );
+  pointer-events: none;
+  animation: holo-sweep 8s linear infinite;
+  mix-blend-mode: color-dodge;
+  opacity: 0.7;
+}
+
+@keyframes holo-sweep {
+  0% {
+    transform: translate3d(-30%, -30%, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(30%, 30%, 0) rotate(36deg);
+  }
+}
+
+/* HUD corners */
+.hud-corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: rgba(255, 255, 255, 0.2);
+  border-style: solid;
+  pointer-events: none;
+}
+
+.hud-corner.tl { top: 12px; left: 12px; border-width: 1px 0 0 1px; }
+.hud-corner.tr { top: 12px; right: 12px; border-width: 1px 1px 0 0; }
+.hud-corner.bl { bottom: 12px; left: 12px; border-width: 0 0 1px 1px; }
+.hud-corner.br { bottom: 12px; right: 12px; border-width: 0 1px 1px 0; }
+
+.bf-pass-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-bottom: 16px;
+}
+
+.bf-pass-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bf-pass-logo .logo-mark {
+  font-family: var(--font-display);
+  font-weight: var(--weight-black);
+  font-size: 14px;
+  color: var(--cream);
+  background: var(--accent-ember);
+  padding: 4px 6px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.bf-pass-logo .logo-name {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: 16px;
+  letter-spacing: var(--tracking-tight);
+}
+
+.bf-pass-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--accent-amber);
+  background: rgba(238, 155, 0, 0.1);
+  border: 1px solid rgba(238, 155, 0, 0.2);
+  padding: 4px 10px;
+  border-radius: 100px;
+  letter-spacing: 0.1em;
+}
+
+.bf-pass-body {
+  position: relative;
+  z-index: 1;
+}
+
+.bf-pass-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.bf-pass-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.bf-pass-col.text-right {
+  align-items: flex-end;
+}
+
+.pass-lbl {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: var(--tracking-wide);
+  margin-bottom: 6px;
+}
+
+.pass-val {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+}
+
+.text-accent-color {
+  color: var(--accent-ember) !important;
+}
+
+.truncate-tz {
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bf-pass-footer {
+  margin-top: 28px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Code styled barcode */
+.bf-barcode {
+  display: flex;
+  align-items: stretch;
+  height: 24px;
+  background: transparent;
+  gap: 2px;
+}
+
+.bf-barcode span {
+  background-color: rgba(240, 240, 245, 0.4);
+  display: block;
+}
+
+.bf-pass-system-ref {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: var(--tracking-wide);
+}
+
+.bf-success-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.section-glow-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--accent-ember) 50%, transparent 100%);
+  opacity: 0.3;
+  z-index: 2;
+}
+
+/* Form Validation feedback styles */
+.bf-error-message {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--accent-ember);
+  margin-top: 6px;
+  text-align: left;
+}
+
+.bf-input.has-error {
+  border-color: var(--accent-ember) !important;
+  box-shadow: 0 0 12px rgba(249, 87, 56, 0.15) !important;
+  background: rgba(249, 87, 56, 0.02) !important;
+}
+
+/* Button contrast fixes for Booking Flow container */
+.booking-flow-wrapper .btn-primary {
+  background-color: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+  border: none !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.booking-flow-wrapper .btn-primary:hover {
+  background-color: var(--text-primary) !important;
+  color: var(--bg-primary) !important;
+  transform: translateY(-2px);
+}
+
+.booking-flow-wrapper .btn-primary:disabled {
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: rgba(255, 255, 255, 0.18) !important;
+  border: 1px solid rgba(255, 255, 255, 0.03) !important;
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  pointer-events: none !important;
+}
+
+.booking-flow-wrapper .btn-primary:disabled::after {
+  display: none !important;
+}
+
+/* Step 4: Beautified Calendar Slots */
+.bf-slots-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bf-slots-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.bf-slots-section-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-wide);
+}
+
+.text-amber-color {
+  color: var(--accent-amber);
+  filter: drop-shadow(0 0 4px rgba(238, 155, 0, 0.3));
+}
+
+.text-ember-color {
+  color: var(--accent-ember);
+  filter: drop-shadow(0 0 4px rgba(249, 87, 56, 0.3));
+}
+
+/* Designing glowing date cards */
+.bf-date-card {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+  position: relative;
+}
+
+/* Selected date card indicator line at the top */
+.bf-date-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent-amber), var(--accent-ember));
+  border-radius: 0 0 2px 2px;
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bf-date-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.bf-date-card.active {
+  border-color: var(--accent-ember);
+  background: linear-gradient(180deg, rgba(249, 87, 56, 0.08) 0%, rgba(249, 87, 56, 0.01) 100%);
+  box-shadow: 0 15px 30px rgba(249, 87, 56, 0.08);
+}
+
+.bf-date-card.active::before {
+  width: 60%;
+}
+
+/* Beautify time slots */
+.bf-slot-card {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 12px 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  color: var(--text-secondary);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bf-slot-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  transform: scale(1.02);
+}
+
+.bf-slot-card.active {
+  border-color: var(--accent-amber);
+  background: linear-gradient(135deg, rgba(238, 155, 0, 0.1), transparent);
+  color: var(--text-primary);
+  font-weight: 700;
+  box-shadow: 0 0 15px rgba(238, 155, 0, 0.15);
+}
+
+/* Responsiveness overrides */
+@media (max-width: 900px) {
+  .booking-flow-wrapper {
+    padding: 100px 0 60px;
+  }
+  
+  .bf-step-container {
+    padding: 32px 20px;
+    border-radius: 12px;
+  }
+  
+  .bf-form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .bf-calendar-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .bf-dates-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  
+  .bf-date-card {
+    padding: 12px 4px;
+  }
+  
+  .bf-date-day {
+    font-size: 18px;
+  }
+  
+  .bf-slots-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .bf-pass-card {
+    padding: 24px;
+    margin: 24px auto;
+  }
+  
+  .bf-success-actions {
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    gap: 12px;
+  }
+  
+  .bf-success-actions a,
+  .bf-success-actions button {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .bf-dates-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  
+  .bf-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Escape hatch back to home link and inner wizard back buttons */
+.bf-back-home-wrap {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+}
+
+.bf-back-home-link {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: var(--tracking-wide);
+  text-decoration: none;
+  gap: 6px;
+  transition: all 0.3s ease;
+  cursor: pointer !important;
+}
+
+.bf-back-home-link:hover {
+  color: var(--accent-ember);
+  transform: translateX(-4px);
+}
+
+/* Wizard Inner Back Button ghost style override */
+.booking-flow-wrapper .btn-ghost {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: var(--text-secondary) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  border-radius: var(--radius-full) !important;
+  padding: 12px 24px !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+}
+
+.booking-flow-wrapper .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  color: var(--text-primary) !important;
+}
+
+
+

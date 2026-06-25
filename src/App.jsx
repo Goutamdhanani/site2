@@ -15,6 +15,8 @@ import Testimonials from './components/Testimonials';
 import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
 import CustomCursor from './components/CustomCursor';
+import PortfolioPage from './components/PortfolioPage';
+import BookingFlow from './components/BookingFlow';
 
 const AtmosphericCanvas = lazy(() => import('./components/AtmosphericCanvas'));
 
@@ -23,7 +25,98 @@ gsap.registerPlugin(ScrollTrigger);
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [siteVisible, setSiteVisible] = useState(false);
+  const [currentView, setCurrentView] = useState(() => {
+    return window.location.hash === '#portfolio' ? 'portfolio' : window.location.hash === '#demo' ? 'demo' : 'home';
+  });
   const lenisRef = useRef(null);
+
+  // Hash-based view switching listener
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      
+      // Reset scroll position immediately to prevent page bottom scroll clamp bugs
+      const lenis = lenisRef.current;
+      if (lenis) {
+        lenis.scrollTo(0, { immediate: true });
+        lenis.resize();
+      } else {
+        window.scrollTo(0, 0);
+      }
+
+      if (hash === '#portfolio') {
+        setCurrentView('portfolio');
+      } else if (hash === '#demo') {
+        setCurrentView('demo');
+      } else {
+        setCurrentView('home');
+      }
+    };
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const handleViewChange = (view, targetAnchor = null) => {
+    // Reset scroll position immediately before routing to prevent layout clipping
+    const lenis = lenisRef.current;
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+      lenis.resize();
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    if (view === 'home') {
+      if (targetAnchor) {
+        window.location.hash = targetAnchor;
+      } else {
+        window.location.hash = '';
+      }
+    } else if (view === 'portfolio') {
+      window.location.hash = '#portfolio';
+    } else if (view === 'demo') {
+      window.location.hash = '#demo';
+    }
+  };
+
+  // Reset scroll position and recalculate layouts after view updates
+  useEffect(() => {
+    if (!siteVisible) return;
+    const lenis = lenisRef.current;
+    const hash = window.location.hash;
+
+    // Reset scroll first when switching views to prevent off-screen translations
+    if (lenis) {
+      lenis.scrollTo(0, { immediate: true });
+      lenis.resize();
+    } else {
+      window.scrollTo(0, 0);
+    }
+
+    if (currentView === 'home' && hash && hash !== '#portfolio' && hash !== '#demo') {
+      const target = document.querySelector(hash);
+      if (target) {
+        const timer = setTimeout(() => {
+          if (lenis) {
+            lenis.scrollTo(target, { offset: 0, duration: 1.4 });
+            lenis.resize();
+          } else {
+            target.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 150);
+        return () => clearTimeout(timer);
+      }
+    } else {
+      const timer = setTimeout(() => {
+        if (lenis) {
+          lenis.scrollTo(0, { immediate: true });
+          lenis.resize();
+        }
+        ScrollTrigger.refresh();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [currentView, siteVisible]);
 
   const handlePreloaderComplete = () => {
     setLoading(false);
@@ -219,10 +312,13 @@ export default function App() {
   useEffect(() => {
     if (!siteVisible) return;
 
+    let onScroll = null;
+    let cleanupMagnetic = null;
+
     const ctx = gsap.context(() => {
 
       // ─── Scroll progress bar ───
-      const onScroll = () => {
+      onScroll = () => {
         const scrollH = document.body.scrollHeight - window.innerHeight;
         if (scrollH <= 0) return;
         const prog = window.scrollY / scrollH;
@@ -234,6 +330,8 @@ export default function App() {
       // ─── MAGNETIC BUTTONS (desktop only) ───
       if (!isLite) {
         const btns = document.querySelectorAll('.magnetic');
+        const activeListeners = [];
+
         btns.forEach(btn => {
           const move = (e) => {
             const r = btn.getBoundingClientRect();
@@ -249,7 +347,15 @@ export default function App() {
           };
           btn.addEventListener('mousemove', move);
           btn.addEventListener('mouseleave', leave);
+          activeListeners.push({ btn, move, leave });
         });
+
+        cleanupMagnetic = () => {
+          activeListeners.forEach(({ btn, move, leave }) => {
+            btn.removeEventListener('mousemove', move);
+            btn.removeEventListener('mouseleave', leave);
+          });
+        };
       }
 
       // ─── SECTION GLOW LINES: Draw in ───
@@ -478,8 +584,12 @@ export default function App() {
 
     });
 
-    return () => ctx.revert();
-  }, [siteVisible]);
+    return () => {
+      if (onScroll) window.removeEventListener('scroll', onScroll);
+      if (cleanupMagnetic) cleanupMagnetic();
+      ctx.revert();
+    };
+  }, [siteVisible, currentView]);
 
   // ─── REFRESH SCROLLTRIGGER ON LAYOUT SHIFTS (images, fonts) ───
   useEffect(() => {
@@ -537,21 +647,29 @@ export default function App() {
         }}
       >
         {/* Fixed navbar */}
-        <Navbar />
+        <Navbar currentView={currentView} onViewChange={handleViewChange} />
 
         {/* Scenes flow as one continuous spatial journey */}
         <main className="cinematic-main">
-          <Hero />
-          <CaseStudies />
-          <Marquee />
-          <Services />
-          <Metrics />
-          <Process />
-          <Testimonials />
-          <FinalCTA />
+          {currentView === 'home' ? (
+            <>
+              <Hero />
+              <CaseStudies />
+              <Marquee />
+              <Services />
+              <Metrics />
+              <Process />
+              <Testimonials />
+              <FinalCTA />
+            </>
+          ) : currentView === 'portfolio' ? (
+            <PortfolioPage onViewChange={handleViewChange} />
+          ) : (
+            <BookingFlow onViewChange={handleViewChange} />
+          )}
         </main>
 
-        <Footer />
+        <Footer currentView={currentView} onViewChange={handleViewChange} />
 
         {/* Cursor */}
         <CustomCursor />

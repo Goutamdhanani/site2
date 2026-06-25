@@ -17,22 +17,26 @@ export default function SplitHeading({ text, className }) {
       return;
     }
 
-    gsap.fromTo(chars,
-      { opacity: 0, y: '110%', rotateX: -40 },
-      {
-        opacity: 1,
-        y: '0%',
-        rotateX: 0,
-        duration: 0.7,
-        ease: EASE.out,
-        stagger: 0.03,
-        scrollTrigger: {
-          trigger: ref.current,
-          start: 'top 85%',
-          once: true,
+    const ctx = gsap.context(() => {
+      gsap.fromTo(chars,
+        { opacity: 0, y: '110%', rotateX: -40 },
+        {
+          opacity: 1,
+          y: '0%',
+          rotateX: 0,
+          duration: 0.7,
+          ease: EASE.out,
+          stagger: 0.03,
+          scrollTrigger: {
+            trigger: ref.current,
+            start: 'top 85%',
+            once: true,
+          }
         }
-      }
-    );
+      );
+    }, ref);
+
+    return () => ctx.revert();
   }, [text]);
 
   return (

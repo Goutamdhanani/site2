@@ -10,120 +10,37 @@ gsap.registerPlugin(ScrollTrigger);
 const services = [
   {
     title: 'Web Development',
-    desc: 'Lightning-fast, highly-optimized web applications engineered for seamless scalability, flawless SEO, and conversion-focused architectures.',
-    tags: ['Next.js', 'React', 'TypeScript', 'WebGL', 'SEO'],
+    desc: 'Fast, scalable websites and landing pages designed to convert.',
+    tags: ['Next.js', 'React', 'TypeScript', 'SEO', 'Motion'],
     color: 'var(--accent-ember)',
-    tools: ['Vite', 'Node.js', 'Tailwind', 'GSAP'],
-    logs: [
-      'npm run build --production',
-      'compiling routes (app router)...',
-      'bundling chunks (64 modules)...',
-      'optimized asset delivery (Brotli active)',
-      'server deployed at edge in 18ms ✓'
-    ]
   },
   {
     title: 'Mobile Development',
-    desc: 'Bespoke iOS and Android mobile ecosystems built with native speed and fluid animations to capture and hold user attention.',
-    tags: ['iOS', 'Android', 'React Native', 'Swift', 'Kotlin'],
+    desc: 'Polished mobile apps with smooth UX and strong product feel.',
+    tags: ['React Native', 'Swift', 'Kotlin', 'Expo'],
     color: 'var(--accent-amber)',
-    tools: ['SwiftUI', 'Expo', 'Redux', 'Fastlane'],
-    logs: [
-      'expo build:ios --profile production',
-      'compiling native Swift layers...',
-      'linking react-native-reanimated engine',
-      'optimized assets: main.jsbundle (1.4MB)',
-      'build completed successfully ✓'
-    ]
   },
   {
     title: 'Brand & UI/UX',
-    desc: 'Distinctive visual identities, interactive design tokens, and clean layout grids designed to elevate branding into a digital power status.',
-    tags: ['Branding', 'Figma', 'Prototyping', 'Design Systems'],
+    desc: 'Design systems and interfaces that make your brand feel serious.',
+    tags: ['Figma', 'Design Systems', 'Prototyping', 'Branding'],
     color: 'var(--accent-gold)',
-    tools: ['Illustrator', 'Spline', 'After Effects', 'Tokens'],
-    logs: [
-      'loading design system tokens...',
-      'parsing Figma styles API node-trees',
-      'generating layout grid assets',
-      'compiled theme: responsive variables',
-      'canvas layout rendering at 120fps'
-    ]
   },
   {
     title: 'CMS & Automation',
-    desc: 'Tailor-made headless CMS architectures and automated webhook pipelines to streamline editing workflows and eliminate manual tasks.',
-    tags: ['Shopify', 'Webflow', 'Headless CMS', 'Webhooks'],
+    desc: 'Headless content systems and workflow automation.',
+    tags: ['Shopify', 'Webflow', 'Contentful', 'Strapi', 'Make', 'Zapier'],
     color: 'var(--accent-lacquer)',
-    tools: ['Contentful', 'Strapi', 'Make', 'Zapier'],
-    logs: [
-      'initializing webhook listeners...',
-      'connecting Shopify Storefront API v2',
-      'linking orders -> Zapier automation',
-      'syncing Headless space to edge cache',
-      'webhook pipeline: listening... ✓'
-    ]
   },
   {
     title: 'SEO & Performance',
-    desc: 'Deep audit optimizations, lightning Core Web Vitals score tuning, and structured semantic layouts that secure top search rankings.',
-    tags: ['PageSpeed', 'Lighthouse', 'Schema', 'Analytics'],
+    desc: 'Technical optimization for speed, visibility, and indexation.',
+    tags: ['Core Web Vitals', 'Schema', 'Analytics', 'Search Console'],
     color: 'var(--accent-bright)',
-    tools: ['Search Console', 'GTmetrix', 'Vitals', 'Tag Manager'],
-    logs: [
-      'running Lighthouse performance audits...',
-      'verifying schema.org JSON-LD microdata',
-      'optimized dynamic media: WebP (-65%)',
-      'Core Web Vitals check: passed ✓',
-      'search index indexation synced'
-    ]
   },
 ];
 
-function TerminalConsole({ logs, isActive }) {
-  const [displayedLogs, setDisplayedLogs] = useState([]);
 
-  useEffect(() => {
-    if (!isActive) {
-      setDisplayedLogs([]);
-      return;
-    }
-
-    setDisplayedLogs([]);
-    let currentLine = 0;
-    const interval = setInterval(() => {
-      if (currentLine < logs.length) {
-        setDisplayedLogs(prev => [...prev, logs[currentLine]]);
-        currentLine++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 280); // typewriter timing
-
-    return () => clearInterval(interval);
-  }, [isActive, logs]);
-
-  return (
-    <div className="terminal-console">
-      <div className="console-header">
-        <span className="console-dot red"></span>
-        <span className="console-dot yellow"></span>
-        <span className="console-dot green"></span>
-        <span className="console-title">terminal.sh</span>
-      </div>
-      <div className="console-body">
-        {displayedLogs.map((log, index) => (
-          <div key={index} className="console-line">
-            <span className="console-prompt">&gt;</span> {log}
-          </div>
-        ))}
-        {displayedLogs.length < logs.length && (
-          <span className="console-cursor">_</span>
-        )}
-      </div>
-    </div>
-  );
-}
 
 // ─── REUSABLE MOCKUPS ───
 
@@ -396,8 +313,10 @@ function ServiceRow({ service, index, activeService, setActiveService }) {
                 duration: DUR.slow,
                 ease: EASE.outExpo,
                 onUpdate: function () {
-                  const val = Math.ceil(this.targets()[0].val);
-                  numRef.current.textContent = String(val).padStart(2, '0');
+                  if (numRef.current) {
+                    const val = Math.ceil(this.targets()[0].val);
+                    numRef.current.textContent = String(val).padStart(2, '0');
+                  }
                 },
               }
             );
@@ -439,17 +358,7 @@ function ServiceRow({ service, index, activeService, setActiveService }) {
                 ))}
               </div>
             </div>
-            <div className="sv-details-section">
-              <span className="sv-details-label">Tech Stack</span>
-              <div className="sv-tools">
-                {service.tools.map((tool, j) => (
-                  <span key={j} className="sv-tool-chip">{tool}</span>
-                ))}
-              </div>
-            </div>
           </div>
-
-          <TerminalConsole logs={service.logs} isActive={isActive} />
         </div>
       </div>
       <div className="sv-row-glow-indicator" />
@@ -519,9 +428,9 @@ function ServicesFull() {
         <div className="sv-sticky-wrapper">
           <div className="sv-sticky">
             <span className="sv-label eyebrow">WHAT WE DO</span>
-            <SplitHeading text="Services" className="sv-heading" />
+            <SplitHeading text="What We Do" className="sv-heading" />
             <p className="sv-sub">
-              Engineering Awwwards-grade digital interfaces designed to command market attention.
+              We build websites and digital products that look premium, load fast, and make people trust you quickly.
             </p>
 
             <div 
@@ -660,18 +569,7 @@ function ServiceCardMobile({ service, index }) {
             ))}
           </div>
         </div>
-
-        <div className="sv-mobile-details-section">
-          <span className="sv-details-label">Tech Stack</span>
-          <div className="sv-tools">
-            {service.tools.map((tool, j) => (
-              <span key={j} className="sv-tool-chip">{tool}</span>
-            ))}
-          </div>
-        </div>
       </div>
-
-      <TerminalConsole logs={service.logs} isActive={isActive} />
     </div>
   );
 }
@@ -684,9 +582,9 @@ function ServicesLite() {
       <div className="container">
         <div className="sv-mobile-section-header">
           <span className="sv-label eyebrow">WHAT WE DO</span>
-          <SplitHeading text="Services" className="sv-heading" />
+          <SplitHeading text="What We Do" className="sv-heading" />
           <p className="sv-sub">
-            Engineering Awwwards-grade digital interfaces designed to command market attention.
+            We build websites and digital products that look premium, load fast, and make people trust you quickly.
           </p>
         </div>
 

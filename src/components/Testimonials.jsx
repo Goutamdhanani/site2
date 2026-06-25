@@ -8,14 +8,14 @@ gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
-    quote: "'oddwebs rebuilt our entire revenue engine. 320% growth in 6 months. I recommend them to every founder I meet.'",
+    quote: '"We needed a website that looked premium and brought in leads. oddwebs delivered both."',
     name: 'Rahul Kumar',
     role: 'Founder, LunaCart',
     avatar: '/assets/avatar_rahul.png',
     color: 'var(--accent-ember)',
   },
   {
-    quote: "'I've worked with 4 agencies before oddwebs. They're the only ones who actually care about your outcomes.'",
+    quote: '"They cared about outcomes, not just visuals. That was the difference."',
     name: 'Ananya Mehta',
     role: 'CEO, DataFlow',
     avatar: '/assets/avatar_ananya.png',
@@ -23,7 +23,7 @@ const testimonials = [
     color: 'var(--accent-gold)',
   },
   {
-    quote: "'They built our fintech MVP in 5 weeks. It directly helped us close our $2.4M seed round.'",
+    quote: '"They built our MVP fast and clean. It helped us close funding."',
     name: 'Vikram Patel',
     role: 'Co-Founder, Payze',
     avatar: '/assets/avatar_vikram.png',
@@ -55,6 +55,8 @@ export default function Testimonials() {
       });
       return;
     }
+
+    const listeners = [];
 
     const ctx = gsap.context(() => {
 
@@ -164,11 +166,18 @@ export default function Testimonials() {
 
         card.addEventListener('mousemove', handleMove);
         card.addEventListener('mouseleave', handleLeave);
+        listeners.push({ card, handleMove, handleLeave });
       });
 
     }, sectionRef);
 
-    return () => ctx.revert();
+    return () => {
+      listeners.forEach(({ card, handleMove, handleLeave }) => {
+        card.removeEventListener('mousemove', handleMove);
+        card.removeEventListener('mouseleave', handleLeave);
+      });
+      ctx.revert();
+    };
   }, []);
 
   return (
@@ -203,10 +212,9 @@ export default function Testimonials() {
 
       <div className="container ts-container">
         <div className="testimonials-header">
-          <p className="eyebrow">Client Voices</p>
-          <SplitHeading text="Voices" className="testimonials-big-title" />
+          <SplitHeading text="What Clients Say" className="testimonials-big-title" />
           <p className="testimonials-subtitle">
-            Partnering with visionary founders to build scalable platforms that redefine online standards.
+            Real feedback from the founders we partner with.
           </p>
         </div>
 

@@ -156,10 +156,15 @@ export default function FinalCTA() {
 
     // ─── MAGNETIC BUTTON ───
     const btn = ctaBtnRef.current;
+    let zone = null;
+    let onMouseMove = null;
+    let onMouseLeave = null;
+
     if (btn && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const strength = 0.3;
 
-      const onMouseMove = (e) => {
+      onMouseMove = (e) => {
+        if (!btn) return;
         const rect = btn.getBoundingClientRect();
         const cx = rect.left + rect.width / 2;
         const cy = rect.top + rect.height / 2;
@@ -173,7 +178,8 @@ export default function FinalCTA() {
         });
       };
 
-      const onMouseLeave = () => {
+      onMouseLeave = () => {
+        if (!btn) return;
         gsap.to(btn, {
           x: 0, y: 0,
           duration: 0.6,
@@ -181,15 +187,20 @@ export default function FinalCTA() {
         });
       };
 
-      const zone = btn.parentElement;
-      zone.addEventListener('mousemove', onMouseMove);
-      zone.addEventListener('mouseleave', onMouseLeave);
+      zone = btn.parentElement;
+      if (zone) {
+        zone.addEventListener('mousemove', onMouseMove);
+        zone.addEventListener('mouseleave', onMouseLeave);
+      }
+    }
 
-      return () => {
+    return () => {
+      if (zone && onMouseMove && onMouseLeave) {
         zone.removeEventListener('mousemove', onMouseMove);
         zone.removeEventListener('mouseleave', onMouseLeave);
-      };
-    }
+      }
+      ctx.revert();
+    };
 
   }, [selectedTags]);
 
@@ -211,17 +222,15 @@ export default function FinalCTA() {
 
           {/* HUD status scanner */}
           <div className="cta-scanner-line" />
-          <div className="cta-console-header-label">CONSOLE_SEQUENCE // PROJECT_IGNITION</div>
-
           <div className="cta-content-wrapper">
-            <SplitHeading text="Let's build something great." className="cta-big-title" />
+            <SplitHeading text="Ready to make your website work harder?" className="cta-big-title" />
             <p className="cta-subtitle">
-              Select your parameters below to initialize project ignition. No pitch decks, no BS.
+              If your current site looks nice but does not build trust or generate leads, that is a problem we can fix.
             </p>
 
             {/* Spec Builder Tags */}
             <div className="cta-spec-builder">
-              <span className="spec-label">SELECT_PARAMETERS //</span>
+              <span className="spec-label">Select project parameters:</span>
               <div className="spec-tags-cloud">
                 {projectParameters.map((param, idx) => {
                   const isSelected = selectedTags.includes(param.label);
@@ -251,24 +260,29 @@ export default function FinalCTA() {
             <div className="cta-actions">
               <a 
                 ref={ctaBtnRef} 
-                href={getMailtoLink()} 
+                href="#demo" 
                 className="btn-primary btn-large magnetic"
               >
-                Ignite Project
+                Schedule Free Demo
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style={{ marginLeft: '8px' }}>
                   <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </a>
-              <a href="#" className="btn-outline magnetic">Synchronize Calendar</a>
+              <a 
+                href={getMailtoLink()} 
+                className="btn-outline magnetic"
+              >
+                Send Project Spec
+              </a>
             </div>
 
-            {/* Console Status Badges */}
-            <div className="cta-trust">
-              <span>[ STATUS: FREE_CONSULT ]</span>
-              <span className="cta-trust-dot"></span>
-              <span>[ LATENCY: 48HR_RESPONSE ]</span>
-              <span className="cta-trust-dot"></span>
-              <span>[ TARGET: NO_COMMITMENT ]</span>
+            {/* Trust Info */}
+            <div className="cta-trust-line" style={{ display: 'flex', justifyContent: 'center', gap: '8px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-body-sm)', marginTop: '24px', letterSpacing: '0.04em' }}>
+              <span>48-hour response.</span>
+              <span>•</span>
+              <span>No obligation.</span>
+              <span>•</span>
+              <span>Clear scope.</span>
             </div>
           </div>
         </div>

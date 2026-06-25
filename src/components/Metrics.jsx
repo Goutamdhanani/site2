@@ -9,11 +9,12 @@ gsap.registerPlugin(ScrollTrigger);
 
 const stats = [
   { 
-    value: 150, 
-    suffix: '+', 
-    label: 'Projects Delivered', 
+    value: 320, 
+    prefix: '+',
+    suffix: '%', 
+    label: 'LunaCart', 
     color: 'var(--accent-ember)',
-    desc: 'Custom web apps, headless systems, and robust mobile solutions delivered globally.',
+    desc: 'Revenue growth after redesigning LunaCart’s commerce experience',
     icon: (
       <svg className="stat-micro-graphic" viewBox="0 0 80 30" fill="none">
         <circle cx="15" cy="15" r="4" fill="var(--accent-ember)" className="pulse-node" />
@@ -25,11 +26,12 @@ const stats = [
     )
   },
   { 
-    value: 98, 
+    value: 45, 
+    prefix: '-',
     suffix: '%', 
-    label: 'Client Satisfaction', 
+    label: 'DataFlow', 
     color: 'var(--accent-amber)',
-    desc: 'Unmatched client reviews driven by our focus on pixel-perfection and performance.',
+    desc: 'Churn reduction through DataFlow’s improved UX and dashboards',
     icon: (
       <svg className="stat-micro-graphic stat-micro-graphic--circle" viewBox="0 0 40 40" fill="none">
         <circle cx="20" cy="20" r="16" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="3" />
@@ -39,12 +41,13 @@ const stats = [
     )
   },
   { 
-    value: 4.2, 
-    suffix: 'x', 
-    label: 'Average ROI', 
+    value: 2.4, 
+    prefix: '$',
+    suffix: 'M', 
     decimals: 1, 
+    label: 'Payze', 
     color: 'var(--accent-gold)',
-    desc: 'Our optimized conversion pipelines drive significant revenue growth for brands.',
+    desc: 'Seed funding supported by Payze’s MVP and product experience',
     icon: (
       <svg className="stat-micro-graphic" viewBox="0 0 80 35" fill="none">
         <defs>
@@ -60,11 +63,11 @@ const stats = [
     )
   },
   { 
-    value: 24, 
-    suffix: '/7', 
-    label: 'Support & Uptime', 
+    value: 80, 
+    suffix: '%', 
+    label: 'VoyageAI', 
     color: 'var(--accent-lacquer)',
-    desc: 'Round-the-clock monitoring and support to ensure absolute reliability.',
+    desc: 'Manual work removed through VoyageAI automation pipelines',
     icon: (
       <svg className="stat-micro-graphic" viewBox="0 0 80 30" fill="none">
         <path d="M0,15 H20 L25,5 L30,25 L35,12 L40,18 L45,15 H80" 
@@ -484,10 +487,9 @@ export default function Metrics() {
       <div className="container">
         {/* Header */}
         <div className="metrics-header">
-          <p className="eyebrow">The Metrics</p>
-          <SplitHeading text="Results" className="metrics-big-title" />
+          <SplitHeading text="Results That Matter" className="metrics-big-title" />
           <p className="metrics-subtitle">
-            Strategic digital interventions that generate provable commercial traction.
+            People do not pay for design vocabulary. They pay for outcomes.
           </p>
         </div>
 
@@ -549,6 +551,7 @@ export default function Metrics() {
 
                   <div className="met-card-body">
                     <div className="met-value-row">
+                      {stat.prefix && <span className="met-suffix">{stat.prefix}</span>}
                       <span 
                         className="stat-val-counter"
                         data-target={stat.value}

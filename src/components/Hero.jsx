@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from '../utils/motion';
@@ -11,6 +11,7 @@ gsap.registerPlugin(ScrollTrigger);
  * and a lightweight overlay canvas for the scan line + particles.
  */
 function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) {
+  if (!canvas || !overlayCtx || !overlayCanvas) return;
   const { width, height } = overlayCanvas;
 
   // Clear overlay
@@ -94,7 +95,7 @@ function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) 
   // ─── OVERLAY: Particle dust (0.35 -> 1.0) ───
   if (p > 0.35) {
     const pPhase = (p - 0.35) / 0.65;
-    const bell = Math.sin(pPhase * Math.PI); 
+    const bell = Math.sin(pPhase * Math.PI);
 
     overlayCtx.save();
     overlayCtx.globalCompositeOperation = 'lighter';
@@ -107,7 +108,7 @@ function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) 
     for (let i = 0; i < particleCount; i++) {
       const spreadFactor = bell * (0.2 + (i / particleCount) * 0.8);
       const spreadRadius = maxSpread * spreadFactor;
-      
+
       const angle = (i / particleCount) * Math.PI * 6 + pPhase * Math.PI;
       const x = cx + Math.cos(angle) * spreadRadius * (1 + Math.sin(i * 1.7) * 0.3);
       const y = cy + Math.sin(angle) * spreadRadius * (1 + Math.cos(i * 2.3) * 0.3);
@@ -291,16 +292,16 @@ export default function Hero() {
     });
 
     tl.fromTo(eyebrowRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0 }, 0.1);
-    
+
     const words = headlineRef.current?.querySelectorAll('.hero-word-wrap') || [];
     if (words.length > 0) {
-      tl.fromTo(words, 
-        { opacity: 0, y: 20 }, 
-        { opacity: 1, y: 0, stagger: 0.08 }, 
+      tl.fromTo(words,
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, stagger: 0.08 },
         0.2
       );
     }
-    
+
     tl.fromTo(subRef.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0 }, 0.5);
     tl.fromTo(actionsRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0 }, 0.7);
     tl.fromTo(scrollHintRef.current, { opacity: 0 }, { opacity: 1 }, 1.0);
@@ -322,7 +323,7 @@ export default function Hero() {
   }, [loaded, isLite, totalFrames, renderFrame]);
 
   // ─── SCROLL ANIMATION + EXIT TRANSITION ───
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!loaded) return;
 
     const canvas = canvasRef.current;
@@ -380,6 +381,7 @@ export default function Hero() {
         scrub: isLite ? 0.8 : 1.2,           // Snappier response on mobile
         anticipatePin: 1,
         onUpdate: (self) => {
+          if (!self || typeof self.progress !== 'number' || isNaN(self.progress)) return;
           const progress = self.progress;
 
           // ═══ FRAME SEQUENCE (0 → EXIT_START) ═══
@@ -439,13 +441,15 @@ export default function Hero() {
               if (actionsRef.current) gsap.set(actionsRef.current, { opacity: textFade });
             } else {
               // Desktop: original cinematic effects
-              overlay.style.opacity = '1';
+              if (overlay) overlay.style.opacity = '1';
               const textFade = Math.max(0, 1 - exitProgress * 2.5);
               if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: textFade });
               if (headlineRef.current) gsap.set(headlineRef.current, { opacity: textFade });
               if (subRef.current) gsap.set(subRef.current, { opacity: textFade });
               if (actionsRef.current) gsap.set(actionsRef.current, { opacity: textFade });
-              applyScrollTransition(canvas, overlayCtx, overlay, exitProgress);
+              if (canvas && overlayCtx && overlay) {
+                applyScrollTransition(canvas, overlayCtx, overlay, exitProgress);
+              }
               const containerOpacity = Math.max(0, 1 - Math.max(0, (exitProgress - 0.5) / 0.5));
               const canvasContainer = document.querySelector('.hero-canvas-container');
               if (canvasContainer) {
@@ -454,9 +458,9 @@ export default function Hero() {
             }
           } else {
             // Reset transition styles
-            canvas.style.filter = 'none';
+            if (canvas) canvas.style.filter = 'none';
             if (overlay) overlay.style.opacity = '0';
-            if (overlayCtx) overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
+            if (overlayCtx && overlay) overlayCtx.clearRect(0, 0, overlay.width, overlay.height);
             const canvasContainer = document.querySelector('.hero-canvas-container');
             if (canvasContainer) {
               canvasContainer.style.opacity = 1;
@@ -520,11 +524,11 @@ export default function Hero() {
         <div className="hero-ui-layer">
           <div className="hero-content">
             <p ref={eyebrowRef} className="hero-eyebrow" style={{ opacity: 0, textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-              Modern AI Agency
+              MODERN AI AGENCY
             </p>
 
             <h1 ref={headlineRef} className="hero-headline">
-              {['A', 'Peaceful', 'Ascension.'].map((word, i) => (
+              {['Premium websites ', 'that turn visitors ', 'into customers.'].map((word, i) => (
                 <span className="hero-word-wrap" key={i} style={{ opacity: 0 }}>
                   <span className="hero-word" style={{ textShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>{word}</span>
                 </span>
@@ -532,25 +536,26 @@ export default function Hero() {
             </h1>
 
             <p ref={subRef} className="hero-sub" style={{ opacity: 0, textShadow: '0 4px 12px rgba(0,0,0,0.8)' }}>
-              Transforming the world through cinematic <br />
-              storytelling and intelligent design.
+              We design and build fast, high-trust websites, apps, and AI systems for founders who want more leads, stronger credibility, and real growth.
             </p>
 
             <div ref={actionsRef} className="hero-actions" style={{ opacity: 0 }}>
-              <a href="#contact" className="btn-primary magnetic">
-                Explore the Future <span className="btn-arrow">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <a href="#demo" className="btn-primary magnetic">
+                Schedule Free Demo <span className="btn-arrow">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
                 </span>
               </a>
               <a href="#work" className="btn-ghost magnetic">
-                <span style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>Discover More</span>
+                <span style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>View Work</span>
               </a>
+              <p className="hero-small-line" style={{ opacity: 0.6, fontSize: 'var(--text-body-sm)', fontFamily: 'var(--font-mono)', marginTop: '20px', textShadow: '0 2px 4px rgba(0,0,0,0.8)', letterSpacing: '0.05em', width: '100%', textAlign: 'center' }}>
+                48-hour response time. Clear scope. No fluff.
+              </p>
             </div>
           </div>
 
           <div ref={scrollHintRef} className="hero-scroll-indicator" style={{ position: 'absolute', bottom: '4vh' }}>
             <div className="scroll-line" style={{ background: 'var(--text-primary)', boxShadow: '0 0 8px rgba(255,255,255,0.5)' }} />
-            <span style={{ color: 'var(--text-primary)', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>Scroll to Ascend</span>
           </div>
         </div>
       </div>
