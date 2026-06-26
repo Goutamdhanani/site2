@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SplitHeading from './SplitHeading';
@@ -156,10 +156,9 @@ export default function FinalCTA() {
 
     // ─── MAGNETIC BUTTON ───
     const btn = ctaBtnRef.current;
-    let zone = null;
-    let onMouseMove = null;
-    let onMouseLeave = null;
-
+    let onMouseMove;
+    let onMouseLeave;
+    let zone;
     if (btn && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       const strength = 0.3;
 
@@ -195,13 +194,12 @@ export default function FinalCTA() {
     }
 
     return () => {
+      ctx.revert();
       if (zone && onMouseMove && onMouseLeave) {
         zone.removeEventListener('mousemove', onMouseMove);
         zone.removeEventListener('mouseleave', onMouseLeave);
       }
-      ctx.revert();
     };
-
   }, [selectedTags]);
 
   return (
@@ -214,23 +212,19 @@ export default function FinalCTA() {
 
       <div className="container cta-container">
         <div className="cta-console-panel">
-          {/* HUD borders */}
-          <div className="hud-corner tl" />
-          <div className="hud-corner tr" />
-          <div className="hud-corner bl" />
-          <div className="hud-corner br" />
-
           {/* HUD status scanner */}
           <div className="cta-scanner-line" />
+          <div className="cta-console-header-label">Start Your Project</div>
+
           <div className="cta-content-wrapper">
-            <SplitHeading text="Ready to make your website work harder?" className="cta-big-title" />
+            <SplitHeading text="Let's build something great." className="cta-big-title" />
             <p className="cta-subtitle">
-              If your current site looks nice but does not build trust or generate leads, that is a problem we can fix.
+              Select your requirements below to build your project specification. Zero friction, zero delays.
             </p>
 
             {/* Spec Builder Tags */}
             <div className="cta-spec-builder">
-              <span className="spec-label">Select project parameters:</span>
+              <span className="spec-label">What are we building?</span>
               <div className="spec-tags-cloud">
                 {projectParameters.map((param, idx) => {
                   const isSelected = selectedTags.includes(param.label);
@@ -276,13 +270,13 @@ export default function FinalCTA() {
               </a>
             </div>
 
-            {/* Trust Info */}
-            <div className="cta-trust-line" style={{ display: 'flex', justifyContent: 'center', gap: '8px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', fontSize: 'var(--text-body-sm)', marginTop: '24px', letterSpacing: '0.04em' }}>
-              <span>48-hour response.</span>
-              <span>•</span>
-              <span>No obligation.</span>
-              <span>•</span>
-              <span>Clear scope.</span>
+            {/* Trust Badges */}
+            <div className="cta-trust">
+              <span>Free Consultation</span>
+              <span className="cta-trust-dot"></span>
+              <span>48hr Response Time</span>
+              <span className="cta-trust-dot"></span>
+              <span>No Obligation</span>
             </div>
           </div>
         </div>

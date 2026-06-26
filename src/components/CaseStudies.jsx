@@ -1,8 +1,6 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { EASE, DUR, STAGGER, prefersReducedMotion } from '../utils/motion';
-import { isLite } from '../utils/device';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,6 +13,7 @@ const projects = [
     metric: '+320%',
     metricLabel: 'Revenue Growth',
     color: 'var(--accent-ember)',
+    glowColor: 'rgba(249, 87, 56, 0.22)',
     image: '/assets/projects/project-1.png',
     tags: ['E-COMMERCE', 'NEXT.JS', 'TAILWIND', 'STRIPE', 'AI AGENT', 'MOTION', 'UI/UX'],
   },
@@ -26,8 +25,9 @@ const projects = [
     metric: '-45%',
     metricLabel: 'Churn Reduction',
     color: 'var(--accent-amber)',
+    glowColor: 'rgba(238, 155, 0, 0.22)',
     image: '/assets/projects/project-2.png',
-    tags: ['FINTECH', 'REACT', 'GSAP', 'REDUX', 'CYBERSECURITY', 'CHARTS', 'UI/UX'],
+    tags: ['SAAS', 'REACT', 'GSAP', 'REDUX', 'CYBERSECURITY', 'CHARTS', 'UI/UX'],
   },
   {
     title: 'Payze',
@@ -37,6 +37,7 @@ const projects = [
     metric: '$2.4M',
     metricLabel: 'Seed Funding',
     color: 'var(--accent-lacquer)',
+    glowColor: 'rgba(174, 32, 18, 0.22)',
     image: '/assets/projects/project-3.png',
     tags: ['MOBILE APP', 'EXPO', 'NODE.JS', 'GOOGLE MAPS', 'REDIS', 'MOTION', 'UI/UX'],
   },
@@ -48,6 +49,7 @@ const projects = [
     metric: '80%',
     metricLabel: 'Manual Work Removed',
     color: 'var(--accent-gold)',
+    glowColor: 'rgba(233, 216, 166, 0.22)',
     image: '/assets/projects/project-4.png',
     tags: ['REAL ESTATE', 'FASTAPI', 'POSTGRES', '3D TOURS', 'AI MODEL', 'REACT', 'UI/UX'],
   },
@@ -56,74 +58,245 @@ const projects = [
 export default function CaseStudies() {
   const sectionRef = useRef(null);
   const trackRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
 
+  // Monitor visibility of the section to suspend active RAF loop when off-screen
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.02 } // Trigger when even a tiny bit of the section enters the screen
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 900);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile, { passive: true });
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Update carousel card animations dynamically based on viewport center distance
+  const updateCarouselDynamics = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const cards = track.querySelectorAll('.cs-card');
+    const screenCenter = window.innerWidth / 2;
+    const screenWidth = window.innerWidth;
+
+    let closestCardIndex = 0;
+    let minDistance = Infinity;
+
+    cards.forEach((card, idx) => {
+      const rect = card.getBoundingClientRect();
+      const cardCenter = rect.left + rect.width / 2;
+      const distance = cardCenter - screenCenter;
+      const normDist = distance / screenWidth;
+
+      // Skip updating off-screen cards to optimize render performance
+      if (Math.abs(normDist) > 1.25) {
+        return;
+      }
+
+      const absDist = Math.abs(distance);
+      if (absDist < minDistance) {
+        minDistance = absDist;
+        closestCardIndex = idx;
+      }
+
+      // Card box scale and opacity
+      const box = card.querySelector('.cs-card__box');
+      if (box) {
+        const scale = 1 - Math.min(Math.abs(normDist) * 0.12, 0.12);
+        const opacity = 1 - Math.min(Math.abs(normDist) * 0.5, 0.5);
+        gsap.set(box, { 
+          scale: scale, 
+          opacity: opacity,
+          overwrite: 'auto'
+        });
+      }
+
+      // Parallax image movement (shift left/right opposite to scroll direction)
+      const img = card.querySelector('.cs-card__img');
+      if (img) {
+        const parallaxX = normDist * -20;
+        gsap.set(img, { 
+          xPercent: parallaxX,
+          overwrite: 'auto'
+        });
+      }
+
+      // Floating metric card movement
+      const badge = card.querySelector('.cs-card__metric-badge');
+      if (badge) {
+        const badgeX = normDist * -30;
+        const badgeY = normDist * -10;
+        gsap.set(badge, { 
+          x: badgeX, 
+          y: badgeY,
+          overwrite: 'auto'
+        });
+      }
+
+      // Giant background typography parallax
+      const giantText = card.querySelector('.cs-card__giant-text');
+      if (giantText) {
+        const textX = normDist * 80;
+        gsap.set(giantText, { 
+          x: textX,
+          overwrite: 'auto'
+        });
+      }
+
+      // Content elements fade
+      const content = card.querySelector('.cs-card__content');
+      if (content) {
+        const contentOpacity = 1 - Math.min(Math.abs(normDist) * 1.5, 1);
+        gsap.set(content, {
+          opacity: contentOpacity,
+          overwrite: 'auto'
+        });
+      }
+    });
+
+    setActiveIndex(closestCardIndex);
+  };
+
+  // Run updates once on visibility or native mobile scroll
+  useEffect(() => {
+    if (isVisible) {
+      updateCarouselDynamics();
+    }
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (!isMobile || !isVisible) return;
+    const track = trackRef.current;
+    if (!track) return;
+
+    const handleScroll = () => {
+      updateCarouselDynamics();
+    };
+
+    track.addEventListener('scroll', handleScroll, { passive: true });
+    return () => track.removeEventListener('scroll', handleScroll);
+  }, [isMobile, isVisible]);
+
+  // Desktop ScrollTrigger Setup (pinning & horizontal translation)
+  useLayoutEffect(() => {
+    if (isMobile) return;
+
+    const track = trackRef.current;
+    const section = sectionRef.current;
+    if (!track || !section) return;
+
+    // Calculate total horizontal translate distance
+    const totalScroll = track.scrollWidth - window.innerWidth;
+
+    const scrollAnim = gsap.to(track, {
+      x: -totalScroll,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: `+=${totalScroll}`,
+        pin: true,
+        scrub: 0.3,
+        anticipatePin: 1,
+        snap: {
+          snapTo: 1 / projects.length, // 5 cards total (1 title + 4 projects), so 4 increments (1 / 4)
+          duration: { min: 0.2, max: 0.5 },
+          ease: 'power3.out',
+        },
+        onUpdate: () => {
+          updateCarouselDynamics();
+        }
+      }
+    });
+
+    // Force layout recalculation inside ScrollTrigger
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+      updateCarouselDynamics();
+    }, 150);
+
+    return () => {
+      scrollAnim.scrollTrigger?.kill();
+      scrollAnim.kill();
+    };
+  }, [isMobile]);
+
+  // Desktop Mouse Move Interactive Tilt & Glow
   const handleMouseMove = (e, card) => {
-    if (prefersReducedMotion()) return;
-    const rect = card.getBoundingClientRect();
+    if (window.innerWidth < 900) return;
+    const box = card.querySelector('.cs-card__box');
+    const imgContainer = card.querySelector('.cs-card__img-container');
+    const badge = card.querySelector('.cs-card__metric-badge');
+
+    if (!box || !imgContainer) return;
+
+    const rect = box.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-    
-    // Normalize coordinates from -0.5 to 0.5
+
     const normX = (x / rect.width) - 0.5;
     const normY = (y / rect.height) - 0.5;
 
-    const imgWrapper = card.querySelector('.cs-card__image-wrapper');
-    const badge = card.querySelector('.cs-card__floating-badge');
-    const bgTitle = card.querySelector('.cs-card__bg-title');
-    const mouseGlow = card.querySelector('.cs-card__mouse-glow');
+    gsap.to(box, {
+      rotateY: normX * 6,
+      rotateX: -normY * 6,
+      transformPerspective: 1200,
+      duration: 0.4,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
 
-    // 3D tilt image wrapper
-    gsap.to(imgWrapper, {
-      rotateY: normX * 14,
-      rotateX: -normY * 14,
+    gsap.to(imgContainer, {
+      rotateY: -normX * 8,
+      rotateX: normY * 8,
+      x: normX * 15,
+      y: normY * 15,
       transformPerspective: 1000,
       duration: 0.4,
       ease: 'power2.out',
       overwrite: 'auto'
     });
 
-    // Translate badge in opposite direction for parallax depth
-    gsap.to(badge, {
-      x: normX * -25,
-      y: normY * -25,
-      rotateY: normX * 8,
-      rotateX: -normY * 8,
-      transformPerspective: 800,
-      duration: 0.5,
-      ease: 'power2.out',
-      overwrite: 'auto'
-    });
-
-    // Shift background title slightly
-    gsap.to(bgTitle, {
-      x: normX * 35,
-      y: normY * 35,
-      duration: 0.6,
-      ease: 'power2.out',
-      overwrite: 'auto'
-    });
-
-    // Move card mouse glow
-    if (mouseGlow) {
-      gsap.to(mouseGlow, {
-        left: `${x}px`,
-        top: `${y}px`,
-        opacity: 0.15,
-        duration: 0.3,
-        ease: 'power1.out',
+    if (badge) {
+      gsap.to(badge, {
+        x: normX * -25,
+        y: normY * -25,
+        duration: 0.5,
+        ease: 'power2.out',
         overwrite: 'auto'
       });
     }
+
+    box.style.setProperty('--mouse-x', `${x}px`);
+    box.style.setProperty('--mouse-y', `${y}px`);
+    box.style.setProperty('--mouse-opacity', '0.12');
   };
 
   const handleMouseLeave = (card) => {
-    if (prefersReducedMotion()) return;
-    const imgWrapper = card.querySelector('.cs-card__image-wrapper');
-    const badge = card.querySelector('.cs-card__floating-badge');
-    const bgTitle = card.querySelector('.cs-card__bg-title');
-    const mouseGlow = card.querySelector('.cs-card__mouse-glow');
+    const box = card.querySelector('.cs-card__box');
+    const imgContainer = card.querySelector('.cs-card__img-container');
+    const badge = card.querySelector('.cs-card__metric-badge');
 
-    gsap.to(imgWrapper, {
+    if (!box) return;
+
+    gsap.to(box, {
       rotateY: 0,
       rotateX: 0,
       duration: 0.8,
@@ -131,258 +304,63 @@ export default function CaseStudies() {
       overwrite: 'auto'
     });
 
-    gsap.to(badge, {
-      x: 0,
-      y: 0,
-      rotateY: 0,
-      rotateX: 0,
-      duration: 0.8,
-      ease: 'elastic.out(1, 0.6)',
-      overwrite: 'auto'
-    });
-
-    gsap.to(bgTitle, {
-      x: 0,
-      y: 0,
-      duration: 0.8,
-      ease: 'power2.out',
-      overwrite: 'auto'
-    });
-
-    if (mouseGlow) {
-      gsap.to(mouseGlow, {
-        opacity: 0,
-        duration: 0.5,
+    if (imgContainer) {
+      gsap.to(imgContainer, {
+        rotateY: 0,
+        rotateX: 0,
+        x: 0,
+        y: 0,
+        duration: 0.8,
+        ease: 'elastic.out(1, 0.6)',
         overwrite: 'auto'
       });
     }
+
+    if (badge) {
+      gsap.to(badge, {
+        x: 0,
+        y: 0,
+        duration: 0.8,
+        ease: 'elastic.out(1, 0.6)',
+        overwrite: 'auto'
+      });
+    }
+
+    box.style.setProperty('--mouse-opacity', '0');
   };
 
-  useLayoutEffect(() => {
-    if (prefersReducedMotion()) return;
-
-    const mm = gsap.matchMedia();
-
-    // ─── DESKTOP HORIZONTAL SCROLL PINNING ───
-    mm.add("(min-width: 900px)", () => {
-      const track = trackRef.current;
-      const totalScroll = track.scrollWidth - window.innerWidth;
-
-      const horizontalTween = gsap.to(track, {
-        x: -totalScroll,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: `+=${totalScroll}`,
-          pin: true,
-          scrub: 1.5,
-          anticipatePin: 1,
-          snap: {
-            snapTo: 1 / projects.length,
-            duration: { min: 0.3, max: 0.6 },
-            ease: 'power2.inOut',
-          },
-        },
-      });
-
-      // Card reveals inside horizontal scroll
-      gsap.utils.toArray('.cs-card').forEach((card) => {
-        const bgTitle = card.querySelector('.cs-card__bg-title');
-        const imgWrapper = card.querySelector('.cs-card__image-wrapper');
-        const img = card.querySelector('.cs-card__image');
-        const badge = card.querySelector('.cs-card__floating-badge');
-        const content = card.querySelector('.cs-card__content');
-        
-        // 1. Shutter reveal (clip-path wipe)
-        if (imgWrapper) {
-          gsap.fromTo(imgWrapper,
-            { clipPath: 'polygon(0 0, 0 0, 0 100%, 0 100%)' },
-            {
-              clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)',
-              ease: 'power2.inOut',
-              scrollTrigger: {
-                trigger: card,
-                containerAnimation: horizontalTween,
-                start: 'left 90%',
-                end: 'left 25%',
-                scrub: true,
-              }
-            }
-          );
-        }
-
-        // 2. Parallax zoom/drift on the mockup image itself
-        if (img) {
-          gsap.fromTo(img,
-            { xPercent: -8, scale: 1.12 },
-            {
-              xPercent: 8,
-              scale: 1.0,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: card,
-                containerAnimation: horizontalTween,
-                start: 'left 100%',
-                end: 'right 0%',
-                scrub: true,
-              }
-            }
-          );
-        }
-
-        // 3. Parallax scroll on the giant outline background title
-        if (bgTitle) {
-          gsap.fromTo(bgTitle,
-            { x: 120 },
-            {
-              x: -120,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: card,
-                containerAnimation: horizontalTween,
-                start: 'left 100%',
-                end: 'right 0%',
-                scrub: true,
-              }
-            }
-          );
-        }
-
-        // 4. Parallax scroll on the floating glass metric badge
-        if (badge) {
-          gsap.fromTo(badge,
-            { x: -50, rotate: -2 },
-            {
-              x: 30,
-              rotate: 2,
-              ease: 'power1.out',
-              scrollTrigger: {
-                trigger: card,
-                containerAnimation: horizontalTween,
-                start: 'left 90%',
-                end: 'left 30%',
-                scrub: true,
-              }
-            }
-          );
-        }
-
-        // 5. Content elements fade/slide stagger reveal
-        if (content) {
-          gsap.fromTo(content.children,
-            { opacity: 0, y: 40 },
-            {
-              opacity: 1,
-              y: 0,
-              stagger: 0.08,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: card,
-                containerAnimation: horizontalTween,
-                start: 'left 75%',
-                end: 'left 40%',
-                scrub: true,
-              }
-            }
-          );
-        }
-      });
-    });
-
-    // ─── MOBILE VERTICAL CARDS (simplified — no scrub, no filter, no clip-path) ───
-    mm.add("(max-width: 899px)", () => {
-      const cards = gsap.utils.toArray('.cs-card');
-      
-      cards.forEach((card, i) => {
-        const badge = card.querySelector('.cs-card__floating-badge');
-        const content = card.querySelector('.cs-card__content');
-        const img = card.querySelector('.cs-card__image');
-
-        // 1. Smooth card reveal
-        gsap.fromTo(card,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              once: true,
-            }
-          }
-        );
-
-        // 2. Parallax drift on the mockup image inside the card
-        if (img) {
-          gsap.fromTo(img,
-            { yPercent: -8 },
-            {
-              yPercent: 8,
-              ease: 'none',
-              scrollTrigger: {
-                trigger: card,
-                start: 'top bottom',
-                end: 'bottom top',
-                scrub: true,
-              }
-            }
-          );
-        }
-
-        // 3. Simple badge entrance
-        if (badge) {
-          gsap.fromTo(badge,
-            { opacity: 0, scale: 0.8, rotate: -3 },
-            {
-              opacity: 1,
-              scale: 1,
-              rotate: 0,
-              duration: 0.6,
-              ease: 'back.out(1.2)',
-              scrollTrigger: {
-                trigger: card,
-                start: 'top 70%',
-                once: true,
-              }
-            }
-          );
-        }
-
-        // 4. Simple content fade
-        if (content) {
-          gsap.fromTo(content.children,
-            { opacity: 0, y: 20 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 0.5,
-              stagger: 0.06,
-              scrollTrigger: {
-                trigger: card,
-                start: 'top 75%',
-                once: true,
-              }
-            }
-          );
-        }
-      });
-    });
-
-    // Recalculate triggers
-    setTimeout(() => {
-      ScrollTrigger.sort();
-      ScrollTrigger.refresh();
-    }, 150);
-
-    return () => mm.revert();
-  }, []);
+  const glowColors = [
+    'rgba(249, 87, 56, 0.15)', // Title slide (ember)
+    'rgba(249, 87, 56, 0.22)', // LunaCart
+    'rgba(238, 155, 0, 0.22)',  // DataFlow
+    'rgba(174, 32, 18, 0.22)',  // Payze
+    'rgba(233, 216, 166, 0.22)' // VoyageAI
+  ];
 
   return (
-    <section id="work" ref={sectionRef} data-scene="work" className="cs-section">
-      <div ref={trackRef} className="cs-track">
+    <section
+      id="work"
+      ref={sectionRef}
+      data-scene="work"
+      className={`cs-section ${isMobile ? 'cs-section--mobile' : 'cs-section--desktop'}`}
+    >
+      {/* Background technical grid */}
+      <div className="cs-section__grid-bg" />
+
+      {/* Cross-fading background radial glow layers */}
+      {glowColors.map((glowColor, idx) => (
+        <div
+          key={idx}
+          className="cs-section__glow-layer"
+          style={{
+            background: `radial-gradient(circle at center, ${glowColor}, transparent 70%)`,
+            opacity: activeIndex === idx ? 1 : 0,
+          }}
+        />
+      ))}
+
+      {/* Horizontal Carousel Track */}
+      <div ref={trackRef} className="cs-track" style={{ width: isMobile ? 'auto' : '500vw' }}>
         {/* Title Slide */}
         <article
           className="cs-card cs-card--title"
@@ -391,28 +369,19 @@ export default function CaseStudies() {
             zIndex: 1,
           }}
         >
-          <div className="cs-card__bg">
-            <div
-              className="cs-card__visual"
-              style={{
-                background: `radial-gradient(ellipse at 30% 40%, var(--accent-ember)10, transparent 65%)`,
-              }}
-            >
-              <div className="cs-card__grid-lines" />
-            </div>
-          </div>
-
-          <div className="cs-card__layout" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '6vw', height: '100%' }}>
-            <div className="cs-card__content" style={{ opacity: 1, transform: 'none', maxWidth: '600px' }}>
-              <p className="eyebrow" style={{ color: 'var(--accent-ember)', letterSpacing: '0.25em', marginBottom: '20px' }}>
-                Selected Work
-              </p>
-              <h2 className="display-lg" style={{ fontSize: 'var(--text-display-lg)', fontWeight: 'var(--weight-black)', color: 'var(--text-primary)', lineHeight: 1.15, marginBottom: '24px' }}>
-                Real projects with real results.
-              </h2>
-              <p className="body-lg" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>
-                Not fake “concept universes.”
-              </p>
+          <div className="cs-card__box" style={{ background: 'transparent', border: 'none', boxShadow: 'none', backdropFilter: 'none' }}>
+            <div className="cs-card__inner" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: isMobile ? '0' : '40px' }}>
+              <div className="cs-card__content" style={{ maxWidth: '600px', width: '100%' }}>
+                <p className="eyebrow" style={{ color: 'var(--accent-ember)', letterSpacing: '0.25em', marginBottom: '20px' }}>
+                  Selected Work
+                </p>
+                <h2 className="display-lg" style={{ fontSize: 'var(--text-display-lg)', fontWeight: 'var(--weight-black)', color: 'var(--text-primary)', lineHeight: 1.15, marginBottom: '24px' }}>
+                  Real projects with real results.
+                </h2>
+                <p className="body-lg" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>
+                  Not fake “concept universes.”
+                </p>
+              </div>
             </div>
           </div>
         </article>
@@ -423,96 +392,85 @@ export default function CaseStudies() {
             className="cs-card"
             style={{
               '--card-accent': project.color,
-              zIndex: i + 2, // Stack cards correctly on mobile
+              zIndex: i + 2,
             }}
             onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
             onMouseLeave={(e) => handleMouseLeave(e.currentTarget)}
           >
-            {/* Interactive mouse follow ambient glow */}
-            <div className="cs-card__mouse-glow" style={{ background: project.color }} />
+            {/* The primary card box */}
+            <div className="cs-card__box">
+              {/* Internal mouse follow localized glow (desktop only) */}
+              <div className="cs-card__mouse-glow" />
 
-            {/* Full-screen background visual */}
-            <div className="cs-card__bg">
-              <div
-                className="cs-card__visual"
-                style={{
-                  background: `radial-gradient(ellipse at 30% 40%, ${project.color}15, transparent 65%), radial-gradient(ellipse at 70% 70%, ${project.color}08, transparent 55%)`,
-                }}
-              >
-                <div className="cs-card__grid-lines" />
-                <div className="cs-card__orb" style={{ background: project.color }} />
-              </div>
-            </div>
+              {/* Technical Grid Overlay */}
+              <div className="cs-card__grid" />
 
-            {/* Asymmetric Depth Sandwich Layout */}
-            <div className="cs-card__layout">
-              {/* Massive background typography overlapping behind the image */}
-              <div className="cs-card__bg-title-wrap">
-                <h2 className="cs-card__bg-title">{project.title}</h2>
-              </div>
+              {/* Massive background typography */}
+              <div className="cs-card__giant-text">{project.title}</div>
 
-              {/* Background rotating tag orbit */}
-              <div className="cs-card__tech-orbit">
-                <div className="cs-card__orbit-track">
-                  {[...project.tags, ...project.tags, ...project.tags].map((tag, idx) => (
-                    <span key={idx} className="cs-card__orbit-tag">
-                      {tag} <span className="cs-card__orbit-dot">•</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Floating Image Showcase Frame */}
-              <div className="cs-card__showcase">
-                <div className="cs-card__image-wrapper">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="cs-card__image"
-                    loading="lazy"
-                  />
-                  <div className="cs-card__image-glow" style={{ background: project.color }} />
-
-                  {/* Corner bracket reticles */}
-                  <div className="cs-card__corner cs-card__corner--tl" />
-                  <div className="cs-card__corner cs-card__corner--tr" />
-                  <div className="cs-card__corner cs-card__corner--bl" />
-                  <div className="cs-card__corner cs-card__corner--br" />
-                </div>
-
-                {/* Floating Glass Metric Badge (overlapping the image) */}
-                <div className="cs-card__floating-badge">
-                  <div className="cs-card__badge-glass" />
-                  <span className="cs-card__badge-val" style={{ color: project.color }}>
-                    {project.metric}
-                  </span>
-                  <span className="cs-card__badge-lbl">{project.metricLabel}</span>
-                </div>
-              </div>
-
-              {/* Foreground content blocks */}
-              <div className="cs-card__content">
-                <div className="cs-card__meta">
-                  <span className="cs-card__num">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="cs-card__category">{project.category}</span>
-                  <span className="cs-card__year">{project.year}</span>
-                </div>
-
-                <p className="cs-card__desc">{project.description}</p>
-
-                <div className="cs-card__actions">
-                  <div className="cs-card__arrow">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M7 17L17 7M17 7H7M17 7V17"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
+              {/* Card Inner Layout */}
+              <div className="cs-card__inner">
+                {/* Left Side: Content */}
+                <div className="cs-card__content">
+                  <div className="cs-card__meta">
+                    <span className="cs-card__num">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="cs-card__category">{project.category}</span>
+                    <span className="cs-card__year">{project.year}</span>
                   </div>
-                  <span className="cs-card__link-text">View Case Study</span>
+
+                  <h3 className="cs-card__title">{project.title}</h3>
+                  <p className="cs-card__desc">{project.description}</p>
+
+                  {/* Tech Tags */}
+                  <div className="cs-card__tags">
+                    {project.tags.map((tag, idx) => (
+                      <span key={idx} className="cs-card__tag">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Action Link */}
+                  <div className="cs-card__action">
+                    <span className="cs-card__action-text">Explore Project</span>
+                    <span className="cs-card__action-arrow">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <path
+                          d="M7 17L17 7M17 7H7M17 7V17"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Right Side: Showcase */}
+                <div className="cs-card__showcase">
+                  <div className="cs-card__img-container">
+                    <img
+                      src={isVisible ? project.image : ''}
+                      alt={project.title}
+                      className="cs-card__img"
+                      loading="lazy"
+                    />
+                    <div
+                      className="cs-card__img-radial"
+                      style={{
+                        background: `radial-gradient(circle at center, ${project.glowColor}, transparent 65%)`,
+                      }}
+                    />
+                  </div>
+
+                  {/* Floating Metric Card (overlapping showcase image) */}
+                  <div className="cs-card__metric-badge">
+                    <span className="cs-card__metric-val" style={{ color: project.color }}>
+                      {project.metric}
+                    </span>
+                    <span className="cs-card__metric-label">{project.metricLabel}</span>
+                  </div>
                 </div>
               </div>
             </div>

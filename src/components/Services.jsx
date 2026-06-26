@@ -10,37 +10,123 @@ gsap.registerPlugin(ScrollTrigger);
 const services = [
   {
     title: 'Web Development',
-    desc: 'Fast, scalable websites and landing pages designed to convert.',
-    tags: ['Next.js', 'React', 'TypeScript', 'SEO', 'Motion'],
+    desc: 'Lightning-fast, scalability-engineered edge applications.',
+    tags: ['Next.js', 'React', 'TypeScript', 'WebGL', 'SEO'],
     color: 'var(--accent-ember)',
+    tools: ['Vite', 'Node.js', 'Tailwind', 'GSAP'],
+    logs: [
+      'npm run build --production',
+      'compiling routes (app router)...',
+      'bundling chunks (64 modules)...',
+      'optimized asset delivery (Brotli active)',
+      'server deployed at edge in 18ms ✓'
+    ]
   },
   {
     title: 'Mobile Development',
-    desc: 'Polished mobile apps with smooth UX and strong product feel.',
-    tags: ['React Native', 'Swift', 'Kotlin', 'Expo'],
+    desc: 'Bespoke native mobile ecosystems with fluid reanimated motion.',
+    tags: ['iOS', 'Android', 'React Native', 'Swift', 'Kotlin'],
     color: 'var(--accent-amber)',
+    tools: ['SwiftUI', 'Expo', 'Redux', 'Fastlane'],
+    logs: [
+      'expo build:ios --profile production',
+      'compiling native Swift layers...',
+      'linking react-native-reanimated engine',
+      'optimized assets: main.jsbundle (1.4MB)',
+      'build completed successfully ✓'
+    ]
   },
   {
     title: 'Brand & UI/UX',
-    desc: 'Design systems and interfaces that make your brand feel serious.',
-    tags: ['Figma', 'Design Systems', 'Prototyping', 'Branding'],
+    desc: 'High-fidelity interaction design systems and digital tokens.',
+    tags: ['Branding', 'Figma', 'Prototyping', 'Design Systems'],
     color: 'var(--accent-gold)',
+    tools: ['Illustrator', 'Spline', 'After Effects', 'Tokens'],
+    logs: [
+      'loading design system tokens...',
+      'parsing Figma styles API node-trees',
+      'generating layout grid assets',
+      'compiled theme: responsive variables',
+      'canvas layout rendering at 120fps'
+    ]
   },
   {
     title: 'CMS & Automation',
-    desc: 'Headless content systems and workflow automation.',
-    tags: ['Shopify', 'Webflow', 'Contentful', 'Strapi', 'Make', 'Zapier'],
+    desc: 'Headless CMS systems and automated webhook workflows.',
+    tags: ['Shopify', 'Webflow', 'Headless CMS', 'Webhooks'],
     color: 'var(--accent-lacquer)',
+    tools: ['Contentful', 'Strapi', 'Make', 'Zapier'],
+    logs: [
+      'initializing webhook listeners...',
+      'connecting Shopify Storefront API v2',
+      'linking orders -> Zapier automation',
+      'syncing Headless space to edge cache',
+      'webhook pipeline: listening... ✓'
+    ]
   },
   {
     title: 'SEO & Performance',
-    desc: 'Technical optimization for speed, visibility, and indexation.',
-    tags: ['Core Web Vitals', 'Schema', 'Analytics', 'Search Console'],
+    desc: 'Core Web Vitals tuning and indexation optimization.',
+    tags: ['PageSpeed', 'Lighthouse', 'Schema', 'Analytics'],
     color: 'var(--accent-bright)',
+    tools: ['Search Console', 'GTmetrix', 'Vitals', 'Tag Manager'],
+    logs: [
+      'running Lighthouse performance audits...',
+      'verifying schema.org JSON-LD microdata',
+      'optimized dynamic media: WebP (-65%)',
+      'Core Web Vitals check: passed ✓',
+      'search index indexation synced'
+    ]
   },
 ];
 
+function TerminalConsole({ logs, isActive }) {
+  const [displayedLogs, setDisplayedLogs] = useState([]);
 
+  useEffect(() => {
+    if (!isActive) {
+      const timer = setTimeout(() => setDisplayedLogs([]), 0);
+      return () => clearTimeout(timer);
+    }
+
+    const timer = setTimeout(() => setDisplayedLogs([]), 0);
+    let currentLine = 0;
+    const interval = setInterval(() => {
+      if (currentLine < logs.length) {
+        setDisplayedLogs(prev => [...prev, logs[currentLine]]);
+        currentLine++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 280); // typewriter timing
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [isActive, logs]);
+
+  return (
+    <div className="terminal-console">
+      <div className="console-header">
+        <span className="console-dot red"></span>
+        <span className="console-dot yellow"></span>
+        <span className="console-dot green"></span>
+        <span className="console-title">terminal.sh</span>
+      </div>
+      <div className="console-body">
+        {displayedLogs.map((log, index) => (
+          <div key={index} className="console-line">
+            <span className="console-prompt">&gt;</span> {log}
+          </div>
+        ))}
+        {displayedLogs.length < logs.length && (
+          <span className="console-cursor">_</span>
+        )}
+      </div>
+    </div>
+  );
+}
 
 // ─── REUSABLE MOCKUPS ───
 
@@ -358,7 +444,17 @@ function ServiceRow({ service, index, activeService, setActiveService }) {
                 ))}
               </div>
             </div>
+            <div className="sv-details-section">
+              <span className="sv-details-label">Tech Stack</span>
+              <div className="sv-tools">
+                {service.tools.map((tool, j) => (
+                  <span key={j} className="sv-tool-chip">{tool}</span>
+                ))}
+              </div>
+            </div>
           </div>
+
+          <TerminalConsole logs={service.logs} isActive={isActive} />
         </div>
       </div>
       <div className="sv-row-glow-indicator" />
@@ -428,9 +524,9 @@ function ServicesFull() {
         <div className="sv-sticky-wrapper">
           <div className="sv-sticky">
             <span className="sv-label eyebrow">WHAT WE DO</span>
-            <SplitHeading text="What We Do" className="sv-heading" />
+            <SplitHeading text="Services" className="sv-heading" />
             <p className="sv-sub">
-              We build websites and digital products that look premium, load fast, and make people trust you quickly.
+              Engineering Awwwards-grade digital interfaces designed to command market attention.
             </p>
 
             <div 
@@ -499,7 +595,50 @@ function ServicesFull() {
 
 function ServiceCardMobile({ service, index }) {
   const cardRef = useRef(null);
+  const chamberRef = useRef(null);
   const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    if (!chamberRef.current || prefersReducedMotion()) return;
+
+    const chamber = chamberRef.current;
+    
+    if (isActive) {
+      const tl = gsap.timeline({ defaults: { overwrite: 'auto' } });
+      tl.to(chamber, {
+        scaleX: 0.72,
+        scaleY: 0.16,
+        borderRadius: '60px',
+        backgroundColor: '#000000',
+        borderColor: 'rgba(255, 255, 255, 0.25)',
+        boxShadow: '0 8px 30px rgba(0,0,0,0.9), 0 0 15px rgba(255, 255, 255, 0.08)',
+        duration: 0.25,
+        ease: 'power3.inOut'
+      })
+      .to(chamber, {
+        scaleX: 1.0,
+        scaleY: 1.0,
+        borderRadius: '16px',
+        backgroundColor: 'rgba(8, 5, 4, 0.75)',
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.02)',
+        duration: 0.8,
+        ease: 'elastic.out(1.05, 0.58)'
+      });
+    } else {
+      gsap.to(chamber, {
+        scaleX: 1.0,
+        scaleY: 1.0,
+        borderRadius: '16px',
+        backgroundColor: 'rgba(8, 5, 4, 0.75)',
+        borderColor: 'rgba(255, 255, 255, 0.05)',
+        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.02)',
+        duration: 0.3,
+        ease: 'power2.out',
+        overwrite: 'auto'
+      });
+    }
+  }, [isActive]);
 
   useEffect(() => {
     const trigger = ScrollTrigger.create({
@@ -544,6 +683,7 @@ function ServiceCardMobile({ service, index }) {
 
       <div className="sv-mobile-mockup-wrapper">
         <div 
+          ref={chamberRef}
           className="hologram-chamber-mobile"
           style={{ '--active-color': service.color }}
         >
@@ -569,7 +709,18 @@ function ServiceCardMobile({ service, index }) {
             ))}
           </div>
         </div>
+
+        <div className="sv-mobile-details-section">
+          <span className="sv-details-label">Tech Stack</span>
+          <div className="sv-tools">
+            {service.tools.map((tool, j) => (
+              <span key={j} className="sv-tool-chip">{tool}</span>
+            ))}
+          </div>
+        </div>
       </div>
+
+      <TerminalConsole logs={service.logs} isActive={isActive} />
     </div>
   );
 }
@@ -582,9 +733,9 @@ function ServicesLite() {
       <div className="container">
         <div className="sv-mobile-section-header">
           <span className="sv-label eyebrow">WHAT WE DO</span>
-          <SplitHeading text="What We Do" className="sv-heading" />
+          <SplitHeading text="Services" className="sv-heading" />
           <p className="sv-sub">
-            We build websites and digital products that look premium, load fast, and make people trust you quickly.
+            Engineering Awwwards-grade digital interfaces designed to command market attention.
           </p>
         </div>
 

@@ -155,7 +155,459 @@ function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) 
   }
 }
 
-export default function Hero() {
+/* ═══════════════════════════════════════════════════════
+   HERO — MOBILE VIEW (Static visual, 3D tilt, typed text)
+   ═══════════════════════════════════════════════════════ */
+function HeroMobile({ startTyping }) {
+  const sectionRef = useRef(null);
+  const mobileImageRef = useRef(null);
+  const mobileGlowRef = useRef(null);
+  const glareRef = useRef(null);
+  const eyebrowRef = useRef(null);
+  const headlineRef = useRef(null);
+  const subRef = useRef(null);
+  const actionsRef = useRef(null);
+  const scrollHintRef = useRef(null);
+
+  // Smooth tilt interaction refs
+  const tiltRef = useRef({ x: 0, y: 0 });
+  const targetTiltRef = useRef({ x: 0, y: 0 });
+  const isUserInteractingRef = useRef(false);
+
+  // Calibration refs for gyroscope
+  const baseBetaRef = useRef(null);
+  const baseGammaRef = useRef(null);
+  const scrollTiltYRef = useRef(0);
+  const motionPermissionRef = useRef('unknown');
+
+  const [loaded, setLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
+
+  // Typing animation states
+  const [displayedText, setDisplayedText] = useState('');
+  const [typingDone, setTypingDone] = useState(false);
+  const [showSubAndActions, setShowSubAndActions] = useState(false);
+  const [showEyebrow, setShowEyebrow] = useState(false);
+
+  // Monitor visibility of the Hero section
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.01 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Preload single mobile image to trigger loading state cleanly
+  useEffect(() => {
+    const mobImg = new Image();
+    mobImg.src = "https://res.cloudinary.com/dtbdgnh89/image/upload/f_auto,q_auto/Picsart_26-06-24_19-36-17-116_trkcu4";
+    mobImg.onload = () => setLoaded(true);
+    mobImg.onerror = () => setLoaded(true);
+  }, []);
+
+  // Entrance animation for mobile image container
+  useEffect(() => {
+    if (!loaded) return;
+
+    gsap.fromTo(".hero-mobile-image-container",
+      {
+        opacity: 0,
+        scale: 0.95,
+        rotateY: -15,
+        rotateX: 10,
+      },
+      {
+        opacity: 1,
+        scale: 1,
+        rotateY: 0,
+        rotateX: 0,
+        duration: 1.8,
+        ease: 'power3.out',
+      }
+    );
+  }, [loaded]);
+
+  // ─── TYPING ANIMATION SCHEDULER ───
+  useEffect(() => {
+    if (!startTyping) return;
+
+    const eyebrowTimer = setTimeout(() => setShowEyebrow(true), 0);
+
+    const textToType = "We build\ndigital\npowerhouses.";
+    let currentIdx = 0;
+
+    const typingTimer = setTimeout(() => {
+      const interval = setInterval(() => {
+        if (currentIdx <= textToType.length) {
+          setDisplayedText(textToType.substring(0, currentIdx));
+          currentIdx++;
+        } else {
+          clearInterval(interval);
+          setTypingDone(true);
+          setShowSubAndActions(true);
+        }
+      }, 70); // Elegant, rapid Apple-style typing
+
+      return () => clearInterval(interval);
+    }, 400);
+
+    return () => {
+      clearTimeout(eyebrowTimer);
+      clearTimeout(typingTimer);
+    };
+  }, [startTyping]);
+
+  // ─── 3D PERSPECTIVE INTERACTION ───
+  useEffect(() => {
+    if (!isVisible) return;
+    const mobileImg = mobileImageRef.current;
+    const sectionEl = sectionRef.current;
+
+    const targetEl = mobileImg;
+    if (!targetEl) return;
+
+    // Map pointer coordinate on the hero section to [-1, 1] relative to the center
+    const updatePointerTilt = (clientX, clientY) => {
+      const rect = sectionEl.getBoundingClientRect();
+      const pointerX = clientX - rect.left;
+      const pointerY = clientY - rect.top;
+
+      const x = (pointerX / rect.width) * 2 - 1;
+      const y = (pointerY / rect.height) * 2 - 1;
+
+      targetTiltRef.current = {
+        x: Math.max(-0.8, Math.min(0.8, x)),
+        y: Math.max(-0.8, Math.min(0.8, y)),
+      };
+    };
+
+    const handlePointerDown = (e) => {
+      if (e.button !== undefined && e.button !== 0) return;
+      isUserInteractingRef.current = true;
+      updatePointerTilt(e.clientX, e.clientY);
+    };
+
+    const handlePointerMove = (e) => {
+      if (!isUserInteractingRef.current) return;
+      updatePointerTilt(e.clientX, e.clientY);
+    };
+
+    const handlePointerUp = () => {
+      isUserInteractingRef.current = false;
+    };
+
+    // Touch event fallbacks for older devices
+    const handleTouchStart = (e) => {
+      isUserInteractingRef.current = true;
+      const touch = e.touches[0];
+      updatePointerTilt(touch.clientX, touch.clientY);
+    };
+
+    const handleTouchMove = (e) => {
+      if (!isUserInteractingRef.current) return;
+      const touch = e.touches[0];
+      updatePointerTilt(touch.clientX, touch.clientY);
+    };
+
+    const handleTouchEnd = () => {
+      isUserInteractingRef.current = false;
+    };
+
+    // Scroll-based parallax tilt fallback
+    const handleScroll = () => {
+      if (isUserInteractingRef.current) return;
+      const rect = sectionEl.getBoundingClientRect();
+      if (rect.top <= 0 && rect.top >= -rect.height) {
+        const scrollProgress = Math.abs(rect.top) / rect.height;
+        scrollTiltYRef.current = scrollProgress * 0.45; // Max scroll tilt
+      } else if (rect.top > 0) {
+        scrollTiltYRef.current = 0;
+      }
+    };
+
+    // Device Orientation handler for Mobile/Tablet (Gyroscope)
+    const handleOrientation = (e) => {
+      if (isUserInteractingRef.current) return;
+
+      const gamma = e.gamma !== null && e.gamma !== undefined ? e.gamma : 0; // [-90, 90]
+      const beta = e.beta !== null && e.beta !== undefined ? e.beta : 0;   // [-180, 180]
+
+      // Initialize baseline if not set yet
+      if (baseBetaRef.current === null) {
+        baseBetaRef.current = beta;
+        baseGammaRef.current = gamma;
+        return;
+      }
+
+      // Dynamic baseline calibration: slowly drift towards current position (low-pass filter)
+      baseBetaRef.current = baseBetaRef.current * 0.98 + beta * 0.02;
+      baseGammaRef.current = baseGammaRef.current * 0.98 + gamma * 0.02;
+
+      let diffBeta = beta - baseBetaRef.current;
+      let diffGamma = gamma - baseGammaRef.current;
+
+      // Handle wrapping at boundaries
+      if (diffBeta > 180) diffBeta -= 360;
+      if (diffBeta < -180) diffBeta += 360;
+      if (diffGamma > 90) diffGamma -= 180;
+      if (diffGamma < -90) diffGamma += 180;
+
+      // Clamp difference to +/- 20 degrees for a beautiful range of motion
+      const maxGyroAngle = 20;
+      const x = Math.max(-1, Math.min(1, diffGamma / maxGyroAngle));
+      const y = Math.max(-1, Math.min(1, diffBeta / maxGyroAngle));
+
+      targetTiltRef.current = { x, y };
+    };
+
+    if (sectionEl) {
+      sectionEl.addEventListener('pointerdown', handlePointerDown);
+      sectionEl.addEventListener('pointermove', handlePointerMove);
+      sectionEl.addEventListener('pointerup', handlePointerUp);
+      sectionEl.addEventListener('pointercancel', handlePointerUp);
+
+      sectionEl.addEventListener('touchstart', handleTouchStart, { passive: true });
+      sectionEl.addEventListener('touchmove', handleTouchMove, { passive: true });
+      sectionEl.addEventListener('touchend', handleTouchEnd, { passive: true });
+      sectionEl.addEventListener('touchcancel', handleTouchEnd, { passive: true });
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    // Active tracking for DeviceOrientation
+    let isListenerActive = false;
+
+    const startOrientationTracking = () => {
+      if (isListenerActive) return;
+      window.addEventListener('deviceorientation', handleOrientation, { passive: true });
+      window.addEventListener('deviceorientationabsolute', handleOrientation, { passive: true });
+      isListenerActive = true;
+    };
+
+    const requestOrientationPermission = () => {
+      if (motionPermissionRef.current === 'granted' || motionPermissionRef.current === 'denied') {
+        if (motionPermissionRef.current === 'granted') startOrientationTracking();
+        return;
+      }
+
+      if (
+        typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function'
+      ) {
+        DeviceOrientationEvent.requestPermission()
+          .then((state) => {
+            motionPermissionRef.current = state;
+            if (state === 'granted') {
+               startOrientationTracking();
+            }
+          })
+          .catch((err) => {
+            console.warn('DeviceOrientation permission request error:', err);
+            motionPermissionRef.current = 'denied';
+          });
+      } else {
+        // Non-iOS or older browsers that don't need explicit permission prompt
+        motionPermissionRef.current = 'granted';
+        startOrientationTracking();
+      }
+    };
+
+    // Auto-attempt start tracking if permission not needed or already granted
+    if (
+      typeof DeviceOrientationEvent === 'undefined' ||
+      typeof DeviceOrientationEvent.requestPermission !== 'function' ||
+      motionPermissionRef.current === 'granted'
+    ) {
+      motionPermissionRef.current = 'granted';
+      startOrientationTracking();
+    }
+
+    // Register user interaction triggers for iOS permission
+    if (motionPermissionRef.current === 'unknown') {
+      window.addEventListener('click', requestOrientationPermission, { once: true });
+      window.addEventListener('touchstart', requestOrientationPermission, { once: true });
+      window.addEventListener('pointerdown', requestOrientationPermission, { once: true });
+    }
+
+    // ─── SMOOTH INTERPOLATION LOOP (RAF) ───
+    let rafId;
+    let time = 0;
+    const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
+
+    const updateLoop = () => {
+      // Continuous float animation wave (subtle drifting effect)
+      time += 0.015;
+      const floatScale = isUserInteractingRef.current ? 0.15 : 1.0;
+      const waveX = Math.sin(time) * 0.06 * floatScale;
+      const waveY = Math.cos(time * 0.8) * 0.05 * floatScale;
+
+      const lerpAmt = 0.05;
+
+      // Smooth decay for target tilt when user is NOT interacting
+      if (!isUserInteractingRef.current) {
+        targetTiltRef.current.x = targetTiltRef.current.x * 0.95;
+        targetTiltRef.current.y = targetTiltRef.current.y * 0.95;
+      }
+
+      const targetX = targetTiltRef.current.x + waveX;
+      const targetY = targetTiltRef.current.y + scrollTiltYRef.current + waveY;
+
+      tiltRef.current.x = lerp(tiltRef.current.x, targetX, lerpAmt);
+      tiltRef.current.y = lerp(tiltRef.current.y, targetY, lerpAmt);
+
+      const rotateLimit = 25;    // Degrees max
+      const translateLimit = 30; // Pixels max
+
+      const rotateY = tiltRef.current.x * rotateLimit;
+      const rotateX = -tiltRef.current.y * rotateLimit;
+      const transX = tiltRef.current.x * translateLimit;
+      const transY = tiltRef.current.y * translateLimit;
+
+      // 1. Image Transform
+      targetEl.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translate3d(${transX}px, ${transY}px, 0) scale(1.18)`;
+
+      // 2. Glare Transform (moves opposite of rotation for glossy reflection)
+      if (glareRef.current) {
+        const glareX = -tiltRef.current.x * 45;
+        const glareY = -tiltRef.current.y * 45;
+        const glareOpacity = Math.max(0.0, Math.min(0.45, 0.22 + tiltRef.current.y * 0.22));
+        glareRef.current.style.transform = `translate3d(${glareX}px, ${glareY}px, 0) scale(1.25)`;
+        glareRef.current.style.opacity = glareOpacity;
+      }
+
+      // 3. Glow Transform (moves opposite for depth separation)
+      if (mobileGlowRef.current) {
+        const glowX = -transX * 0.8;
+        const glowY = -transY * 0.8;
+        mobileGlowRef.current.style.transform = `translate3d(${glowX}px, ${glowY}px, 0) translate(-50%, -50%)`;
+      }
+
+      rafId = requestAnimationFrame(updateLoop);
+    };
+
+    rafId = requestAnimationFrame(updateLoop);
+
+    return () => {
+      if (sectionEl) {
+        sectionEl.removeEventListener('pointerdown', handlePointerDown);
+        sectionEl.removeEventListener('pointermove', handlePointerMove);
+        sectionEl.removeEventListener('pointerup', handlePointerUp);
+        sectionEl.removeEventListener('pointercancel', handlePointerUp);
+
+        sectionEl.removeEventListener('touchstart', handleTouchStart);
+        sectionEl.removeEventListener('touchmove', handleTouchMove);
+        sectionEl.removeEventListener('touchend', handleTouchEnd);
+        sectionEl.removeEventListener('touchcancel', handleTouchEnd);
+      }
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('click', requestOrientationPermission);
+      window.removeEventListener('touchstart', requestOrientationPermission);
+      window.removeEventListener('pointerdown', requestOrientationPermission);
+      if (isListenerActive) {
+        window.removeEventListener('deviceorientation', handleOrientation);
+        window.removeEventListener('deviceorientationabsolute', handleOrientation);
+      }
+      cancelAnimationFrame(rafId);
+    };
+  }, [isVisible]);
+
+  return (
+    <section id="hero" ref={sectionRef} data-scene="hero">
+      <div className="hero-sticky-container">
+        <div className="hero-canvas-container">
+          <div className="hero-mobile-image-wrapper">
+            <div ref={mobileGlowRef} className="hero-mobile-image-glow" />
+            <div className="hero-mobile-image-container">
+              <img
+                ref={mobileImageRef}
+                src="https://res.cloudinary.com/dtbdgnh89/image/upload/f_auto,q_auto/Picsart_26-06-24_19-36-17-116_trkcu4"
+                alt="Hero concept"
+                className="hero-mobile-image"
+              />
+              <div ref={glareRef} className="hero-mobile-image-glare" />
+            </div>
+          </div>
+
+          {/* Visual tilt hint for mobile users */}
+          {loaded && (
+            <div className="hero-drag-hint" aria-hidden="true">
+              <div className="drag-hint-icon" style={{ animation: 'hero-cursor-blink 1.5s infinite ease-in-out' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                  <line x1="12" y1="18" x2="12" y2="18" strokeLinecap="round" />
+                </svg>
+              </div>
+              <span>Touch or tilt to explore 3D</span>
+            </div>
+          )}
+
+          <div className="hero-gradient-bg" aria-hidden="true" style={{ opacity: 0.15 }}>
+            <div className="hero-noise-overlay" />
+          </div>
+        </div>
+
+        <div className="hero-ui-layer">
+          <div className="hero-content">
+            <p ref={eyebrowRef} className={`hero-eyebrow ${showEyebrow ? 'visible' : ''}`} style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
+              ✦ MODERN AI AGENCY
+            </p>
+
+            <h1 ref={headlineRef} className="hero-headline">
+              <span className="hero-typed-text" style={{ textShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>
+                {displayedText.split('\n').map((line, idx, arr) => {
+                  const isLastLine = idx === 2;
+                  return (
+                    <span key={idx} className={isLastLine ? "hero-gradient-text" : ""}>
+                      {line}
+                      {idx < arr.length - 1 && <br />}
+                    </span>
+                  );
+                })}
+              </span>
+              <span className={`hero-cursor ${typingDone ? 'done' : ''}`}>|</span>
+            </h1>
+
+            <p ref={subRef} className={`hero-sub ${showSubAndActions ? 'visible' : ''}`} style={{ textShadow: '0 4px 12px rgba(0,0,0,0.8)' }}>
+              We design and build fast, high-trust websites, apps, and AI systems for founders who want more leads, stronger credibility, and real growth.
+            </p>
+
+            <div ref={actionsRef} className={`hero-actions ${showSubAndActions ? 'visible' : ''}`}>
+              <a href="#demo" className="btn-primary magnetic">
+                Schedule Free Demo <span className="btn-arrow">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </span>
+              </a>
+              <a href="#work" className="btn-ghost magnetic">
+                <span style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>View Work</span>
+              </a>
+              <p className="hero-small-line" style={{ opacity: 0.6, fontSize: 'var(--text-body-sm)', fontFamily: 'var(--font-mono)', marginTop: '20px', textShadow: '0 2px 4px rgba(0,0,0,0.8)', letterSpacing: '0.05em', width: '100%', textAlign: 'center' }}>
+                48-hour response time. Clear scope. No fluff.
+              </p>
+            </div>
+          </div>
+
+          <div ref={scrollHintRef} className={`hero-scroll-indicator ${showSubAndActions ? 'visible' : ''}`} style={{ position: 'absolute', bottom: '4vh' }}>
+            <div className="scroll-line" style={{ background: 'var(--text-primary)', boxShadow: '0 0 8px rgba(255,255,255,0.5)' }} />
+            <span style={{ color: 'var(--text-primary)', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>Scroll to Ascend</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   HERO — DESKTOP VIEW (Original full canvas, scroll-scrub sequence)
+   ═══════════════════════════════════════════════════════ */
+function HeroDesktop() {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
   const overlayCanvasRef = useRef(null);
@@ -169,8 +621,8 @@ export default function Hero() {
   const currentFrameRef = useRef(0);
   const [loaded, setLoaded] = useState(false);
 
-  // Mobile optimization: Cap preloaded frames to 30 on mobile/lite mode, 118 on desktop
-  const totalFrames = isLite ? 30 : 118;
+  // Desktop frames
+  const totalFrames = 118;
   const EXIT_START = 0.78;
 
   // ─── RENDER FRAME ───
@@ -179,7 +631,29 @@ export default function Hero() {
     const context = contextRef.current;
     if (!canvas || !context) return;
 
-    const img = imagesRef.current[index];
+    // Find the nearest loaded frame fallback to prevent flash/blank canvas
+    let img = imagesRef.current[index];
+    if (!img || !img.complete || img.naturalWidth === 0) {
+      let found = false;
+      // Search backwards first
+      for (let i = index - 1; i >= 0; i--) {
+        if (imagesRef.current[i] && imagesRef.current[i].complete && imagesRef.current[i].naturalWidth > 0) {
+          img = imagesRef.current[i];
+          found = true;
+          break;
+        }
+      }
+      // Search forwards if not found
+      if (!found) {
+        for (let i = index + 1; i < totalFrames; i++) {
+          if (imagesRef.current[i] && imagesRef.current[i].complete && imagesRef.current[i].naturalWidth > 0) {
+            img = imagesRef.current[i];
+            break;
+          }
+        }
+      }
+    }
+
     if (!img || !img.width || !img.height) return;
 
     const canvasRatio = canvas.width / canvas.height;
@@ -196,12 +670,15 @@ export default function Hero() {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.imageSmoothingEnabled = true;
-    context.imageSmoothingQuality = isLite ? 'medium' : 'high';
+    context.imageSmoothingQuality = 'high';
     context.drawImage(img, ox, oy, dw, dh);
-  }, []);
+  }, [totalFrames]);
 
   // ─── DEFERRED PRELOAD FRAMES (after first paint) ───
   useEffect(() => {
+    let idleId;
+    let timerId;
+
     // 1. Load and render first frame immediately on mount to prevent blank canvas
     const firstImg = new Image();
     firstImg.src = '/assets/sequence/frame_0001.webp';
@@ -212,7 +689,7 @@ export default function Hero() {
       const canvas = canvasRef.current;
       const context = canvas?.getContext('2d');
       if (canvas && context && currentFrameRef.current === 0) {
-        const dpr = Math.min(window.devicePixelRatio || 1, isLite ? 1.5 : 2);
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
         canvas.width = window.innerWidth * dpr;
         canvas.height = window.innerHeight * dpr;
         canvas.style.width = window.innerWidth + 'px';
@@ -231,19 +708,37 @@ export default function Hero() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         context.drawImage(firstImg, ox, oy, dw, dh);
       }
+
+      // If user prefers reduced motion, we only need the first frame!
+      if (prefersReducedMotion()) {
+        imagesRef.current = [firstImg];
+        setLoaded(true);
+      }
     };
+
+    if (prefersReducedMotion()) {
+      return () => {
+        imagesRef.current = [];
+      };
+    }
 
     // 2. Preload remaining frames
     const startPreload = () => {
       let loadedCount = 0;
       const images = [];
+      const criticalFramesCount = 10;
+      let criticalLoaded = false;
 
       const handleFrameLoad = () => {
         loadedCount++;
-        if (loadedCount === totalFrames) setLoaded(true);
+        // Release loader as soon as the first 10 frames are ready for smooth first impression
+        if (!criticalLoaded && loadedCount >= Math.min(totalFrames, criticalFramesCount)) {
+          criticalLoaded = true;
+          setLoaded(true);
+        } else if (loadedCount === totalFrames) {
+          setLoaded(true);
+        }
       };
-
-      const frameStep = isLite ? Math.ceil(118 / totalFrames) : 1;
 
       for (let i = 0; i < totalFrames; i++) {
         // Reuse first frame if already loaded
@@ -253,9 +748,7 @@ export default function Hero() {
           continue;
         }
         const img = new Image();
-        const originalFrameNum = isLite ? (i * frameStep + 1) : (i + 1);
-        const clampedFrameNum = Math.min(originalFrameNum, 118);
-        const frameNum = String(clampedFrameNum).padStart(4, '0');
+        const frameNum = String(i + 1).padStart(4, '0');
         img.src = `/assets/sequence/frame_${frameNum}.webp`;
         img.onload = handleFrameLoad;
         img.onerror = () => {
@@ -267,60 +760,48 @@ export default function Hero() {
       imagesRef.current = images;
     };
 
+    const handleWindowLoad = () => {
+      timerId = setTimeout(startPreload, 100);
+    };
+
     if ('requestIdleCallback' in window) {
-      const id = requestIdleCallback(startPreload, { timeout: 3000 });
-      return () => cancelIdleCallback(id);
+      idleId = requestIdleCallback(startPreload, { timeout: 3000 });
     } else {
-      const onLoad = () => setTimeout(startPreload, 100);
       if (document.readyState === 'complete') {
-        const timer = setTimeout(startPreload, 100);
-        return () => clearTimeout(timer);
+        timerId = setTimeout(startPreload, 100);
       } else {
-        window.addEventListener('load', onLoad);
-        return () => window.removeEventListener('load', onLoad);
+        window.addEventListener('load', handleWindowLoad);
       }
     }
+
+    return () => {
+      if (idleId) cancelIdleCallback(idleId);
+      if (timerId) clearTimeout(timerId);
+      window.removeEventListener('load', handleWindowLoad);
+      // Cancel active network requests & clean up memory
+      imagesRef.current.forEach((img) => {
+        img.onload = null;
+        img.onerror = null;
+        img.src = '';
+      });
+      imagesRef.current = [];
+    };
   }, [totalFrames]);
 
-  // ─── MOBILE ENTRANCE ANIMATIONS (Immediate & Preload Auto-play) ───
+  // Scroll Lock during desktop loading sequence to prevent scroll-stutter during preloading
   useEffect(() => {
-    if (!isLite) return;
-
-    // Fade in text immediately on mount so the screen is never blank
-    const tl = gsap.timeline({
-      defaults: { duration: 0.9, ease: 'power3.out' }
-    });
-
-    tl.fromTo(eyebrowRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0 }, 0.1);
-
-    const words = headlineRef.current?.querySelectorAll('.hero-word-wrap') || [];
-    if (words.length > 0) {
-      tl.fromTo(words,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, stagger: 0.08 },
-        0.2
-      );
+    if (!loaded) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
     }
-
-    tl.fromTo(subRef.current, { opacity: 0, y: 12 }, { opacity: 1, y: 0 }, 0.5);
-    tl.fromTo(actionsRef.current, { opacity: 0, y: 15 }, { opacity: 1, y: 0 }, 0.7);
-    tl.fromTo(scrollHintRef.current, { opacity: 0 }, { opacity: 1 }, 1.0);
-  }, [isLite]);
-
-  useEffect(() => {
-    if (!isLite || !loaded) return;
-
-    // Play the 3D model entrance rotation spin once the frames are ready in memory
-    const animObj = { frame: 0 };
-    gsap.to(animObj, {
-      frame: totalFrames - 1,
-      duration: 1.6,
-      ease: 'power2.out',
-      onUpdate: () => {
-        renderFrame(Math.round(animObj.frame));
-      }
-    });
-  }, [loaded, isLite, totalFrames, renderFrame]);
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [loaded]);
 
   // ─── SCROLL ANIMATION + EXIT TRANSITION ───
   useLayoutEffect(() => {
@@ -328,18 +809,13 @@ export default function Hero() {
 
     const canvas = canvasRef.current;
     const overlay = overlayCanvasRef.current;
-    const context = canvas.getContext('2d', { willReadFrequently: isLite });
+    const context = canvas.getContext('2d');
     contextRef.current = context;
     const overlayCtx = overlay?.getContext('2d');
 
-    // ─── CANVAS SIZING (Ignore mobile height-only changes to prevent scroll-jank!) ───
-    let lastWidth = window.innerWidth;
+    // ─── CANVAS SIZING ───
     const resizeCanvas = () => {
-      if (isLite && window.innerWidth === lastWidth) return;
-      lastWidth = window.innerWidth;
-
-      const maxDpr = isLite ? 1.5 : 2;
-      const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
       canvas.style.width = window.innerWidth + 'px';
@@ -364,21 +840,14 @@ export default function Hero() {
       return () => window.removeEventListener('resize', resizeCanvas);
     }
 
-    if (isLite) {
-      // Size canvas and listen to resize on mobile, but do NOT run pinning/ScrollTrigger
-      return () => {
-        window.removeEventListener('resize', resizeCanvas);
-      };
-    }
-
     // ─── SINGLE UNIFIED SCROLL TRIGGER ───
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: sectionRef.current,
         start: 'top top',
-        end: isLite ? '+=120%' : '+=180%',   // Shorter scroll pin on mobile for app-like clean flow
+        end: '+=180%',
         pin: true,
-        scrub: isLite ? 0.8 : 1.2,           // Snappier response on mobile
+        scrub: 1.2,
         anticipatePin: 1,
         onUpdate: (self) => {
           if (!self || typeof self.progress !== 'number' || isNaN(self.progress)) return;
@@ -428,33 +897,21 @@ export default function Hero() {
           if (progress > EXIT_START) {
             const exitProgress = (progress - EXIT_START) / (1 - EXIT_START);
 
-            if (isLite) {
-              // Mobile: High-performance opacity fade (no heavy filters or overlay context operations)
-              const canvasContainer = document.querySelector('.hero-canvas-container');
-              if (canvasContainer) {
-                canvasContainer.style.opacity = Math.max(0, 1 - exitProgress * 1.5);
-              }
-              const textFade = Math.max(0, 1 - exitProgress * 2.0);
-              if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: textFade });
-              if (headlineRef.current) gsap.set(headlineRef.current, { opacity: textFade });
-              if (subRef.current) gsap.set(subRef.current, { opacity: textFade });
-              if (actionsRef.current) gsap.set(actionsRef.current, { opacity: textFade });
-            } else {
-              // Desktop: original cinematic effects
-              if (overlay) overlay.style.opacity = '1';
-              const textFade = Math.max(0, 1 - exitProgress * 2.5);
-              if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: textFade });
-              if (headlineRef.current) gsap.set(headlineRef.current, { opacity: textFade });
-              if (subRef.current) gsap.set(subRef.current, { opacity: textFade });
-              if (actionsRef.current) gsap.set(actionsRef.current, { opacity: textFade });
-              if (canvas && overlayCtx && overlay) {
-                applyScrollTransition(canvas, overlayCtx, overlay, exitProgress);
-              }
-              const containerOpacity = Math.max(0, 1 - Math.max(0, (exitProgress - 0.5) / 0.5));
-              const canvasContainer = document.querySelector('.hero-canvas-container');
-              if (canvasContainer) {
-                canvasContainer.style.opacity = containerOpacity;
-              }
+            if (overlay) overlay.style.opacity = '1';
+            const textFade = Math.max(0, 1 - exitProgress * 2.5);
+            if (eyebrowRef.current) gsap.set(eyebrowRef.current, { opacity: textFade });
+            if (headlineRef.current) gsap.set(headlineRef.current, { opacity: textFade });
+            if (subRef.current) gsap.set(subRef.current, { opacity: textFade });
+            if (actionsRef.current) gsap.set(actionsRef.current, { opacity: textFade });
+            
+            if (canvas && overlayCtx && overlay) {
+              applyScrollTransition(canvas, overlayCtx, overlay, exitProgress);
+            }
+            
+            const containerOpacity = Math.max(0, 1 - Math.max(0, (exitProgress - 0.5) / 0.5));
+            const canvasContainer = document.querySelector('.hero-canvas-container');
+            if (canvasContainer) {
+              canvasContainer.style.opacity = containerOpacity;
             }
           } else {
             // Reset transition styles
@@ -469,20 +926,18 @@ export default function Hero() {
         },
       });
 
-      // Camera tilt near end of frame sequence (desktop only for performance)
-      if (!isLite) {
-        gsap.fromTo(canvas, { scale: 1 }, {
-          scale: 1.05,
-          y: '-5vh',
-          ease: 'power2.inOut',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: '60% top',
-            end: '78% top',
-            scrub: 1.8,
-          },
-        });
-      }
+      // Camera tilt near end of frame sequence (desktop only)
+      gsap.fromTo(canvas, { scale: 1 }, {
+        scale: 1.05,
+        y: '-5vh',
+        ease: 'power2.inOut',
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: '60% top',
+          end: '78% top',
+          scrub: 1.8,
+        },
+      });
 
       setTimeout(() => {
         ScrollTrigger.sort();
@@ -499,7 +954,7 @@ export default function Hero() {
 
   return (
     <section id="hero" ref={sectionRef} data-scene="hero">
-      {!loaded && !isLite && (
+      {!loaded && (
         <div className="hero-loading-overlay">
           <span>Loading Sequence...</span>
         </div>
@@ -508,14 +963,11 @@ export default function Hero() {
       <div className="hero-sticky-container">
         <div className="hero-canvas-container">
           <canvas ref={canvasRef} className="hero-canvas" />
-          {/* FX Overlay — hidden by default, desktop only */}
-          {!isLite && (
-            <canvas
-              ref={overlayCanvasRef}
-              className="hero-fx-canvas"
-              aria-hidden="true"
-            />
-          )}
+          <canvas
+            ref={overlayCanvasRef}
+            className="hero-fx-canvas"
+            aria-hidden="true"
+          />
           <div className="hero-gradient-bg" aria-hidden="true" style={{ opacity: 0.15 }}>
             <div className="hero-noise-overlay" />
           </div>
@@ -542,7 +994,7 @@ export default function Hero() {
             <div ref={actionsRef} className="hero-actions" style={{ opacity: 0 }}>
               <a href="#demo" className="btn-primary magnetic">
                 Schedule Free Demo <span className="btn-arrow">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </span>
               </a>
               <a href="#work" className="btn-ghost magnetic">
@@ -556,9 +1008,32 @@ export default function Hero() {
 
           <div ref={scrollHintRef} className="hero-scroll-indicator" style={{ position: 'absolute', bottom: '4vh' }}>
             <div className="scroll-line" style={{ background: 'var(--text-primary)', boxShadow: '0 0 8px rgba(255,255,255,0.5)' }} />
+            <span style={{ color: 'var(--text-primary)', textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>Scroll to Ascend</span>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   HERO — default export switching on mobile/desktop bounds
+   ═══════════════════════════════════════════════════════ */
+export default function Hero({ startTyping = true }) {
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 900);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 900);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile, { passive: true });
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return isMobile ? (
+    <HeroMobile startTyping={startTyping} />
+  ) : (
+    <HeroDesktop />
   );
 }

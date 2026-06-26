@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from '../utils/motion';
@@ -10,11 +10,11 @@ gsap.registerPlugin(ScrollTrigger);
 const steps = [
   {
     num: '01',
-    title: 'Discovery',
-    phase: 'Phase 01',
+    title: 'Discovery & Audit',
+    phase: 'Phase 01 · Research',
     metric: '1-2 Weeks',
     metricLabel: 'Duration',
-    desc: 'We study your business, competitors, audience, and current problems.',
+    desc: 'We deep dive into your business model, audit existing codebases, and map out the competitive digital landscape to locate leverage points.',
     color: 'var(--accent-ember)',
     blueprint: (
       <svg className="blueprint-svg" viewBox="0 0 160 160" fill="none">
@@ -40,11 +40,11 @@ const steps = [
   },
   {
     num: '02',
-    title: 'Strategy',
-    phase: 'Phase 02',
+    title: 'Architecture & Strategy',
+    phase: 'Phase 02 · Specification',
     metric: '2 Weeks',
     metricLabel: 'Duration',
-    desc: 'We define the structure, messaging, and conversion path.',
+    desc: 'Defining layout architectures, API structures, state schemas, and compiling technical specifications to guarantee frictionless development.',
     color: 'var(--accent-amber)',
     blueprint: (
       <svg className="blueprint-svg" viewBox="0 0 160 160" fill="none">
@@ -76,11 +76,11 @@ const steps = [
   },
   {
     num: '03',
-    title: 'Design',
-    phase: 'Phase 03',
+    title: 'UI/UX & Interactive Design',
+    phase: 'Phase 03 · Prototyping',
     metric: '3-4 Weeks',
     metricLabel: 'Duration',
-    desc: 'We create the visual system, layout, and interaction style.',
+    desc: 'Translating strategy into high-end interactive interfaces. Pixel-perfect, interactive Figma prototypes before coding.',
     color: 'var(--accent-lacquer)',
     blueprint: (
       <svg className="blueprint-svg" viewBox="0 0 160 160" fill="none">
@@ -103,11 +103,11 @@ const steps = [
   },
   {
     num: '04',
-    title: 'Build',
-    phase: 'Phase 04',
+    title: 'Clean Agile Development',
+    phase: 'Phase 04 · Development',
     metric: '6-8 Weeks',
     metricLabel: 'Duration',
-    desc: 'We develop the site for speed, responsiveness, and scale.',
+    desc: 'Engineering with responsive clean code and modular sprint structures. Regular weekly demonstrations keep you aligned.',
     color: 'var(--accent-gold)',
     blueprint: (
       <svg className="blueprint-svg" viewBox="0 0 160 160" fill="none">
@@ -132,11 +132,11 @@ const steps = [
   },
   {
     num: '05',
-    title: 'Launch',
-    phase: 'Phase 05',
+    title: 'Launch & Continuous Scale',
+    phase: 'Phase 05 · Deployment',
     metric: 'Continuous',
-    metricLabel: 'Support',
-    desc: 'We test, deploy, and support the handoff.',
+    metricLabel: 'Monitoring',
+    desc: 'Rigorous QA check audits, domain propagation config, and search engine console handoff. We help you scale.',
     color: 'var(--accent-bright)',
     blueprint: (
       <svg className="blueprint-svg" viewBox="0 0 160 160" fill="none">
@@ -160,67 +160,66 @@ export default function Process() {
   const [activeStep, setActiveStep] = useState(0);
   const [rotation, setRotation] = useState(0);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (prefersReducedMotion() || isLite) return;
 
-    const ctx = gsap.context(() => {
-      const container = containerRef.current;
-      const engine = engineRef.current;
+    const container = containerRef.current;
+    const engine = engineRef.current;
 
-      // Orchestrate ScrollTrigger to pin the section
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: container,
-          start: 'top top',
-          end: '+=380%',
-          pin: true,
-          scrub: 1.2,
-          onUpdate: (self) => {
-            if (!self || typeof self.progress !== 'number' || isNaN(self.progress)) return;
-            const progress = self.progress;
-            // Calculate active step index based on progress (0 to 1)
-            const stepIndex = Math.max(0, Math.min(steps.length - 1, Math.floor(progress * steps.length)));
-            setActiveStep(stepIndex);
-            
-            // Animate the rotation angle tracker state (for counter rotations)
-            setRotation(progress * 288);
-          }
+    // Orchestrate ScrollTrigger to pin the section
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: 'top top',
+        end: '+=200%',
+        pin: true,
+        scrub: 0.3,
+        onUpdate: (self) => {
+          if (!self || typeof self.progress !== 'number' || isNaN(self.progress)) return;
+          
+          // Calculate active step index based on progress (0 to 1)
+          const stepIndex = Math.min(steps.length - 1, Math.floor(self.progress * steps.length));
+          setActiveStep(stepIndex);
+          
+          // Animate the rotation angle tracker state (for counter rotations)
+          setRotation(self.progress * 288);
         }
-      });
+      }
+    });
 
-      // Rotate the parent mech engine track
-      tl.to(engine, {
-        rotateZ: 288,
-        ease: 'none'
-      });
-    }, containerRef);
+    // Rotate the parent mech engine track
+    tl.to(engine, {
+      rotateZ: 288,
+      ease: 'none'
+    });
 
-    return () => ctx.revert();
+    return () => {
+      tl.kill();
+    };
   }, []);
 
   // Mobile-specific scroll tracking for process steps
   useEffect(() => {
     if (!isLite) return;
 
-    const ctx = gsap.context(() => {
-      const cards = gsap.utils.toArray('.pr-hud-card');
-      cards.forEach((card, idx) => {
-        ScrollTrigger.create({
-          trigger: card,
-          start: 'top 55%',
-          end: 'bottom 45%',
-          onToggle: (self) => {
-            if (self.isActive) {
-              setActiveStep(idx);
-            }
+    const cards = gsap.utils.toArray('.pr-hud-card');
+    const triggers = cards.map((card, idx) => {
+      return ScrollTrigger.create({
+        trigger: card,
+        start: 'top 55%',
+        end: 'bottom 45%',
+        onToggle: (self) => {
+          if (self.isActive) {
+            setActiveStep(idx);
           }
-        });
+        }
       });
-    }, containerRef);
+    });
 
-    return () => ctx.revert();
+    return () => {
+      triggers.forEach(t => t.kill());
+    };
   }, []);
-
 
   return (
     <div ref={containerRef} className="process-pin-wrapper">
@@ -230,9 +229,10 @@ export default function Process() {
         <div className="container pr-container">
           {/* Header */}
           <div className="process-header">
-            <SplitHeading text="How We Work" className="process-big-title" />
+            <p className="eyebrow">Framework</p>
+            <SplitHeading text="Process" className="process-big-title" />
             <p className="process-subtitle">
-              Simple process. Clear milestones. No agency theater.
+              Orchestrated phases that translate creative design concepts into secure scalable applications.
             </p>
           </div>
 
@@ -248,7 +248,11 @@ export default function Process() {
 
                 {/* Cyber HUD visual scan indicators */}
                 <div className="engine-scanner-overlay" />
-
+                <div className="engine-core-label">PROCESS_ENGINE // v2.6</div>
+                <div className="engine-progress-meter">
+                  <span className="meter-label">SEQ_PROGRESS //</span>
+                  <span className="meter-value">{Math.round((rotation / 288) * 100)}%</span>
+                </div>
 
                 <div className="engine-3d-scene">
                   {/* Central Holographic Lens Projector */}
@@ -289,15 +293,9 @@ export default function Process() {
             {/* Right Column: HUD Scroll Cards */}
             <div className="process-cards-col">
               <div className="cards-viewport-frame" style={{ '--active-theme-color': steps[activeStep].color }}>
-                {/* HUD borders */}
-                <div className="hud-corner tl"></div>
-                <div className="hud-corner tr"></div>
-                <div className="hud-corner bl"></div>
-                <div className="hud-corner br"></div>
-
-                {/* Cyber HUD visual scan indicators */}
+                {/* Visual scan indicators */}
                 <div className="engine-scanner-overlay" />
-
+                <div className="engine-core-label">Process Engine: Active</div>
 
                 <div className="pr-scroll-cards">
                   {steps.map((step, i) => {
@@ -322,6 +320,10 @@ export default function Process() {
                           <div className="pr-footer-metric">
                             <span className="metric-label">{step.metricLabel}</span>
                             <span className="metric-val">{step.metric}</span>
+                          </div>
+                          <div className="pr-footer-status">
+                            <span className="status-dot"></span>
+                            <span className="status-label">{isCardActive ? 'IN PROGRESS' : 'QUEUED'}</span>
                           </div>
                         </div>
 

@@ -398,185 +398,286 @@ export default function App() {
       // ═══════════════════════════════════════════════════════
 
       if (!isLite) {
-        // ─── DESKTOP TRANSITIONS (original cinematic effects) ───
+        // ─── DESKTOP TRANSITIONS (rewritten to trigger-once for performance and smooth scroll) ───
 
-        // TRANSITION 1: Marquee — Clip-path unmask from bottom
+        // TRANSITION 1: Marquee — Smooth fade and slide up
         const marqueeEl = document.querySelector('[data-scene="marquee"]');
         if (marqueeEl) {
           gsap.fromTo(marqueeEl, {
-            clipPath: 'inset(100% 0 0 0)',
-            opacity: 0.5,
+            y: 30,
+            opacity: 0,
           }, {
-            clipPath: 'inset(0% 0 0 0)',
+            y: 0,
             opacity: 1,
-            ease: 'none',
+            duration: 0.7,
+            ease: 'power2.out',
             scrollTrigger: {
               trigger: marqueeEl,
-              start: 'top 95%',
-              end: 'top 60%',
-              scrub: 1,
+              start: 'top 92%',
+              toggleActions: 'play none none none',
             },
           });
         }
 
-        // TRANSITION 2: CaseStudies — Zoom-in reveal with blur dissolve
+        // TRANSITION 2: CaseStudies — Smooth scale up & fade in
         const workEl = document.querySelector('[data-scene="work"]');
         if (workEl) {
           const trackEl = workEl.querySelector('.cs-track');
           if (trackEl) {
             gsap.fromTo(trackEl, {
-              scale: 0.82,
+              scale: 0.94,
               opacity: 0,
-              filter: 'blur(16px) brightness(1.8)',
-              transformOrigin: 'center center',
             }, {
               scale: 1,
               opacity: 1,
-              filter: 'blur(0px) brightness(1)',
-              ease: 'none',
+              duration: 0.8,
+              ease: 'power3.out',
               scrollTrigger: {
                 trigger: workEl,
-                start: 'top 95%',
-                end: 'top 45%',
-                scrub: 1.2,
+                start: 'top 85%',
+                toggleActions: 'play none none none',
               },
             });
           }
         }
 
-        // TRANSITION 3: Services — Split from center (horizontal wipe)
+        // TRANSITION 3: Services — Smooth slide up & fade in
         const servicesEl = document.querySelector('[data-scene="services"]');
         if (servicesEl) {
           gsap.fromTo(servicesEl, {
-            clipPath: 'inset(0 50% 0 50%)',
+            y: 40,
             opacity: 0,
           }, {
-            clipPath: 'inset(0 0% 0 0%)',
+            y: 0,
             opacity: 1,
-            ease: 'none',
+            duration: 0.8,
+            ease: 'power3.out',
             scrollTrigger: {
               trigger: servicesEl,
-              start: 'top 90%',
-              end: 'top 40%',
-              scrub: 1,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
             },
           });
         }
 
-        // TRANSITION 4: Metrics — 3D Page flip rotation
+        // TRANSITION 4: Metrics — Smooth scale up & fade in
         const metricsEl = document.querySelector('[data-scene="metrics"]');
         if (metricsEl) {
           gsap.fromTo(metricsEl, {
-            rotateX: -10,
-            scale: 0.88,
+            scale: 0.94,
             opacity: 0,
-            transformOrigin: 'center bottom',
-            filter: 'blur(8px)',
           }, {
-            rotateX: 0,
             scale: 1,
             opacity: 1,
-            filter: 'blur(0px)',
-            ease: 'none',
+            duration: 0.8,
+            ease: 'power3.out',
             scrollTrigger: {
               trigger: metricsEl,
-              start: 'top 90%',
-              end: 'top 40%',
-              scrub: 1,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
             },
           });
         }
 
-        // TRANSITION 5: Process — Radial circle expand
+        // TRANSITION 5: Process — Smooth scale up & fade in
         const processWrapper = document.querySelector('.process-pin-wrapper');
         const processSection = document.querySelector('#process');
         if (processWrapper && processSection) {
           gsap.fromTo(processSection, {
-            clipPath: 'circle(0% at 50% 50%)',
+            scale: 0.94,
             opacity: 0,
-          }, {
-            clipPath: 'circle(150% at 50% 50%)',
-            opacity: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: processWrapper,
-              start: 'top 90%',
-              end: 'top 30%',
-              scrub: 1,
-            },
-          });
-        }
-
-        // TRANSITION 6: Testimonials — Vertical blinds reveal
-        const testimonialsEl = document.querySelector('[data-scene="testimonials"]');
-        if (testimonialsEl) {
-          gsap.fromTo(testimonialsEl, {
-            clipPath: 'inset(0 0 100% 0)',
-            y: 80,
-            opacity: 0,
-            filter: 'blur(6px)',
-          }, {
-            clipPath: 'inset(0 0 0% 0)',
-            y: 0,
-            opacity: 1,
-            filter: 'blur(0px)',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: testimonialsEl,
-              start: 'top 90%',
-              end: 'top 35%',
-              scrub: 1,
-            },
-          });
-        }
-
-        // TRANSITION 7: FinalCTA — Zoom + white flash
-        const ctaEl = document.querySelector('[data-scene="cta"]');
-        if (ctaEl) {
-          gsap.fromTo(ctaEl, {
-            scale: 0.7,
-            opacity: 0,
-            filter: 'blur(20px) brightness(2.5)',
           }, {
             scale: 1,
             opacity: 1,
-            filter: 'blur(0px) brightness(1)',
-            ease: 'none',
+            duration: 0.8,
+            ease: 'power3.out',
             scrollTrigger: {
-              trigger: ctaEl,
+              trigger: processWrapper,
               start: 'top 85%',
-              end: 'top 30%',
-              scrub: 1.2,
+              toggleActions: 'play none none none',
             },
           });
         }
 
-        // TRANSITION 8: Footer — Rise from depth
-        const footerEl = document.querySelector('[data-scene="footer"]');
-        if (footerEl) {
-          gsap.fromTo(footerEl, {
-            y: 100,
+        // TRANSITION 6: Testimonials — Smooth slide up & fade in
+        const testimonialsEl = document.querySelector('[data-scene="testimonials"]');
+        if (testimonialsEl) {
+          gsap.fromTo(testimonialsEl, {
+            y: 40,
             opacity: 0,
-            filter: 'blur(8px)',
           }, {
             y: 0,
             opacity: 1,
-            filter: 'blur(0px)',
-            ease: 'none',
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: testimonialsEl,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            },
+          });
+        }
+
+        // TRANSITION 7: FinalCTA — Smooth scale up & fade in
+        const ctaEl = document.querySelector('[data-scene="cta"]');
+        if (ctaEl) {
+          gsap.fromTo(ctaEl, {
+            scale: 0.94,
+            opacity: 0,
+          }, {
+            scale: 1,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: ctaEl,
+              start: 'top 85%',
+              toggleActions: 'play none none none',
+            },
+          });
+        }
+
+        // TRANSITION 8: Footer — Smooth slide up & fade in
+        const footerEl = document.querySelector('[data-scene="footer"]');
+        if (footerEl) {
+          gsap.fromTo(footerEl, {
+            y: 30,
+            opacity: 0,
+          }, {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power2.out',
             scrollTrigger: {
               trigger: footerEl,
               start: 'top 95%',
-              end: 'top 60%',
-              scrub: 1,
+              toggleActions: 'play none none none',
             },
           });
         }
 
       } else {
-        // ─── LITE MODE: No section transitions needed ───
-        // CSS @media (max-width: 900px) forces all [data-scene] to
-        // opacity:1, transform:none, filter:none, clip-path:none.
-        // Sections are visible natively — zero GSAP overhead on scroll.
+        // ─── LITE MODE: High-performance mobile scroll transitions ───
+
+        // 1. Marquee: fade in & scale in
+        const marqueeEl = document.querySelector('[data-scene="marquee"]');
+        if (marqueeEl) {
+          gsap.fromTo(marqueeEl, { opacity: 0.3, scale: 0.96 }, {
+            opacity: 1, scale: 1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: marqueeEl,
+              start: 'top 95%',
+              end: 'top 65%',
+              scrub: 1,
+            }
+          });
+        }
+
+        // 2. CaseStudies: simple fade-in of the work section container (since cards slide horizontally)
+        const workEl = document.querySelector('[data-scene="work"]');
+        if (workEl) {
+          gsap.fromTo(workEl, { opacity: 0.4 }, {
+            opacity: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: workEl,
+              start: 'top 95%',
+              end: 'top 65%',
+              scrub: 1,
+            }
+          });
+        }
+
+        // 3. Services: fade in and slide up
+        const servicesEl = document.querySelector('[data-scene="services"]');
+        if (servicesEl) {
+          gsap.fromTo(servicesEl, { opacity: 0.3, y: 30 }, {
+            opacity: 1, y: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: servicesEl,
+              start: 'top 95%',
+              end: 'top 70%',
+              scrub: 1,
+            }
+          });
+        }
+
+        // 4. Metrics: fade in and scale in
+        const metricsEl = document.querySelector('[data-scene="metrics"]');
+        if (metricsEl) {
+          gsap.fromTo(metricsEl, { opacity: 0.3, scale: 0.96 }, {
+            opacity: 1, scale: 1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: metricsEl,
+              start: 'top 95%',
+              end: 'top 70%',
+              scrub: 1,
+            }
+          });
+        }
+
+        // 5. Process: fade in
+        const processSection = document.querySelector('#process');
+        if (processSection) {
+          gsap.fromTo(processSection, { opacity: 0.3 }, {
+            opacity: 1,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: processSection,
+              start: 'top 95%',
+              end: 'top 70%',
+              scrub: 1,
+            }
+          });
+        }
+
+        // 6. Testimonials: fade in and slide up
+        const testimonialsEl = document.querySelector('[data-scene="testimonials"]');
+        if (testimonialsEl) {
+          gsap.fromTo(testimonialsEl, { opacity: 0.3, y: 30 }, {
+            opacity: 1, y: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: testimonialsEl,
+              start: 'top 95%',
+              end: 'top 70%',
+              scrub: 1,
+            }
+          });
+        }
+
+        // 7. FinalCTA: fade in and scale in
+        const ctaEl = document.querySelector('[data-scene="cta"]');
+        if (ctaEl) {
+          gsap.fromTo(ctaEl, { opacity: 0.3, scale: 0.95 }, {
+            opacity: 1, scale: 1,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: ctaEl,
+              start: 'top 90%',
+              end: 'top 70%',
+              scrub: 1,
+            }
+          });
+        }
+
+        // 8. Footer: fade in and slide up
+        const footerEl = document.querySelector('[data-scene="footer"]');
+        if (footerEl) {
+          gsap.fromTo(footerEl, { opacity: 0.3, y: 25 }, {
+            opacity: 1, y: 0,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: footerEl,
+              start: 'top 98%',
+              end: 'top 80%',
+              scrub: 1,
+            }
+          });
+        }
       }
 
       // Refresh ScrollTrigger after all content mounts

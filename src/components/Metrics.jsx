@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from '../utils/motion';
@@ -10,11 +10,10 @@ gsap.registerPlugin(ScrollTrigger);
 const stats = [
   { 
     value: 320, 
-    prefix: '+',
     suffix: '%', 
-    label: 'LunaCart', 
+    label: 'Revenue Growth', 
     color: 'var(--accent-ember)',
-    desc: 'Revenue growth after redesigning LunaCart’s commerce experience',
+    desc: 'Rebuilt LunaCart\'s headless checkout and AI fashion recommendations, generating 320% growth.',
     icon: (
       <svg className="stat-micro-graphic" viewBox="0 0 80 30" fill="none">
         <circle cx="15" cy="15" r="4" fill="var(--accent-ember)" className="pulse-node" />
@@ -27,11 +26,10 @@ const stats = [
   },
   { 
     value: 45, 
-    prefix: '-',
     suffix: '%', 
-    label: 'DataFlow', 
+    label: 'Churn Reduced', 
     color: 'var(--accent-amber)',
-    desc: 'Churn reduction through DataFlow’s improved UX and dashboards',
+    desc: 'Optimized DataFlow\'s real-time SaaS analytics dashboards, reducing customer churn by 45%.',
     icon: (
       <svg className="stat-micro-graphic stat-micro-graphic--circle" viewBox="0 0 40 40" fill="none">
         <circle cx="20" cy="20" r="16" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="3" />
@@ -42,12 +40,11 @@ const stats = [
   },
   { 
     value: 2.4, 
-    prefix: '$',
     suffix: 'M', 
+    label: 'Funding Secured', 
     decimals: 1, 
-    label: 'Payze', 
     color: 'var(--accent-gold)',
-    desc: 'Seed funding supported by Payze’s MVP and product experience',
+    desc: 'Engineered Payze\'s mobile banking MVP in 5 weeks, helping them secure $2.4M in seed funding.',
     icon: (
       <svg className="stat-micro-graphic" viewBox="0 0 80 35" fill="none">
         <defs>
@@ -65,9 +62,9 @@ const stats = [
   { 
     value: 80, 
     suffix: '%', 
-    label: 'VoyageAI', 
+    label: 'Work Automation', 
     color: 'var(--accent-lacquer)',
-    desc: 'Manual work removed through VoyageAI automation pipelines',
+    desc: 'Built VoyageAI\'s automated webhook and LLM pipelines, eliminating 80% of manual entry.',
     icon: (
       <svg className="stat-micro-graphic" viewBox="0 0 80 30" fill="none">
         <path d="M0,15 H20 L25,5 L30,25 L35,12 L40,18 L45,15 H80" 
@@ -81,10 +78,27 @@ export default function Metrics() {
   const sectionRef = useRef(null);
   const canvasRef = useRef(null);
   const [activeStat, setActiveStat] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+
+  // Monitor visibility of the section to pause the rendering loop when off-screen
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   // ─── CANVAS HOLOGRAPHIC GRAPHICS ───
   useEffect(() => {
-    if (prefersReducedMotion() || !canvasRef.current) return;
+    if (prefersReducedMotion() || !canvasRef.current || !isVisible) return;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -103,7 +117,7 @@ export default function Metrics() {
       height = rect.height;
     };
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas, { passive: true });
 
     // Initialize particles
     const particleCount = 45;
@@ -189,7 +203,7 @@ export default function Metrics() {
 
         ctx.beginPath();
         ctx.arc(width / 2, height / 2, 10 + Math.sin(time * 2) * 2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.3)`;
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.35)`;
         ctx.shadowColor = activeColor;
         ctx.shadowBlur = 15;
         ctx.fill();
@@ -338,7 +352,7 @@ export default function Metrics() {
         // Pulsing status heartbeat node
         ctx.beginPath();
         ctx.arc(centerX, centerY, 15 + Math.sin(time * 3) * 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.3)`;
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, 0.35)`;
         ctx.fill();
 
         ctx.beginPath();
@@ -359,7 +373,7 @@ export default function Metrics() {
       window.removeEventListener('resize', resizeCanvas);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [activeStat]);
+  }, [activeStat, isVisible]);
 
   // ─── SCROLL REVEALS & COUNT-UP ANIMATIONS ───
   useEffect(() => {
@@ -430,7 +444,7 @@ export default function Metrics() {
 
       // ─── DESKTOP CINEMATIC REVEALS & COUNT-UPS ───
       // Card reveals
-      gsap.utils.toArray('.met-card').forEach((card, i) => {
+      gsap.utils.toArray('.met-card').forEach((card) => {
         gsap.fromTo(card, {
           y: 70,
           opacity: 0,
@@ -487,9 +501,10 @@ export default function Metrics() {
       <div className="container">
         {/* Header */}
         <div className="metrics-header">
-          <SplitHeading text="Results That Matter" className="metrics-big-title" />
+          <p className="eyebrow">The Metrics</p>
+          <SplitHeading text="Results" className="metrics-big-title" />
           <p className="metrics-subtitle">
-            People do not pay for design vocabulary. They pay for outcomes.
+            Strategic digital interventions that generate provable commercial traction.
           </p>
         </div>
 
@@ -507,12 +522,6 @@ export default function Metrics() {
               
               {/* Rotating radar graphic */}
               <canvas ref={canvasRef} className="metrics-canvas" />
-
-              {/* Corner brackets */}
-              <div className="vis-hud-border border-tl" />
-              <div className="vis-hud-border border-tr" />
-              <div className="vis-hud-border border-bl" />
-              <div className="vis-hud-border border-br" />
 
               {/* Live HUD Readouts */}
               <div className="vis-hud-data-feed">
@@ -539,11 +548,6 @@ export default function Metrics() {
                   style={{ '--stat-color': stat.color }}
                   onMouseEnter={() => setActiveStat(i)}
                 >
-                  <div className="card-bracket bracket-tl" />
-                  <div className="card-bracket bracket-tr" />
-                  <div className="card-bracket bracket-bl" />
-                  <div className="card-bracket bracket-br" />
-
                   <div className="met-card-header">
                     <span className="met-card-badge">{stat.label}</span>
                     {stat.icon}
@@ -551,7 +555,6 @@ export default function Metrics() {
 
                   <div className="met-card-body">
                     <div className="met-value-row">
-                      {stat.prefix && <span className="met-suffix">{stat.prefix}</span>}
                       <span 
                         className="stat-val-counter"
                         data-target={stat.value}
