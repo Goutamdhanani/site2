@@ -1,0 +1,9 @@
+# oddwebs.com — Robots.txt
+# Allow all search engine crawlers
+
+User-agent: *
+Allow: /
+Disallow: /assets/sequence/
+
+# Sitemap location
+Sitemap: https://oddwebs.com/sitemap.xml

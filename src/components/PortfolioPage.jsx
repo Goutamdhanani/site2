@@ -5,229 +5,215 @@ import { isLite } from '../utils/device';
 const projects = [
   {
     title: 'LunaCart',
-    category: 'E-Commerce',
+    category: 'E-Commerce Platform',
     year: '2026',
-    description: 'Luxury fashion commerce experience built to increase conversion and average order value.',
+    description: 'Luxury fashion commerce experience meticulously crafted to boost sales and conversion rates.',
     metric: '+320%',
     metricLabel: 'Revenue Growth',
-    color: 'var(--accent-ember)',
+    color: '#ff5c33', // Custom tailored vibrant theme color
     image: '/assets/projects/project-1.png',
-    tags: ['E-COMMERCE', 'NEXT.JS', 'TAILWIND', 'STRIPE', 'AI AGENT', 'MOTION', 'UI/UX'],
+    tags: ['NEXT.JS', 'STRIPE', 'AI RECOM', 'GSAP', 'UI/UX', 'SEO'],
+    link: 'https://project-restro1.vercel.app/'
   },
   {
     title: 'DataFlow',
-    category: 'Analytics Platform',
+    category: 'Analytics Dashboard',
     year: '2025',
-    description: 'Enterprise analytics platform redesigned for clarity, retention, and performance.',
+    description: 'Enterprise metrics panel redesigned for maximum clarity, low latency, and ease of use.',
     metric: '-45%',
     metricLabel: 'Churn Reduction',
-    color: 'var(--accent-amber)',
+    color: '#33ccff',
     image: '/assets/projects/project-2.png',
-    tags: ['ANALYTICS', 'REACT', 'GSAP', 'REDUX', 'CYBERSECURITY', 'CHARTS', 'UI/UX'],
+    tags: ['REACT', 'HIGHCHARTS', 'TAILWIND', 'REDUX', 'UX AUDIT'],
+    link: 'https://project-restro1.vercel.app/'
   },
   {
     title: 'Payze',
     category: 'Fintech MVP',
     year: '2026',
-    description: 'Fintech MVP built to look trustworthy, launch fast, and support fundraising.',
+    description: 'Highly secure fintech platform built to launch fast, convert trust, and secure seed funding.',
     metric: '$2.4M',
-    metricLabel: 'Seed Funding',
-    color: 'var(--accent-lacquer)',
+    metricLabel: 'Seed Funding Secured',
+    color: '#33ffaa',
     image: '/assets/projects/project-3.png',
-    tags: ['FINTECH', 'MVP', 'SECURE', 'REACT', 'UI/UX'],
+    tags: ['FINTECH', 'REACT', 'SECURITY', 'MVP', 'WEB DESIGN'],
+    link: 'https://project-restro1.vercel.app/'
   },
   {
-    title: 'VoyageAI',
-    category: 'Automation Platform',
-    year: '2025',
-    description: 'Automation platform for enterprise workflows and LLM execution.',
-    metric: '80%',
-    metricLabel: 'Work Removed',
-    color: 'var(--accent-gold)',
-    image: '/assets/projects/project-4.png',
-    tags: ['AUTOMATION', 'FASTAPI', 'POSTGRES', '3D TOURS', 'AI MODEL', 'REACT', 'UI/UX'],
+    title: 'Qitchen',
+    category: 'Restaurant Experience',
+    year: '2026',
+    description: 'A premium Japanese restaurant reservations portal and digital brand experience.',
+    metric: '4.9★',
+    metricLabel: 'Customer Rating',
+    color: '#ffd700',
+    image: '/assets/projects/qitchen.png',
+    tags: ['UX/UI', 'RESTAURANT', 'NEXT.JS', 'RESERVATIONS', 'BRANDING'],
+    link: 'https://project-restro1.vercel.app/'
   },
 ];
 
 export default function PortfolioPage({ onViewChange }) {
-  const [rotationY, setRotationY] = useState(0);
-  const [orbitX, setOrbitX] = useState(-5); // Default tilt down slightly
-  const [orbitY, setOrbitY] = useState(0);
-  const [orbitMode, setOrbitMode] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  
-  const rotationRef = useRef({ y: 0 });
-  const orbitRef = useRef({ x: -5, y: 0 });
-  const dragStartRef = useRef({ x: 0, rotationY: 0 });
+  const [activeIdx, setActiveIdx] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const containerRef = useRef(null);
+  const stageRef = useRef(null);
 
-  // Active project index calculation
-  const activeIndex = (Math.round(-rotationY / 90) % 4 + 4) % 4;
-  const activeProject = projects[activeIndex];
+  const activeProject = projects[activeIdx];
 
-  // ─── MOUSE DRAG / SWIPE INTERACTION ───
-  const handleDragStart = (clientX) => {
-    setIsDragging(true);
-    dragStartRef.current = {
-      x: clientX,
-      rotationY: rotationRef.current.y
-    };
-    // Kill any active GSAP rotation tweens immediately
-    gsap.killTweensOf(rotationRef.current);
-  };
+  // ─── 3D PERSPECTIVE PARALLAX TILT ───
+  const handleMouseMove = (e) => {
+    if (isLite || isAnimating) return;
+    const stage = stageRef.current;
+    if (!stage) return;
 
-  const handleDragMove = (clientX) => {
-    if (!isDragging) return;
-    const deltaX = clientX - dragStartRef.current.x;
-    const dragSensitivity = isLite ? 0.45 : 0.35;
-    const targetRot = dragStartRef.current.rotationY + deltaX * dragSensitivity;
-    
-    rotationRef.current.y = targetRot;
-    setRotationY(targetRot);
-  };
+    const rect = stage.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+    const y = (e.clientY - rect.top) / rect.height - 0.5; // -0.5 to 0.5
 
-  const handleDragEnd = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-
-    // Snap Y angle to the nearest 90-degree face
-    const snapRot = Math.round(rotationRef.current.y / 90) * 90;
-    
-    gsap.to(rotationRef.current, {
-      y: snapRot,
-      duration: 0.65,
-      ease: 'power2.out',
-      onUpdate: () => {
-        setRotationY(rotationRef.current.y);
-      }
+    // Tilt the browser mockup
+    gsap.to('.pt-browser-mockup', {
+      rotateX: -y * 18,
+      rotateY: x * 18,
+      rotateZ: x * -1.5,
+      x: x * 12,
+      y: y * 12,
+      duration: 0.4,
+      ease: 'power1.out',
+      overwrite: 'auto'
     });
-  };
 
-  // Drag button helpers
-  const rotateTo = (direction) => {
-    const currentSnap = Math.round(rotationRef.current.y / 90) * 90;
-    const targetRot = currentSnap + direction * 90;
-    
-    gsap.killTweensOf(rotationRef.current);
-    gsap.to(rotationRef.current, {
-      y: targetRot,
-      duration: 0.8,
-      ease: 'power3.out',
-      onUpdate: () => {
-        setRotationY(rotationRef.current.y);
-      }
+    // Parallax on Floating Badges (moving independently in opposite depth coordinates)
+    gsap.to('.pt-float-badge-metric', {
+      x: x * 32,
+      y: y * 32,
+      z: 50,
+      rotateX: -y * 8,
+      rotateY: x * 8,
+      duration: 0.5,
+      ease: 'power1.out',
+      overwrite: 'auto'
     });
-  };
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowLeft') {
-        rotateTo(1);
-      } else if (e.key === 'ArrowRight') {
-        rotateTo(-1);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  // ─── PERSPECTIVE ORBIT (MOUSE MOVE TILT) ───
-  useEffect(() => {
-    if (isLite) return;
-
-    const handleMouseMove = (e) => {
-      // Calculate cursor position from -0.5 to 0.5 relative to viewport center
-      const x = (e.clientX / window.innerWidth) - 0.5;
-      const y = (e.clientY / window.innerHeight) - 0.5;
-
-      const targetX = orbitMode ? -y * 25 - 5 : -5;
-      const targetY = orbitMode ? x * 30 : 0;
-
-      gsap.to(orbitRef.current, {
-        x: targetX,
-        y: targetY,
-        duration: 0.8,
-        ease: 'power2.out',
-        onUpdate: () => {
-          setOrbitX(orbitRef.current.x);
-          setOrbitY(orbitRef.current.y);
-        }
-      });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [orbitMode]);
-
-  // Card individual hover tilt
-  const handleCardMouseMove = (e, cardIndex) => {
-    if (cardIndex !== activeIndex || isLite) return;
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-
-    // Subtle localized 3D tilt
-    gsap.to(card, {
+    gsap.to('.pt-float-badge-tech', {
+      x: x * -24,
+      y: y * -24,
+      z: 40,
       rotateX: -y * 12,
       rotateY: x * 12,
-      scale: 1.02,
-      duration: 0.35,
-      ease: 'power2.out',
+      duration: 0.5,
+      ease: 'power1.out',
       overwrite: 'auto'
     });
   };
 
-  const handleCardMouseLeave = (e, cardIndex) => {
-    if (cardIndex !== activeIndex || isLite) return;
-    const card = e.currentTarget;
-    gsap.to(card, {
+  const handleMouseLeave = () => {
+    if (isLite) return;
+    gsap.to(['.pt-browser-mockup', '.pt-float-badge-metric', '.pt-float-badge-tech'], {
       rotateX: 0,
       rotateY: 0,
-      scale: 1,
-      duration: 0.6,
+      rotateZ: 0,
+      x: 0,
+      y: 0,
+      z: 0,
+      duration: 0.8,
       ease: 'power2.out',
       overwrite: 'auto'
     });
   };
 
-  // Entrance animations
+  // ─── NAVIGATE TO NEW PROJECT ───
+  const handleProjectSelect = (idx) => {
+    if (idx === activeIdx || isAnimating) return;
+    setIsAnimating(true);
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setActiveIdx(idx);
+        setIsAnimating(false);
+      }
+    });
+
+    // Transition out
+    tl.to(['.pt-browser-mockup', '.pt-float-badge-metric', '.pt-float-badge-tech'], {
+      scale: 0.85,
+      opacity: 0,
+      y: 40,
+      filter: 'blur(10px)',
+      duration: 0.35,
+      ease: 'power2.in'
+    })
+    .to('.pt-console-inner > *', {
+      opacity: 0,
+      x: -30,
+      stagger: 0.04,
+      duration: 0.3,
+      ease: 'power2.in'
+    }, 0);
+  };
+
+  // ─── TRANSITION ENTRANCE ONCE INDEX UPDATES ───
+  useEffect(() => {
+    // Reset layout rotations
+    gsap.set(['.pt-browser-mockup', '.pt-float-badge-metric', '.pt-float-badge-tech'], {
+      rotateX: 0,
+      rotateY: 0,
+      rotateZ: 0,
+      x: 0,
+      y: 0,
+      z: 0
+    });
+
+    // Transition in
+    gsap.fromTo(['.pt-browser-mockup', '.pt-float-badge-metric', '.pt-float-badge-tech'], {
+      scale: 0.85,
+      opacity: 0,
+      y: -40,
+      filter: 'blur(10px)'
+    }, {
+      scale: 1,
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      duration: 0.75,
+      ease: 'power3.out',
+      delay: 0.05
+    });
+
+    gsap.fromTo('.pt-console-inner > *', {
+      opacity: 0,
+      x: 30
+    }, {
+      opacity: 1,
+      x: 0,
+      stagger: 0.06,
+      duration: 0.6,
+      ease: 'power3.out',
+      delay: 0.15
+    });
+  }, [activeIdx]);
+
+  // Entrance animations for the entire page
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo('.pt-header-text > *', {
+      gsap.fromTo('.pt-header-top', {
         opacity: 0,
-        y: 30,
-        filter: 'blur(8px)'
+        y: 20
       }, {
         opacity: 1,
         y: 0,
-        filter: 'blur(0px)',
-        duration: 0.8,
-        stagger: 0.12,
-        ease: 'power3.out'
+        duration: 0.6,
+        ease: 'power2.out'
       });
-
-      gsap.fromTo('.pt-viewport-frame', {
+      gsap.fromTo('.pt-cinematic-grid', {
         opacity: 0,
-        scale: 0.85
+        y: 30
       }, {
         opacity: 1,
-        scale: 1,
-        duration: 1.0,
+        y: 0,
+        duration: 0.8,
         ease: 'power3.out',
-        delay: 0.2
-      });
-
-      gsap.fromTo('.pt-details-panel', {
-        opacity: 0,
-        y: 40
-      }, {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power2.out',
-        delay: 0.4
+        delay: 0.15
       });
     }, containerRef);
 
@@ -237,153 +223,177 @@ export default function PortfolioPage({ onViewChange }) {
   return (
     <div ref={containerRef} className="portfolio-page-wrapper">
       <div className="section-glow-line" aria-hidden="true" />
-      
-      {/* Background radial overlays */}
-      <div className="portfolio-bg-glow" style={{ '--active-color': activeProject.color }} />
+      <div className="portfolio-bg-glow-redesign" style={{ '--active-theme': activeProject.color }} />
 
-      <div className="container portfolio-container">
-        {/* Minimalism Header */}
-        <header className="portfolio-header">
-          <div className="pt-header-text">
-            <span className="eyebrow" style={{ color: activeProject.color }}>Portfolio Stage</span>
-            <h1 className="display-lg pt-title">Our Work</h1>
-            <p className="body-md pt-subtitle">
-              Drag to spin the carousel, hover to tilt cards, or toggle orbit mode for a true 3D spatial experience.
-            </p>
+      <div className="container portfolio-container-redesign">
+        {/* Sleek Minimal Header */}
+        <header className="pt-header-top">
+          <div>
+            <span className="eyebrow" style={{ color: activeProject.color }}>SELECTED ARCHITECTURE</span>
+            <h1 className="display-sm pt-main-title">Our Work</h1>
           </div>
-
-          <div className="pt-controls-bar">
-            {/* Interactive orbit toggle */}
-            {!isLite && (
-              <button 
-                onClick={() => setOrbitMode(!orbitMode)} 
-                className={`pt-btn-orbit ${orbitMode ? 'active' : ''}`}
-                style={{ '--btn-accent': activeProject.color }}
-              >
-                <span className="orbit-dot" />
-                {orbitMode ? 'Orbit Mode Enabled' : 'Enable Orbit Mode'}
-              </button>
-            )}
-          </div>
+          <p className="body-md pt-desc-top">
+            Interact with the digital products crafted by our agency. Select a project to view metrics, specs, and live demonstrations.
+          </p>
         </header>
 
-        {/* 3D Visualizer Viewport */}
-        <div className="pt-viewport-frame">
-          <div className="hud-corner tl" />
-          <div className="hud-corner tr" />
-          <div className="hud-corner bl" />
-          <div className="hud-corner br" />
-
+        {/* Full Cinematic 2-Column Grid */}
+        <div className="pt-cinematic-grid">
+          {/* Left Column: 3D Parallax Device Showcase */}
           <div 
-            className={`pt-viewport ${isDragging ? 'grabbing' : ''}`}
-            onMouseDown={(e) => handleDragStart(e.clientX)}
-            onMouseMove={(e) => handleDragMove(e.clientX)}
-            onMouseUp={handleDragEnd}
-            onMouseLeave={handleDragEnd}
-            onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
-            onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
-            onTouchEnd={handleDragEnd}
+            ref={stageRef}
+            className="pt-visual-column"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
           >
-            {/* 3D rotating stage */}
-            <div 
-              className="pt-stage"
-              style={{
-                transform: `rotateX(${orbitX}deg) rotateY(${orbitY + rotationY}deg)`,
-                transformStyle: 'preserve-3d',
-                transition: isDragging ? 'none' : 'transform 0.05s linear'
-              }}
-            >
-              {projects.map((project, idx) => {
-                const isCardActive = idx === activeIndex;
-                const angle = idx * 90;
-                
-                return (
-                  <div
-                    key={idx}
-                    className={`pt-card-face ${isCardActive ? 'active' : ''}`}
-                    style={{
-                      transform: `rotateY(${angle}deg) translateZ(${isLite ? 220 : 330}px)`,
-                      '--card-theme': project.color,
-                      transformStyle: 'preserve-3d'
-                    }}
-                    onMouseMove={(e) => handleCardMouseMove(e, idx)}
-                    onMouseLeave={(e) => handleCardMouseLeave(e, idx)}
-                  >
-                    {/* Glowing card border */}
-                    <div className="pt-card-glow" />
-
-                    <div className="pt-card-content" style={{ transformStyle: 'preserve-3d' }}>
-                      <div className="pt-card-img-wrap" style={{ transform: 'translateZ(20px)' }}>
-                        <img src={project.image} alt={project.title} className="pt-card-img" />
-                      </div>
-                      
-                      <div className="pt-card-footer" style={{ transform: 'translateZ(35px)' }}>
-                        <h3 className="pt-card-name">{project.title}</h3>
-                        <div className="pt-card-metric-badge">
-                          <span className="pt-badge-val">{project.metric}</span>
-                          <span className="pt-badge-lbl">{project.metricLabel}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="hud-brackets" aria-hidden="true">
+              <div className="hud-corner-r tl" />
+              <div className="hud-corner-r tr" />
+              <div className="hud-corner-r bl" />
+              <div className="hud-corner-r br" />
             </div>
 
-            {/* Stage perspective grid floor */}
-            <div className="pt-stage-grid" style={{ transform: `rotateX(${orbitX}deg) rotateY(${orbitY}deg)` }} />
+            {/* Glowing spotlight effect behind the active device */}
+            <div className="pt-spotlight" style={{ '--spotlight-color': activeProject.color }} />
+
+            {/* The main browser mockup */}
+            <div className="pt-browser-mockup" style={{ transformStyle: 'preserve-3d' }}>
+              {/* Browser window header */}
+              <div className="pt-browser-header">
+                <div className="pt-browser-dots">
+                  <span className="dot red" />
+                  <span className="dot yellow" />
+                  <span className="dot green" />
+                </div>
+                <div className="pt-browser-address">{activeProject.title.toLowerCase()}.oddwebs.com</div>
+              </div>
+              
+              {/* Image viewport */}
+              <div className="pt-browser-body">
+                <img src={activeProject.image} alt={activeProject.title} className="pt-browser-img" />
+              </div>
+            </div>
+
+            {/* Floating Badge 1: Key Metric (parallax layers) */}
+            <div className="pt-float-badge-metric pt-floating-card">
+              <span className="badge-title">PROVEN OUTCOME</span>
+              <span className="badge-value" style={{ color: activeProject.color }}>{activeProject.metric}</span>
+              <span className="badge-label">{activeProject.metricLabel}</span>
+            </div>
+
+            {/* Floating Badge 2: Tech Details */}
+            <div className="pt-float-badge-tech pt-floating-card">
+              <span className="badge-title">KEY SPECIALIZATION</span>
+              <div className="badge-tech-list">
+                <span className="badge-tech-item">{activeProject.tags[0]}</span>
+                <span className="badge-tech-item">{activeProject.tags[1]}</span>
+              </div>
+              <span className="badge-label">{activeProject.category}</span>
+            </div>
           </div>
 
-          {/* Quick-action rotation arrow buttons */}
-          <button className="pt-arrow-btn pt-arrow-prev" onClick={() => rotateTo(1)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M15 19l-7-7 7-7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          <button className="pt-arrow-btn pt-arrow-next" onClick={() => rotateTo(-1)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M9 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
+          {/* Right Column: Specs & Roadmapping Console */}
+          <section className="pt-info-column" style={{ '--console-color': activeProject.color }}>
+            <div className="hud-brackets" aria-hidden="true">
+              <div className="hud-corner-r tl" />
+              <div className="hud-corner-r tr" />
+              <div className="hud-corner-r bl" />
+              <div className="hud-corner-r br" />
+            </div>
+
+            <div className="pt-console-card">
+              <div className="pt-console-inner">
+                {/* Number HUD & Category */}
+                <div className="pt-console-header-row">
+                  <span className="pt-console-num" style={{ color: activeProject.color }}>
+                    [ 0{activeIdx + 1} // 0{projects.length} ]
+                  </span>
+                  <span className="pt-console-cat">{activeProject.category}</span>
+                </div>
+
+                {/* Project Title */}
+                <h2 className="pt-console-title">{activeProject.title}</h2>
+                <div className="console-divider" style={{ background: `linear-gradient(90deg, ${activeProject.color}4d, transparent)` }} />
+
+                {/* Description */}
+                <p className="pt-console-desc">{activeProject.description}</p>
+
+                {/* Tag Cloud */}
+                <div className="pt-console-tags-wrap">
+                  <span className="pt-console-section-label">SYSTEM ARCHITECTURE:</span>
+                  <div className="pt-console-chips">
+                    {activeProject.tags.map((tag, i) => (
+                      <span key={i} className="pt-console-chip" style={{ '--chip-theme': activeProject.color }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Outcome Metrics Container */}
+                <div className="pt-console-metrics-row">
+                  <div className="pt-console-metric-card" style={{ borderLeftColor: activeProject.color }}>
+                    <span className="metric-header">METRIC PERFORMANCE</span>
+                    <div className="metric-body-val" style={{ color: activeProject.color }}>{activeProject.metric}</div>
+                    <span className="metric-body-lbl">{activeProject.metricLabel}</span>
+                  </div>
+                </div>
+
+                {/* Interactive Action CTAs */}
+                <div className="pt-console-actions">
+                  {activeProject.link ? (
+                    <a 
+                      href={activeProject.link} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="pt-console-btn-primary"
+                      style={{ '--btn-glow-color': activeProject.color }}
+                    >
+                      LAUNCH LIVE DEMO ↗
+                    </a>
+                  ) : (
+                    <button 
+                      onClick={() => onViewChange('demo')} 
+                      className="pt-console-btn-primary"
+                      style={{ '--btn-glow-color': activeProject.color }}
+                    >
+                      BOOK FREE TECHNICAL ROADMAP
+                    </button>
+                  )}
+                  
+                  <button 
+                    onClick={() => onViewChange('demo')} 
+                    className="pt-console-btn-secondary"
+                  >
+                    GET CUSTOM QUOTE
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
 
-        {/* Dynamic Project Details Overlay */}
-        <section className="pt-details-panel" style={{ '--active-border': activeProject.color }}>
-          <div className="hud-corner tl" />
-          <div className="hud-corner tr" />
-          
-          <div className="pt-details-grid">
-            <div className="pt-details-main">
-              <div className="pt-meta-row">
-                <span className="pt-label-num">Project 0{activeIndex + 1}</span>
-                <span className="pt-category">{activeProject.category}</span>
-                <span className="pt-year">{activeProject.year}</span>
-              </div>
-              <h2 className="display-sm pt-details-title">{activeProject.title}</h2>
-              <p className="body-lg pt-details-desc">{activeProject.description}</p>
-              
-              <div className="pt-tags-row">
-                {activeProject.tags.map((tag, i) => (
-                  <span key={i} className="pt-tag-chip">{tag}</span>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-details-sidebar">
-              <div className="pt-sidebar-metric-box" style={{ background: `${activeProject.color}0a`, borderColor: `${activeProject.color}33` }}>
-                <span className="pt-sidebar-lbl">PROVEN OUTCOME</span>
-                <div className="pt-sidebar-val" style={{ color: activeProject.color }}>{activeProject.metric}</div>
-                <div className="pt-sidebar-lbl-metric">{activeProject.metricLabel}</div>
-              </div>
-
-              <div className="pt-details-actions">
-                <a href="#demo" onClick={(e) => { e.preventDefault(); onViewChange('demo'); }} className="btn-primary magnetic" style={{ width: '100%', justifyContent: 'center' }}>
-                  Schedule Free Demo
-                </a>
-              </div>
-            </div>
+        {/* Modern Interactive Timeline Navigation */}
+        <nav className="pt-timeline-container">
+          <div className="pt-timeline-nav">
+            {projects.map((project, idx) => (
+              <button
+                key={idx}
+                onClick={() => handleProjectSelect(idx)}
+                className={`pt-timeline-btn ${idx === activeIdx ? 'active' : ''}`}
+                style={{ '--btn-theme': project.color }}
+              >
+                <div className="pt-timeline-btn-content">
+                  <span className="btn-num">0{idx + 1}</span>
+                  <span className="btn-title">{project.title}</span>
+                </div>
+                <div className="btn-indicator-bar">
+                  <div className="btn-indicator-fill" />
+                </div>
+              </button>
+            ))}
           </div>
-        </section>
+        </nav>
       </div>
     </div>
   );

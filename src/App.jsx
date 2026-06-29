@@ -17,6 +17,7 @@ import Footer from './components/Footer';
 import CustomCursor from './components/CustomCursor';
 import PortfolioPage from './components/PortfolioPage';
 import BookingFlow from './components/BookingFlow';
+import ServicesPage from './components/ServicesPage';
 
 const AtmosphericCanvas = lazy(() => import('./components/AtmosphericCanvas'));
 
@@ -26,7 +27,11 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [siteVisible, setSiteVisible] = useState(false);
   const [currentView, setCurrentView] = useState(() => {
-    return window.location.hash === '#portfolio' ? 'portfolio' : window.location.hash === '#demo' ? 'demo' : 'home';
+    const hash = window.location.hash;
+    if (hash === '#portfolio') return 'portfolio';
+    if (hash === '#demo') return 'demo';
+    if (hash === '#services-page') return 'services-page';
+    return 'home';
   });
   const lenisRef = useRef(null);
 
@@ -35,19 +40,24 @@ export default function App() {
     const handleHashChange = () => {
       const hash = window.location.hash;
       
+      // Kill all GSAP ScrollTriggers BEFORE React unmounts components
+      // This removes .pin-spacer wrappers so React's DOM tree matches expectations
+      ScrollTrigger.getAll().forEach(t => t.kill());
+
       // Reset scroll position immediately to prevent page bottom scroll clamp bugs
       const lenis = lenisRef.current;
       if (lenis) {
         lenis.scrollTo(0, { immediate: true });
         lenis.resize();
-      } else {
-        window.scrollTo(0, 0);
       }
+      window.scrollTo(0, 0);
 
       if (hash === '#portfolio') {
         setCurrentView('portfolio');
       } else if (hash === '#demo') {
         setCurrentView('demo');
+      } else if (hash === '#services-page') {
+        setCurrentView('services-page');
       } else {
         setCurrentView('home');
       }
@@ -57,14 +67,20 @@ export default function App() {
   }, []);
 
   const handleViewChange = (view, targetAnchor = null) => {
+    // Kill all GSAP ScrollTriggers BEFORE React unmounts components
+    // This removes .pin-spacer wrappers so React's DOM tree matches expectations
+    ScrollTrigger.getAll().forEach(t => t.kill());
+
     // Reset scroll position immediately before routing to prevent layout clipping
     const lenis = lenisRef.current;
     if (lenis) {
       lenis.scrollTo(0, { immediate: true });
       lenis.resize();
-    } else {
-      window.scrollTo(0, 0);
     }
+    window.scrollTo(0, 0);
+
+    // Sync state directly first
+    setCurrentView(view);
 
     if (view === 'home') {
       if (targetAnchor) {
@@ -76,6 +92,8 @@ export default function App() {
       window.location.hash = '#portfolio';
     } else if (view === 'demo') {
       window.location.hash = '#demo';
+    } else if (view === 'services-page') {
+      window.location.hash = '#services-page';
     }
   };
 
@@ -89,9 +107,8 @@ export default function App() {
     if (lenis) {
       lenis.scrollTo(0, { immediate: true });
       lenis.resize();
-    } else {
-      window.scrollTo(0, 0);
     }
+    window.scrollTo(0, 0);
 
     if (currentView === 'home' && hash && hash !== '#portfolio' && hash !== '#demo') {
       const target = document.querySelector(hash);
@@ -112,6 +129,7 @@ export default function App() {
           lenis.scrollTo(0, { immediate: true });
           lenis.resize();
         }
+        window.scrollTo(0, 0);
         ScrollTrigger.refresh();
       }, 100);
       return () => clearTimeout(timer);
@@ -765,6 +783,8 @@ export default function App() {
             </>
           ) : currentView === 'portfolio' ? (
             <PortfolioPage onViewChange={handleViewChange} />
+          ) : currentView === 'services-page' ? (
+            <ServicesPage onViewChange={handleViewChange} />
           ) : (
             <BookingFlow onViewChange={handleViewChange} />
           )}

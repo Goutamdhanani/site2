@@ -524,9 +524,9 @@ function ServicesFull() {
         <div className="sv-sticky-wrapper">
           <div className="sv-sticky">
             <span className="sv-label eyebrow">WHAT WE DO</span>
-            <SplitHeading text="Services" className="sv-heading" />
+            <SplitHeading text="Our Services" className="sv-heading" />
             <p className="sv-sub">
-              Engineering Awwwards-grade digital interfaces designed to command market attention.
+              Full-stack web design, mobile app development, AI automation, and SEO services — engineered to grow your business across the US and Canada.
             </p>
 
             <div 
@@ -602,70 +602,75 @@ function ServiceCardMobile({ service, index }) {
     if (!chamberRef.current || prefersReducedMotion()) return;
 
     const chamber = chamberRef.current;
-    
-    if (isActive) {
-      const tl = gsap.timeline({ defaults: { overwrite: 'auto' } });
-      tl.to(chamber, {
-        scaleX: 0.72,
-        scaleY: 0.16,
-        borderRadius: '60px',
-        backgroundColor: '#000000',
-        borderColor: 'rgba(255, 255, 255, 0.25)',
-        boxShadow: '0 8px 30px rgba(0,0,0,0.9), 0 0 15px rgba(255, 255, 255, 0.08)',
-        duration: 0.25,
-        ease: 'power3.inOut'
-      })
-      .to(chamber, {
-        scaleX: 1.0,
-        scaleY: 1.0,
-        borderRadius: '16px',
-        backgroundColor: 'rgba(8, 5, 4, 0.75)',
-        borderColor: 'rgba(255, 255, 255, 0.05)',
-        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.02)',
-        duration: 0.8,
-        ease: 'elastic.out(1.05, 0.58)'
-      });
-    } else {
-      gsap.to(chamber, {
-        scaleX: 1.0,
-        scaleY: 1.0,
-        borderRadius: '16px',
-        backgroundColor: 'rgba(8, 5, 4, 0.75)',
-        borderColor: 'rgba(255, 255, 255, 0.05)',
-        boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.02)',
-        duration: 0.3,
-        ease: 'power2.out',
-        overwrite: 'auto'
-      });
-    }
+    const ctx = gsap.context(() => {
+      if (isActive) {
+        const tl = gsap.timeline({ defaults: { overwrite: 'auto' } });
+        tl.to(chamber, {
+          scaleX: 0.72,
+          scaleY: 0.16,
+          borderRadius: '60px',
+          backgroundColor: '#000000',
+          borderColor: 'rgba(255, 255, 255, 0.25)',
+          boxShadow: '0 8px 30px rgba(0,0,0,0.9), 0 0 15px rgba(255, 255, 255, 0.08)',
+          duration: 0.25,
+          ease: 'power3.inOut'
+        })
+        .to(chamber, {
+          scaleX: 1.0,
+          scaleY: 1.0,
+          borderRadius: '16px',
+          backgroundColor: 'rgba(8, 5, 4, 0.75)',
+          borderColor: 'rgba(255, 255, 255, 0.05)',
+          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.02)',
+          duration: 0.8,
+          ease: 'elastic.out(1.05, 0.58)'
+        });
+      } else {
+        gsap.to(chamber, {
+          scaleX: 1.0,
+          scaleY: 1.0,
+          borderRadius: '16px',
+          backgroundColor: 'rgba(8, 5, 4, 0.75)',
+          borderColor: 'rgba(255, 255, 255, 0.05)',
+          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(255, 255, 255, 0.02)',
+          duration: 0.3,
+          ease: 'power2.out',
+          overwrite: 'auto'
+        });
+      }
+    }, chamberRef);
+
+    return () => ctx.revert();
   }, [isActive]);
 
   useEffect(() => {
-    const trigger = ScrollTrigger.create({
-      trigger: cardRef.current,
-      start: 'top 60%',
-      end: 'bottom 40%',
-      onToggle: (self) => {
-        setIsActive(self.isActive);
-      }
-    });
-
-    gsap.fromTo(cardRef.current,
-      { opacity: 0, y: 35 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: cardRef.current,
-          start: 'top 85%',
-          once: true
+    const ctx = gsap.context(() => {
+      ScrollTrigger.create({
+        trigger: cardRef.current,
+        start: 'top 60%',
+        end: 'bottom 40%',
+        onToggle: (self) => {
+          setIsActive(self.isActive);
         }
-      }
-    );
+      });
 
-    return () => trigger.kill();
+      gsap.fromTo(cardRef.current,
+        { opacity: 0, y: 35 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: cardRef.current,
+            start: 'top 85%',
+            once: true
+          }
+        }
+      );
+    }, cardRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -733,9 +738,9 @@ function ServicesLite() {
       <div className="container">
         <div className="sv-mobile-section-header">
           <span className="sv-label eyebrow">WHAT WE DO</span>
-          <SplitHeading text="Services" className="sv-heading" />
+          <SplitHeading text="Our Services" className="sv-heading" />
           <p className="sv-sub">
-            Engineering Awwwards-grade digital interfaces designed to command market attention.
+            Full-stack web design, mobile app development, AI automation, and SEO services — engineered to grow your business across the US and Canada.
           </p>
         </div>
 

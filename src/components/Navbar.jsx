@@ -57,8 +57,7 @@ export default function Navbar({ currentView, onViewChange }) {
                 Our Work
               </a>
             </li>
-            <li><a href="#services" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('home', '#services'); }}>Services</a></li>
-            <li><a href="#about" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('home', '#about'); }}>Results</a></li>
+            <li><a href="#services-page" className={`nav-link ${currentView === 'services-page' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); onViewChange('services-page'); }}>Services</a></li>
             <li><a href="#process" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('home', '#process'); }}>Process</a></li>
             <li><a href="#testimonials" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('home', '#testimonials'); }}>About</a></li>
           </ul>
@@ -80,8 +79,7 @@ export default function Navbar({ currentView, onViewChange }) {
 
       <div className={`mobile-menu ${menuOpen ? 'active' : ''}`}>
         <a href="#portfolio" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('portfolio'); }}>Our Work</a>
-        <a href="#services" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#services'); }}>Services</a>
-        <a href="#about" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#about'); }}>Results</a>
+        <a href="#services-page" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('services-page'); }}>Services</a>
         <a href="#process" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#process'); }}>Process</a>
         <a href="#testimonials" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#testimonials'); }}>About</a>
         <a href="#demo" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('demo'); }}>Schedule Free Demo</a>

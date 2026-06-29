@@ -241,7 +241,7 @@ function HeroMobile({ startTyping }) {
 
     const eyebrowTimer = setTimeout(() => setShowEyebrow(true), 0);
 
-    const textToType = "We build\ndigital\npowerhouses.";
+    const textToType = "We build\nwebsites, apps\n& AI systems.";
     let currentIdx = 0;
 
     const typingTimer = setTimeout(() => {
@@ -557,7 +557,7 @@ function HeroMobile({ startTyping }) {
         <div className="hero-ui-layer">
           <div className="hero-content">
             <p ref={eyebrowRef} className={`hero-eyebrow ${showEyebrow ? 'visible' : ''}`} style={{ textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-              ✦ MODERN AI AGENCY
+              ✦ WEB DESIGN & APP DEVELOPMENT AGENCY
             </p>
 
             <h1 ref={headlineRef} className="hero-headline">
@@ -576,7 +576,7 @@ function HeroMobile({ startTyping }) {
             </h1>
 
             <p ref={subRef} className={`hero-sub ${showSubAndActions ? 'visible' : ''}`} style={{ textShadow: '0 4px 12px rgba(0,0,0,0.8)' }}>
-              We design and build fast, high-trust websites, apps, and AI systems for founders who want more leads, stronger credibility, and real growth.
+              Premium web design, mobile app development, and AI automation services for startups and brands across the United States and Canada. More leads, stronger credibility, real growth.
             </p>
 
             <div ref={actionsRef} className={`hero-actions ${showSubAndActions ? 'visible' : ''}`}>
@@ -939,14 +939,15 @@ function HeroDesktop() {
         },
       });
 
-      setTimeout(() => {
-        ScrollTrigger.sort();
-        ScrollTrigger.refresh();
-      }, 50);
-
     }, sectionRef);
 
+    const timer = setTimeout(() => {
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+    }, 50);
+
     return () => {
+      clearTimeout(timer);
       window.removeEventListener('resize', resizeCanvas);
       ctx.revert();
     };
@@ -976,11 +977,11 @@ function HeroDesktop() {
         <div className="hero-ui-layer">
           <div className="hero-content">
             <p ref={eyebrowRef} className="hero-eyebrow" style={{ opacity: 0, textShadow: '0 2px 8px rgba(0,0,0,0.8)' }}>
-              MODERN AI AGENCY
+              WEB DESIGN & APP DEVELOPMENT AGENCY
             </p>
 
             <h1 ref={headlineRef} className="hero-headline">
-              {['Premium websites ', 'that turn visitors ', 'into customers.'].map((word, i) => (
+              {['Custom websites ', 'that turn visitors ', 'into customers.'].map((word, i) => (
                 <span className="hero-word-wrap" key={i} style={{ opacity: 0 }}>
                   <span className="hero-word" style={{ textShadow: '0 4px 16px rgba(0,0,0,0.6)' }}>{word}</span>
                 </span>
@@ -988,7 +989,7 @@ function HeroDesktop() {
             </h1>
 
             <p ref={subRef} className="hero-sub" style={{ opacity: 0, textShadow: '0 4px 12px rgba(0,0,0,0.8)' }}>
-              We design and build fast, high-trust websites, apps, and AI systems for founders who want more leads, stronger credibility, and real growth.
+              Premium web design, mobile app development, and AI automation services for startups and brands across the United States and Canada. More leads, stronger credibility, real growth.
             </p>
 
             <div ref={actionsRef} className="hero-actions" style={{ opacity: 0 }}>

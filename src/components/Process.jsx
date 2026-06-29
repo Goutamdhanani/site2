@@ -166,35 +166,37 @@ export default function Process() {
     const container = containerRef.current;
     const engine = engineRef.current;
 
-    // Orchestrate ScrollTrigger to pin the section
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: container,
-        start: 'top top',
-        end: '+=200%',
-        pin: true,
-        scrub: 0.3,
-        onUpdate: (self) => {
-          if (!self || typeof self.progress !== 'number' || isNaN(self.progress)) return;
-          
-          // Calculate active step index based on progress (0 to 1)
-          const stepIndex = Math.min(steps.length - 1, Math.floor(self.progress * steps.length));
-          setActiveStep(stepIndex);
-          
-          // Animate the rotation angle tracker state (for counter rotations)
-          setRotation(self.progress * 288);
+    const ctx = gsap.context(() => {
+      // Orchestrate ScrollTrigger to pin the section
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: container,
+          start: 'top top',
+          end: '+=200%',
+          pin: true,
+          scrub: 0.3,
+          onUpdate: (self) => {
+            if (!self || typeof self.progress !== 'number' || isNaN(self.progress)) return;
+            
+            // Calculate active step index based on progress (0 to 1)
+            const stepIndex = Math.min(steps.length - 1, Math.floor(self.progress * steps.length));
+            setActiveStep(stepIndex);
+            
+            // Animate the rotation angle tracker state (for counter rotations)
+            setRotation(self.progress * 288);
+          }
         }
-      }
-    });
+      });
 
-    // Rotate the parent mech engine track
-    tl.to(engine, {
-      rotateZ: 288,
-      ease: 'none'
-    });
+      // Rotate the parent mech engine track
+      tl.to(engine, {
+        rotateZ: 288,
+        ease: 'none'
+      });
+    }, container);
 
     return () => {
-      tl.kill();
+      ctx.revert();
     };
   }, []);
 

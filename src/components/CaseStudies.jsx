@@ -16,6 +16,7 @@ const projects = [
     glowColor: 'rgba(249, 87, 56, 0.22)',
     image: '/assets/projects/project-1.png',
     tags: ['E-COMMERCE', 'NEXT.JS', 'TAILWIND', 'STRIPE', 'AI AGENT', 'MOTION', 'UI/UX'],
+    link: 'https://project-restro1.vercel.app/'
   },
   {
     title: 'DataFlow',
@@ -28,6 +29,7 @@ const projects = [
     glowColor: 'rgba(238, 155, 0, 0.22)',
     image: '/assets/projects/project-2.png',
     tags: ['SAAS', 'REACT', 'GSAP', 'REDUX', 'CYBERSECURITY', 'CHARTS', 'UI/UX'],
+    link: 'https://project-restro1.vercel.app/'
   },
   {
     title: 'Payze',
@@ -40,18 +42,20 @@ const projects = [
     glowColor: 'rgba(174, 32, 18, 0.22)',
     image: '/assets/projects/project-3.png',
     tags: ['MOBILE APP', 'EXPO', 'NODE.JS', 'GOOGLE MAPS', 'REDIS', 'MOTION', 'UI/UX'],
+    link: 'https://project-restro1.vercel.app/'
   },
   {
-    title: 'VoyageAI',
-    category: 'Automation Platform',
-    year: '2025',
-    description: 'Automation platform for enterprise workflows and LLM execution.',
-    metric: '80%',
-    metricLabel: 'Manual Work Removed',
+    title: 'Qitchen',
+    category: 'Restaurant Experience',
+    year: '2026',
+    description: 'A premium Japanese restaurant menu and reservation brand experience.',
+    metric: '4.9★',
+    metricLabel: 'Customer Rating',
     color: 'var(--accent-gold)',
     glowColor: 'rgba(233, 216, 166, 0.22)',
-    image: '/assets/projects/project-4.png',
-    tags: ['REAL ESTATE', 'FASTAPI', 'POSTGRES', '3D TOURS', 'AI MODEL', 'REACT', 'UI/UX'],
+    image: '/assets/projects/qitchen.png',
+    tags: ['UX/UI', 'RESTAURANT', 'NEXT.JS', 'FRAMER MOTION', 'BOOKINGS', 'BRANDING'],
+    link: 'https://project-restro1.vercel.app/'
   },
 ];
 
@@ -202,39 +206,41 @@ export default function CaseStudies() {
     const section = sectionRef.current;
     if (!track || !section) return;
 
-    // Calculate total horizontal translate distance
-    const totalScroll = track.scrollWidth - window.innerWidth;
+    const ctx = gsap.context(() => {
+      // Calculate total horizontal translate distance
+      const totalScroll = track.scrollWidth - window.innerWidth;
 
-    const scrollAnim = gsap.to(track, {
-      x: -totalScroll,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: `+=${totalScroll}`,
-        pin: true,
-        scrub: 0.3,
-        anticipatePin: 1,
-        snap: {
-          snapTo: 1 / projects.length, // 5 cards total (1 title + 4 projects), so 4 increments (1 / 4)
-          duration: { min: 0.2, max: 0.5 },
-          ease: 'power3.out',
-        },
-        onUpdate: () => {
-          updateCarouselDynamics();
+      gsap.to(track, {
+        x: -totalScroll,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: `+=${totalScroll}`,
+          pin: true,
+          scrub: 0.3,
+          anticipatePin: 1,
+          snap: {
+            snapTo: 1 / projects.length, // 5 cards total (1 title + 4 projects), so 4 increments (1 / 4)
+            duration: { min: 0.2, max: 0.5 },
+            ease: 'power3.out',
+          },
+          onUpdate: () => {
+            updateCarouselDynamics();
+          }
         }
-      }
-    });
+      });
+    }, section);
 
     // Force layout recalculation inside ScrollTrigger
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       ScrollTrigger.refresh();
       updateCarouselDynamics();
     }, 150);
 
     return () => {
-      scrollAnim.scrollTrigger?.kill();
-      scrollAnim.kill();
+      clearTimeout(timer);
+      ctx.revert();
     };
   }, [isMobile]);
 
@@ -376,7 +382,7 @@ export default function CaseStudies() {
                   Selected Work
                 </p>
                 <h2 className="display-lg" style={{ fontSize: 'var(--text-display-lg)', fontWeight: 'var(--weight-black)', color: 'var(--text-primary)', lineHeight: 1.15, marginBottom: '24px' }}>
-                  Real projects with real results.
+                  Web Design & Development Case Studies
                 </h2>
                 <p className="body-lg" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>
                   Not fake “concept universes.”
@@ -431,7 +437,11 @@ export default function CaseStudies() {
                   </div>
 
                   {/* Action Link */}
-                  <div className="cs-card__action">
+                  <div 
+                    className="cs-card__action"
+                    onClick={(e) => { e.stopPropagation(); window.open(project.link, '_blank', 'noopener,noreferrer'); }}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <span className="cs-card__action-text">Explore Project</span>
                     <span className="cs-card__action-arrow">
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -450,12 +460,14 @@ export default function CaseStudies() {
                 {/* Right Side: Showcase */}
                 <div className="cs-card__showcase">
                   <div className="cs-card__img-container">
-                    <img
-                      src={isVisible ? project.image : ''}
-                      alt={project.title}
-                      className="cs-card__img"
-                      loading="lazy"
-                    />
+                    {isVisible && project.image && (
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="cs-card__img"
+                        loading="lazy"
+                      />
+                    )}
                     <div
                       className="cs-card__img-radial"
                       style={{

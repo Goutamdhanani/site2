@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { isLite } from '../utils/device';
+import { handleBookingNotifications } from '../utils/booking';
 
 const TIMEZONES = [
   'America/New_York',
@@ -56,6 +57,7 @@ export default function BookingFlow({ onViewChange }) {
   
   // Step 5: Success Payload
   const [bookingResult, setBookingResult] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
   const containerRef = useRef(null);
 
   // Auto-detect timezone and country
@@ -193,11 +195,13 @@ export default function BookingFlow({ onViewChange }) {
     setStep(prev => Math.max(1, prev - 1));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedDate || !selectedSlot) {
       return alert('Please pick a date and a time slot.');
     }
+
+    setSubmitting(true);
 
     // 1. Capture Hidden Analytics Metadata
     const urlParams = new URLSearchParams(window.location.search);
@@ -240,29 +244,28 @@ export default function BookingFlow({ onViewChange }) {
       }
     };
 
+    // Save payload to localStorage so client maintains their booking locally
+    try {
+      localStorage.setItem('oddwebs_last_booking', JSON.stringify(payload));
+    } catch (e) {
+      console.warn('Failed to save booking to localStorage:', e);
+    }
+
     // 2. Output Simulated API payloads to Console
     console.log('========== SCHEDULER BACKEND RECORD ==========');
     console.log('LOCAL_STORAGE_SAVE:', payload);
-    console.log('SIMULATED_RESEND_EMAIL:', {
-      to: 'hello@oddwebs.com',
-      subject: `[New Booking] ${bookingId} - ${name}`,
-      body: `Booking Reference: ${bookingId}\nName: ${name}\nEmail: ${email}\nWhatsApp: ${whatsapp}\nServices: ${payload.services.join(', ')}\nDate/Time: ${formattedDate} at ${selectedSlot} (${timezone})\nMetadata: ${JSON.stringify(payload.metadata)}`
-    });
-    console.log('SIMULATED_WHATSAPP_NOTIFICATION:', {
-      to: whatsapp,
-      body: `Hi ${name}, your oddwebs Free Demo has been scheduled for ${formattedDate} at ${selectedSlot} (${timezone}). Booking Ref: ${bookingId}. See you there!`
-    });
-    console.log('SIMULATED_GOOGLE_CALENDAR_EVENT:', {
-      summary: `oddwebs Free Demo: ${name}`,
-      description: `Project Scope: ${payload.description}\nServices: ${payload.services.join(', ')}\nWhatsApp: ${whatsapp}`,
-      start: `${selectedDate.toISOString().split('T')[0]}T${selectedSlot === '09:00 AM' ? '09:00:00' : selectedSlot === '10:00 AM' ? '10:00:00' : selectedSlot === '11:00 AM' ? '11:00:00' : selectedSlot === '01:00 PM' ? '13:00:00' : selectedSlot === '02:00 PM' ? '14:00:00' : selectedSlot === '03:00 PM' ? '15:00:00' : selectedSlot === '04:00 PM' ? '16:00:00' : '17:00:00'}`,
-      timezone
-    });
     console.log('==============================================');
 
-    // 3. Save to local state and route to Success
-    setBookingResult(payload);
-    setStep(5);
+    // 3. Send actual notifications & update Sheet
+    try {
+      await handleBookingNotifications(payload);
+    } catch (err) {
+      console.error('Failed to dispatch notifications:', err);
+    } finally {
+      setSubmitting(false);
+      setBookingResult(payload);
+      setStep(5);
+    }
   };
   return (
     <div id="demo" ref={containerRef} className="booking-flow-wrapper">
@@ -553,16 +556,26 @@ export default function BookingFlow({ onViewChange }) {
               </div>
 
               <div className="bf-actions-bar">
-                <button type="button" onClick={handlePrev} className="btn-ghost">
+                <button type="button" onClick={handlePrev} className="btn-ghost" disabled={submitting}>
                   Back
                 </button>
                 <button 
                   type="button" 
                   onClick={handleSubmit} 
                   className="btn-primary magnetic"
-                  disabled={!selectedDate || !selectedSlot}
+                  disabled={!selectedDate || !selectedSlot || submitting}
                 >
-                  Schedule Free Demo
+                  {submitting ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                      <svg className="bf-spinner" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" style={{ animation: 'spin 1s linear infinite' }}>
+                        <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
+                        <path d="M12 2a10 10 0 0 1 10 10" />
+                      </svg>
+                      Scheduling...
+                    </span>
+                  ) : (
+                    'Schedule Free Demo'
+                  )}
                 </button>
               </div>
             </div>
