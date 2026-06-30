@@ -33,7 +33,18 @@ export default function BookingFlow({ onViewChange }) {
   const [step, setStep] = useState(1);
   
   // Step 1: Services
-  const [selectedServices, setSelectedServices] = useState([]);
+  const [selectedServices, setSelectedServices] = useState(() => {
+    try {
+      const stored = sessionStorage.getItem('preferred_services');
+      if (stored) {
+        sessionStorage.removeItem('preferred_services');
+        return JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    return [];
+  });
   
   // Step 2: Description
   const [description, setDescription] = useState('');

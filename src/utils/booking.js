@@ -8,42 +8,78 @@
  */
 export async function handleBookingNotifications(payload) {
   const googleSheetsWebhook = import.meta.env.VITE_GOOGLE_SHEETS_WEBHOOK;
+  const resendApiUrl = import.meta.env.VITE_RESEND_API_URL || '/api/send-email';
   const adminEmail = import.meta.env.VITE_ADMIN_EMAIL || 'hello@oddwebs.com';
 
-  // Inject admin email into payload so the Apps Script knows where to send notifications
   const requestPayload = {
     ...payload,
     adminEmail: adminEmail
   };
 
-  if (googleSheetsWebhook && !googleSheetsWebhook.includes('YOUR_GOOGLE_APPS_SCRIPT')) {
+  let resendSuccess = false;
+  let sheetsSuccess = false;
+
+  // 1. Try sending via the Resend Serverless API Route
+  const useResend = import.meta.env.VITE_USE_RESEND === 'true' || !!import.meta.env.VITE_RESEND_API_URL;
+
+  if (useResend || resendApiUrl === '/api/send-email') {
     try {
-      const response = await fetch(googleSheetsWebhook, {
+      const response = await fetch(resendApiUrl, {
         method: 'POST',
-        mode: 'no-cors', // standard for Google Apps Scripts macros to prevent CORS errors
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(requestPayload)
       });
-      console.log('Booking request dispatched to Google Apps Script Webhook.');
-      return { success: true };
+      if (response.ok) {
+        console.log('Booking notifications sent successfully via Resend API.');
+        resendSuccess = true;
+      } else {
+        const errorData = await response.json();
+        console.warn('Resend API returned an error:', errorData.error || response.statusText);
+      }
     } catch (error) {
-      console.error('Error dispatching booking to Google Apps Script:', error);
-      return { success: false };
+      console.warn('Could not connect to /api/send-email serverless route (normal for static clients without Vercel). Falling back.', error);
     }
-  } else {
-    console.warn('Google Sheets Webhook not configured or placeholder used. Running in simulation mode.');
-    // Simulated delay for testing
+  }
+
+  // 2. Try sending/logging via Google Sheets Webhook
+  if (googleSheetsWebhook && !googleSheetsWebhook.includes('YOUR_GOOGLE_APPS_SCRIPT')) {
+    try {
+      await fetch(googleSheetsWebhook, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestPayload)
+      });
+      console.log('Booking request dispatched to Google Sheets Webhook.');
+      sheetsSuccess = true;
+    } catch (error) {
+      console.error('Error logging to Google Sheets:', error);
+    }
+  }
+
+  if (resendSuccess || sheetsSuccess) {
+    return { success: true };
+  }
+
+  // If no backend is active, fall back to dev simulation mode
+  if (!useResend && (!googleSheetsWebhook || googleSheetsWebhook.includes('YOUR_GOOGLE_APPS_SCRIPT'))) {
+    console.log('No backend webhooks configured. Running in simulated mode.');
     await new Promise(resolve => setTimeout(resolve, 1000));
     return { success: true };
   }
+
+  return { success: false };
 }
 
 /**
  * Google Apps Script Webhook Template.
  * Copy and paste this code into your Google Sheets Apps Script editor (Extensions -> Apps Script).
- * It automatically logs submissions and sends beautifully formatted HTML emails for free.
+ * To send via Resend securely, add your RESEND_API_KEY in script properties (Project Settings -> Script Properties).
+ * If no key is set, it falls back to Google's free MailApp.
  */
 export const googleAppsScriptTemplate = `
 function doPost(e) {
@@ -118,47 +154,117 @@ function doPost(e) {
         "</table>" +
       "</div>";
       
-    MailApp.sendEmail({
-      to: adminEmail,
-      subject: adminSubject,
-      htmlBody: adminBodyHtml
-    });
-    
     // 2. Client Confirmation Receipt Email (only if email was provided)
-    if (clientEmail && clientEmail.trim() !== "" && clientEmail !== "Not provided") {
-      var clientSubject = "Your Demo Booking is Confirmed — oddwebs";
-      var clientBodyHtml = 
-        "<div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff; color: #1a202c;'>" +
-          "<div style='text-align: center; margin-bottom: 25px;'>" +
-            "<div style='font-size: 28px; font-weight: 800; letter-spacing: -0.02em; color: #0f172a;'>odd<span style='color: #f95738;'>webs</span></div>" +
-            "<p style='color: #64748b; font-size: 14px; margin-top: 4px;'>We Build Digital Powerhouses</p>" +
-          "</div>" +
-          "<h2 style='color: #0f172a; font-size: 20px; font-weight: 700; margin-top: 0; text-align: center;'>Your Demo is Confirmed!</h2>" +
-          "<p style='font-size: 15px; line-height: 1.6; color: #475569;'>Hi " + data.details.name + ",</p>" +
-          "<p style='font-size: 15px; line-height: 1.6; color: #475569;'>Thanks for scheduling a free demo with us! We have reserved your slot, and our team will analyze your project description and requirements to prepare an initial technical scope proposal beforehand.</p>" +
-          "<div style='background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 25px 0;'>" +
-            "<h3 style='margin-top: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;'>Booking Pass</h3>" +
-            "<table style='width: 100%; border-collapse: collapse; font-size: 14px;'>" +
-              "<tr><td style='padding: 6px 0; color: #64748b; width: 120px;'>Reference</td><td style='padding: 6px 0; font-weight: bold; color: #f95738;'>" + data.id + "</td></tr>" +
-              "<tr><td style='padding: 6px 0; color: #64748b;'>Date</td><td style='padding: 6px 0; font-weight: bold; color: #0f172a;'>" + data.booking.date + "</td></tr>" +
-              "<tr><td style='padding: 6px 0; color: #64748b;'>Time Slot</td><td style='padding: 6px 0; font-weight: bold; color: #0f172a;'>" + data.booking.timeSlot + " (" + data.booking.timezone + ")</td></tr>" +
-              "<tr><td style='padding: 6px 0; color: #64748b;'>Services</td><td style='padding: 6px 0; color: #334155; font-family: monospace;'>" + servicesList + "</td></tr>" +
+    var clientSubject = "Your Demo Booking is Confirmed — oddwebs";
+    var clientBodyHtml = 
+      "<table width='100%' border='0' cellspacing='0' cellpadding='0' style='background-color: #0b0806; width: 100%; font-family: -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial, sans-serif;'>" +
+        "<tr>" +
+          "<td align='center' style='padding: 40px 16px;'>" +
+            "<table width='100%' border='0' cellspacing='0' cellpadding='0' style='max-width: 500px; width: 100%; background-color: #0e0a08; border: 1px solid #2d1f1b; border-top: 4px solid #f95738; border-radius: 20px; text-align: left;'>" +
+              "<tr>" +
+                "<td style='padding: 36px 28px;'>" +
+                  "<table style='width: 100%; border-collapse: collapse; margin-bottom: 24px;'>" +
+                    "<tr>" +
+                      "<td>" +
+                        "<span style='font-size: 26px; font-weight: 900; letter-spacing: -0.03em; color: #ffffff;'>odd<span style='color: #f95738;'>webs</span></span>" +
+                        "<div style='color: #7f6c65; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px;'>We Build Digital Powerhouses</div>" +
+                      "</td>" +
+                      "<td style='text-align: right; vertical-align: top;'>" +
+                        "<span style='font-family: monospace; font-size: 9px; font-weight: 700; color: #ee9b00; background: rgba(238, 155, 0, 0.1); border: 1px solid rgba(238, 155, 0, 0.25); padding: 4px 10px; border-radius: 100px; letter-spacing: 0.05em; display: inline-block;'>APPOINTMENT PASS</span>" +
+                      "</td>" +
+                    "</tr>" +
+                  "</table>" +
+                  "<div style='color: #eae5e2; font-size: 15px; line-height: 1.6; margin-bottom: 20px;'>Hi " + data.details.name + ",</div>" +
+                  "<div style='color: #eae5e2; font-size: 14px; line-height: 1.6; margin-bottom: 24px;'>Your free live demo call is confirmed! Our engineering team is currently reviewing your project details to prepare your custom technical roadmap proposal.</div>" +
+                  "<div style='margin: 24px 0; border-top: 1px dashed #3d2d27; font-size: 0; line-height: 0;'></div>" +
+                  "<table style='width: 100%; border-collapse: collapse;'>" +
+                    "<tr>" +
+                      "<td style='padding: 8px 0; vertical-align: top; width: 50%;'>" +
+                        "<div style='font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;'>VISITOR</div>" +
+                        "<div style='font-size: 14px; font-weight: 700; color: #eae5e2;'>" + data.details.name + "</div>" +
+                      "</td>" +
+                      "<td style='padding: 8px 0; vertical-align: top; width: 50%; text-align: right;'>" +
+                        "<div style='font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;'>REFERENCE</div>" +
+                        "<div style='font-size: 14px; font-weight: 700; color: #f95738; font-family: monospace;'>" + data.id + "</div>" +
+                      "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                      "<td style='padding: 12px 0 8px 0; vertical-align: top;' colspan='2'>" +
+                        "<div style='font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;'>MEETING TARGET</div>" +
+                        "<div style='font-size: 14px; font-weight: 700; color: #eae5e2;'>" + data.booking.date + "</div>" +
+                      "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                      "<td style='padding: 8px 0; vertical-align: top;'>" +
+                        "<div style='font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;'>TIME SLOT</div>" +
+                        "<div style='font-size: 14px; font-weight: 700; color: #eae5e2;'>" + data.booking.timeSlot + "</div>" +
+                      "</td>" +
+                      "<td style='padding: 8px 0; vertical-align: top; text-align: right;'>" +
+                        "<div style='font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;'>TIMEZONE</div>" +
+                        "<div style='font-size: 13px; font-weight: 600; color: #eae5e2;'>" + data.booking.timezone + "</div>" +
+                      "</td>" +
+                    "</tr>" +
+                    "<tr>" +
+                      "<td style='padding: 12px 0 0 0; vertical-align: top;' colspan='2'>" +
+                        "<div style='font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;'>REQUESTED STACK</div>" +
+                        "<div style='font-family: monospace; font-size: 13px; font-weight: 700; color: #ee9b00;'>" + servicesList + "</div>" +
+                      "</td>" +
+                    "</tr>" +
+                  "</table>" +
+                  "<div style='margin: 28px 0; border-top: 1px dashed #3d2d27; font-size: 0; line-height: 0;'></div>" +
+                  "<div style='text-align: center; margin-bottom: 24px;'>" +
+                    "<div style='display: inline-block; height: 24px; background: transparent; letter-spacing: 0; font-size: 0; line-height: 0;'>" +
+                      "<span style='display: inline-block; width: 2px; height: 24px; background-color: #7f6c65; margin-right: 1px;'></span>" +
+                      "<span style='display: inline-block; width: 1px; height: 24px; background-color: #7f6c65; margin-right: 2px;'></span>" +
+                      "<span style='display: inline-block; width: 3px; height: 24px; background-color: #7f6c65; margin-right: 1px;'></span>" +
+                      "<span style='display: inline-block; width: 1px; height: 24px; background-color: #7f6c65; margin-right: 2px;'></span>" +
+                      "<span style='display: inline-block; width: 4px; height: 24px; background-color: #7f6c65; margin-right: 1px;'></span>" +
+                      "<span style='display: inline-block; width: 2px; height: 24px; background-color: #7f6c65; margin-right: 2px;'></span>" +
+                      "<span style='display: inline-block; width: 1px; height: 24px; background-color: #7f6c65; margin-right: 1px;'></span>" +
+                      "<span style='display: inline-block; width: 3px; height: 24px; background-color: #7f6c65; margin-right: 2px;'></span>" +
+                      "<span style='display: inline-block; width: 1px; height: 24px; background-color: #7f6c65; margin-right: 1px;'></span>" +
+                      "<span style='display: inline-block; width: 2px; height: 24px; background-color: #7f6c65; margin-right: 2px;'></span>" +
+                      "<span style='display: inline-block; width: 4px; height: 24px; background-color: #7f6c65; margin-right: 1px;'></span>" +
+                      "<span style='display: inline-block; width: 2px; height: 24px; background-color: #7f6c65; margin-right: 2px;'></span>" +
+                      "<span style='display: inline-block; width: 1px; height: 24px; background-color: #7f6c65;'></span>" +
+                    "</div>" +
+                    "<div style='font-family: monospace; font-size: 8px; color: #7f6c65; letter-spacing: 0.15em; margin-top: 6px; text-transform: uppercase;'>SECURE ACCESS // ACTIVE ENTRY TICKET</div>" +
+                  "</div>" +
+                  "<div style='text-align: center; color: #eae5e2; font-size: 13px; font-weight: 600; line-height: 1.5; margin-bottom: 8px;'>Your video meeting invitation link will be sent shortly.</div>" +
+                  "<div style='text-align: center; color: #7f6c65; font-size: 11px; line-height: 1.5;'>If you have any questions or files to upload beforehand, reply directly to this mail.</div>" +
+                  "<hr style='border: 0; border-top: 1px solid #1f1613; margin: 28px 0;' />" +
+                  "<div style='text-align: center; color: #7f6c65; font-size: 10px; line-height: 1.4;'>&copy; " + new Date().getFullYear() + " oddwebs. All rights reserved.<br/>Next.js web builds, mobile apps, & AI workflow automation.</div>" +
+                "</td>" +
+              "</tr>" +
             "</table>" +
-          "</div>" +
-          "<p style='font-size: 15px; line-height: 1.6; color: #475569;'>We will send you a calendar invite and a meeting link on your email and WhatsApp shortly.</p>" +
-          "<p style='font-size: 15px; line-height: 1.6; color: #475569;'>If you have any questions or additional files/documents to share, feel free to reply directly to this email or ping us on WhatsApp.</p>" +
-          "<hr style='border: 0; border-top: 1px solid #e2e8f0; margin: 30px 0;' />" +
-          "<div style='text-align: center; color: #94a3b8; font-size: 12px;'>" +
-            "&copy; " + new Date().getFullYear() + " oddwebs. All rights reserved.<br/>" +
-            "Web Design, App Development & AI Automation Agency" +
-          "</div>" +
-        "</div>";
-        
+          "</td>" +
+        "</tr>" +
+      "</table>";
+
+    // Dispatching Emails securely
+    var resendApiKey = PropertiesService.getScriptProperties().getProperty("RESEND_API_KEY");
+    if (resendApiKey) {
+      var fromAddress = PropertiesService.getScriptProperties().getProperty("RESEND_FROM_EMAIL") || "onboarding@resend.dev";
+      sendViaResend(adminEmail, adminSubject, adminBodyHtml, resendApiKey, fromAddress);
+      
+      if (clientEmail && clientEmail.trim() !== "" && clientEmail !== "Not provided") {
+        sendViaResend(clientEmail, clientSubject, clientBodyHtml, resendApiKey, fromAddress);
+      }
+    } else {
+      // Fallback to standard Google MailApp
       MailApp.sendEmail({
-        to: clientEmail,
-        subject: clientSubject,
-        htmlBody: clientBodyHtml
+        to: adminEmail,
+        subject: adminSubject,
+        htmlBody: adminBodyHtml
       });
+      
+      if (clientEmail && clientEmail.trim() !== "" && clientEmail !== "Not provided") {
+        MailApp.sendEmail({
+          to: clientEmail,
+          subject: clientSubject,
+          htmlBody: clientBodyHtml
+        });
+      }
     }
     
     return ContentService.createTextOutput(JSON.stringify({ status: "success" }))
@@ -167,5 +273,28 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
+}
+
+function sendViaResend(toEmail, subject, bodyHtml, apiKey, fromAddress) {
+  var url = "https://api.resend.com/emails";
+  var payload = {
+    "from": fromAddress,
+    "to": [toEmail],
+    "subject": subject,
+    "html": bodyHtml
+  };
+  
+  var options = {
+    "method": "post",
+    "contentType": "application/json",
+    "headers": {
+      "Authorization": "Bearer " + apiKey
+    },
+    "payload": JSON.stringify(payload),
+    "muteHttpExceptions": true
+  };
+  
+  var response = UrlFetchApp.fetch(url, options);
+  return response.getResponseCode() === 200 || response.getResponseCode() === 201;
 }
 `;

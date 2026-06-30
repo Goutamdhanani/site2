@@ -142,9 +142,20 @@ const serviceCategories = [
   }
 ];
 
+const servicePrices = {
+  'Web Design & Build': 699,
+  'AI & Automation': 599,
+  'Hosting & Infrastructure': 199,
+  'Google & Local SEO': 399,
+  'Branding': 299,
+  'Content & Copy': 249,
+  'Ads & Marketing': 499
+};
+
 export default function ServicesPage({ onViewChange }) {
   const sectionRef = useRef(null);
   const [expandedCard, setExpandedCard] = useState(null);
+  const [selectedBundle, setSelectedBundle] = useState([0]); // Web Design checked by default
 
   useEffect(() => {
     if (isLite) {
@@ -180,6 +191,47 @@ export default function ServicesPage({ onViewChange }) {
     setExpandedCard(expandedCard === idx ? null : idx);
   };
 
+  const handleBundleToggle = (idx) => {
+    setSelectedBundle(prev => {
+      if (prev.includes(idx)) {
+        return prev.filter(i => i !== idx);
+      } else {
+        return [...prev, idx];
+      }
+    });
+  };
+
+  const handleClaimBundle = (e) => {
+    e.preventDefault();
+    if (selectedBundle.length === 0) return;
+    
+    const mappedServices = [];
+    selectedBundle.forEach(idx => {
+      const title = serviceCategories[idx].title;
+      if (title === 'Web Design & Build') {
+        mappedServices.push('Website', 'UI/UX Design');
+      } else if (title === 'AI & Automation') {
+        mappedServices.push('AI Automation');
+      } else if (title === 'Hosting & Infrastructure' || title === 'Google & Local SEO') {
+        mappedServices.push('Website');
+      } else if (title === 'Branding') {
+        mappedServices.push('UI/UX Design');
+      } else {
+        mappedServices.push('Other');
+      }
+    });
+    
+    const uniqueServices = Array.from(new Set(mappedServices));
+    sessionStorage.setItem('preferred_services', JSON.stringify(uniqueServices));
+    onViewChange('demo');
+  };
+
+  // Pricing calculations
+  const originalTotal = selectedBundle.reduce((sum, idx) => sum + servicePrices[serviceCategories[idx].title], 0);
+  const hasDiscount = selectedBundle.length >= 2;
+  const discountAmount = hasDiscount ? Math.round(originalTotal * 0.20) : 0;
+  const finalTotal = originalTotal - discountAmount;
+
   return (
     <div id="services-page" ref={sectionRef} className="sp-wrapper">
       <div className="section-glow-line" aria-hidden="true" />
@@ -196,6 +248,14 @@ export default function ServicesPage({ onViewChange }) {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
             Back to Home
           </a>
+        </div>
+
+        {/* Scarcity availability status ticker */}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="sp-status-ticker">
+            <span className="sp-status-dot"></span>
+            <span>Status: Only 2 Client Build Slots Remaining for {new Date().toLocaleString('default', { month: 'long' })}</span>
+          </div>
         </div>
 
         {/* Header */}
@@ -229,55 +289,259 @@ export default function ServicesPage({ onViewChange }) {
 
         {/* Services Grid */}
         <div className="sp-grid">
-          {serviceCategories.map((cat, idx) => (
-            <article
-              key={idx}
-              className={`sp-category-card ${expandedCard === idx ? 'sp-card--expanded' : ''}`}
-              style={{ '--card-accent': cat.color }}
-              onClick={() => toggleExpand(idx)}
-            >
-              <div className="sp-card-top">
-                <div className="sp-card-icon" style={{ color: cat.color }}>
-                  {cat.icon}
-                </div>
-                <div className="sp-card-count">{cat.count}</div>
-              </div>
-
-              <h3 className="sp-card-title">{cat.title}</h3>
-              <p className="sp-card-desc">{cat.description}</p>
-
-              {/* Sub-services list */}
-              <ul className="sp-card-list">
-                {cat.subServices.map((sub, i) => (
-                  <li key={i}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    {sub}
-                  </li>
-                ))}
-              </ul>
-
-              {/* Redesigned Pricing & Scope */}
-              <div className="sp-card-price" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '20px' }}>
-                <span style={{ fontSize: '10px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.08em' }}>PROJECT SCOPE</span>
-                <span style={{ fontSize: '15px', fontWeight: 'var(--weight-bold)', color: 'var(--text-primary)' }}>Customized to your needs</span>
-                <span style={{ fontSize: '12px', color: cat.color, fontFamily: 'var(--font-mono)' }}>Starts at $499 USD</span>
-              </div>
-
-              {/* CTA */}
-              <a
-                href="#demo"
-                className="sp-card-cta"
-                style={{ '--cta-color': cat.color }}
-                onClick={(e) => { e.stopPropagation(); e.preventDefault(); onViewChange('demo'); }}
+          {serviceCategories.map((cat, idx) => {
+            const isHighlighted = cat.title === 'Web Design & Build';
+            return (
+              <article
+                key={idx}
+                className={`sp-category-card ${expandedCard === idx ? 'sp-card--expanded' : ''} ${isHighlighted ? 'sp-card--highlighted' : ''}`}
+                style={{ '--card-accent': cat.color }}
+                onClick={() => toggleExpand(idx)}
               >
-                Get Custom Roadmap
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </a>
+                {isHighlighted && (
+                  <span className="sp-highlight-badge">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    Top Deal
+                  </span>
+                )}
+                <div className="sp-card-top">
+                  <div className="sp-card-icon" style={{ color: cat.color }}>
+                    {cat.icon}
+                  </div>
+                  <div className="sp-card-count">{cat.count}</div>
+                </div>
 
-              <div className="sp-card-glow" />
-            </article>
-          ))}
+                <h3 className="sp-card-title">{cat.title}</h3>
+                <p className="sp-card-desc">{cat.description}</p>
+
+                {/* Sub-services list */}
+                <ul className="sp-card-list">
+                  {cat.subServices.map((sub, i) => (
+                    <li key={i}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                      {sub}
+                    </li>
+                  ))}
+                </ul>
+
+                {/* Redesigned Pricing & Scope */}
+                <div className="sp-card-price" style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '20px' }}>
+                  <span style={{ fontSize: '10px', textTransform: 'uppercase', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)', letterSpacing: '0.08em' }}>PROJECT SCOPE</span>
+                  <span style={{ fontSize: '15px', fontWeight: 'var(--weight-bold)', color: 'var(--text-primary)' }}>Customized to your needs</span>
+                  <span style={{ fontSize: '12px', color: cat.color, fontFamily: 'var(--font-mono)' }}>Starts at $499 USD</span>
+                </div>
+
+                {/* CTA */}
+                <a
+                  href="#demo"
+                  className="sp-card-cta"
+                  style={{ '--cta-color': cat.color }}
+                  onClick={(e) => { e.stopPropagation(); e.preventDefault(); onViewChange('demo'); }}
+                >
+                  Get Custom Roadmap
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </a>
+
+                <div className="sp-card-glow" />
+              </article>
+            );
+          })}
         </div>
+
+        {/* Custom Bundle Builder */}
+        <section className="sp-bundle-section">
+          <div className="sp-bundle-header">
+            <span className="eyebrow" style={{ color: 'var(--accent-amber)' }}>interactive pricing</span>
+            <h2 className="sp-bundle-title">Custom Growth Stack Configurator</h2>
+            <p className="sp-bundle-subtitle">
+              Combine services to engineer your perfect digital ecosystem. Select 2 or more capabilities to unlock an instant 20% bundle discount.
+            </p>
+          </div>
+
+          <div className="sp-bundle-container">
+            {/* Left: Checklist */}
+            <div className="sp-bundle-checklist">
+              {serviceCategories.map((cat, idx) => {
+                const isActive = selectedBundle.includes(idx);
+                const price = servicePrices[cat.title];
+                return (
+                  <div
+                    key={idx}
+                    className={`sp-bundle-item ${isActive ? 'active' : ''}`}
+                    onClick={() => handleBundleToggle(idx)}
+                  >
+                    <div className="sp-bundle-checkbox">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div className="sp-bundle-item-content">
+                      <div>
+                        <span className="sp-bundle-item-title">{cat.title}</span>
+                        <span className="sp-bundle-item-tag"> ({cat.count} capabilities included)</span>
+                      </div>
+                      <span className="sp-bundle-item-val">${price} USD</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Right: Pricing Calculator Pass */}
+            <div className="sp-bundle-price-card">
+              <div>
+                <div className="sp-bundle-summary-header">
+                  <span className="sp-bundle-summary-title">Your Custom Stack</span>
+                  <p className="sp-bundle-summary-desc">
+                    {selectedBundle.length === 0 
+                      ? 'Select services on the left to start configuring your deal.' 
+                      : `Bundling ${selectedBundle.length} expert service areas.`}
+                  </p>
+                </div>
+
+                {selectedBundle.length > 0 && (
+                  <div className="sp-bundle-summary-rows">
+                    {selectedBundle.map((idx) => {
+                      const cat = serviceCategories[idx];
+                      return (
+                        <div key={idx} className="sp-bundle-summary-row">
+                          <span>{cat.title}</span>
+                          <span>${servicePrices[cat.title]}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                {hasDiscount && (
+                  <div className="sp-bundle-discount-badge">
+                    🔥 20% Bundle Discount Applied (-${discountAmount} USD)
+                  </div>
+                )}
+
+                {selectedBundle.length > 0 ? (
+                  <>
+                    {hasDiscount && (
+                      <div className="sp-bundle-original-price">${originalTotal} USD</div>
+                    )}
+                    <div className="sp-bundle-final-price">
+                      ${finalTotal} <span>USD / starting</span>
+                    </div>
+                    <p className="sp-bundle-price-footer">
+                      *Scoped completely free. No retainer contract required.
+                    </p>
+                    <a
+                      href="#demo"
+                      className="sp-bundle-cta"
+                      onClick={handleClaimBundle}
+                    >
+                      Lock in this Deal
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+                    </a>
+                  </>
+                ) : (
+                  <div style={{ color: 'var(--text-muted)', fontSize: '13px', textAlign: 'center', padding: '20px 0' }}>
+                    Select services to see pricing.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Comparison Table */}
+        <section className="sp-comparison-section">
+          <div className="sp-bundle-header">
+            <span className="eyebrow" style={{ color: 'var(--accent-ember)' }}>SMART CONTRAST</span>
+            <h2 className="sp-bundle-title">OD Model vs. Traditional Agencies</h2>
+            <p className="sp-bundle-subtitle">
+              Why fast-growing startups and small businesses choose our high-efficiency structure over bloated retainers.
+            </p>
+          </div>
+          <div className="sp-comparison-wrapper">
+            <table className="sp-comp-table">
+              <thead>
+                <tr>
+                  <th>Features & Value</th>
+                  <th className="col-highlight">OD (Our Model)</th>
+                  <th>Traditional Agencies</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="sp-comp-feature">
+                    Risk-Free Demo
+                    <span className="sp-comp-feature-desc">Pay nothing until you see your custom homepage design.</span>
+                  </td>
+                  <td className="sp-comp-us-cell col-highlight">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    100% Free Demo First
+                  </td>
+                  <td className="sp-comp-them-cell">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Requires upfront deposit
+                  </td>
+                </tr>
+                <tr>
+                  <td className="sp-comp-feature">
+                    Pricing Structure
+                    <span className="sp-comp-feature-desc">Modular scaling designed for high ROI.</span>
+                  </td>
+                  <td className="sp-comp-us-cell col-highlight">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Starts at $499 USD
+                  </td>
+                  <td className="sp-comp-them-cell">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    $5,000+ flat minimums
+                  </td>
+                </tr>
+                <tr>
+                  <td className="sp-comp-feature">
+                    Contracts & Retainers
+                    <span className="sp-comp-feature-desc">No lock-ins. Pay only for what you build.</span>
+                  </td>
+                  <td className="sp-comp-us-cell col-highlight">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Zero monthly retainers
+                  </td>
+                  <td className="sp-comp-them-cell">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Hard 6-12 month lock-ins
+                  </td>
+                </tr>
+                <tr>
+                  <td className="sp-comp-feature">
+                    Build Speed & Scoping
+                    <span className="sp-comp-feature-desc">Deployed on fast edge servers quickly.</span>
+                  </td>
+                  <td className="sp-comp-us-cell col-highlight">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    3 - 7 days turnaround
+                  </td>
+                  <td className="sp-comp-them-cell">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    4 - 8 weeks of slow bureaucracy
+                  </td>
+                </tr>
+                <tr>
+                  <td className="sp-comp-feature">
+                    Direct Team Access
+                    <span className="sp-comp-feature-desc">No sales reps or telephone tag.</span>
+                  </td>
+                  <td className="sp-comp-us-cell col-highlight">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Direct dev Slack & WhatsApp
+                  </td>
+                  <td className="sp-comp-them-cell">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Bloated middleman managers
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         {/* Bottom CTA */}
         <div className="sp-bottom-cta">
