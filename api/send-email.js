@@ -18,21 +18,50 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.error('RESEND_API_KEY is not configured in environment variables.');
-    return res.status(500).json({ 
-      error: 'Resend API key is missing. Please set RESEND_API_KEY in your hosting environment.' 
-    });
-  }
-
-  const resend = new Resend(apiKey);
   const data = req.body;
 
   if (!data || !data.id || !data.details || !data.details.name) {
     return res.status(400).json({ error: 'Invalid payload: missing booking details.' });
   }
 
+  // 0. Post to Google Sheets CRM (Server-side to bypass CORS & client-side ad-blockers)
+  const sheetsWebhook = process.env.VITE_GOOGLE_SHEETS_WEBHOOK || process.env.GOOGLE_SHEETS_WEBHOOK;
+  let sheetsStatus = 'Not configured';
+  let sheetsSuccess = false;
+  if (sheetsWebhook && !sheetsWebhook.includes('YOUR_GOOGLE_APPS_SCRIPT')) {
+    try {
+      const sheetsResponse = await fetch(sheetsWebhook, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      if (sheetsResponse.ok) {
+        const sheetsRes = await sheetsResponse.json();
+        sheetsStatus = `Success: ${JSON.stringify(sheetsRes)}`;
+        sheetsSuccess = true;
+      } else {
+        sheetsStatus = `Error: ${sheetsResponse.status} ${sheetsResponse.statusText}`;
+      }
+    } catch (err) {
+      console.error('Failed to post to Google Sheets Webhook:', err);
+      sheetsStatus = `Failed: ${err.message}`;
+    }
+  }
+
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('RESEND_API_KEY is not configured. Email dispatch skipped.');
+    return res.status(200).json({
+      success: sheetsSuccess,
+      message: sheetsSuccess ? 'Lead logged to Google Sheet. Email dispatch skipped (RESEND_API_KEY missing).' : 'Failed to process lead: RESEND_API_KEY is missing and Sheets Webhook failed.',
+      clientEmailStatus: 'Skipped (RESEND_API_KEY missing)',
+      sheetsStatus: sheetsStatus
+    });
+  }
+
+  const resend = new Resend(apiKey);
   const fromEmail = process.env.RESEND_FROM_EMAIL || 'oddwebs <onboarding@resend.dev>';
   const adminEmail = process.env.VITE_ADMIN_EMAIL || 'hello@oddwebs.com';
   const clientEmail = data.details?.email;
@@ -282,7 +311,8 @@ export default async function handler(req, res) {
     return res.status(200).json({ 
       success: true, 
       message: 'Lead processed successfully.', 
-      clientEmailStatus: clientStatus 
+      clientEmailStatus: clientStatus,
+      sheetsStatus: sheetsStatus
     });
 
   } catch (error) {

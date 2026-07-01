@@ -16,58 +16,52 @@ export async function handleBookingNotifications(payload) {
     adminEmail: adminEmail
   };
 
-  let resendSuccess = false;
-  let sheetsSuccess = false;
+  let apiSuccess = false;
 
-  // 1. Try sending via the Resend Serverless API Route
-  const useResend = import.meta.env.VITE_USE_RESEND === 'true' || !!import.meta.env.VITE_RESEND_API_URL;
-
-  if (useResend || resendApiUrl === '/api/send-email') {
-    try {
-      const response = await fetch(resendApiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestPayload)
-      });
-      if (response.ok) {
-        console.log('Booking notifications sent successfully via Resend API.');
-        resendSuccess = true;
-      } else {
-        const errorData = await response.json();
-        console.warn('Resend API returned an error:', errorData.error || response.statusText);
+  try {
+    const response = await fetch(resendApiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestPayload)
+    });
+    
+    if (response.ok) {
+      const resData = await response.json();
+      console.log('API Route processed lead successfully:', resData);
+      apiSuccess = resData.success || (resData.sheetsStatus && resData.sheetsStatus.includes('Success'));
+    } else {
+      console.warn('API Route returned an error:', response.statusText);
+    }
+  } catch (error) {
+    console.warn('Could not connect to backend API route. Falling back to local sheets direct dispatcher.', error);
+    // Dev fallback: Direct post from client to sheets webhook if backend is unavailable (e.g. static preview/dev)
+    if (googleSheetsWebhook && !googleSheetsWebhook.includes('YOUR_GOOGLE_APPS_SCRIPT')) {
+      try {
+        await fetch(googleSheetsWebhook, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestPayload)
+        });
+        console.log('Booking request dispatched directly to Google Sheets Webhook.');
+        apiSuccess = true;
+      } catch (err) {
+        console.error('Direct Google Sheets post failed:', err);
       }
-    } catch (error) {
-      console.warn('Could not connect to /api/send-email serverless route (normal for static clients without Vercel). Falling back.', error);
     }
   }
 
-  // 2. Try sending/logging via Google Sheets Webhook
-  if (googleSheetsWebhook && !googleSheetsWebhook.includes('YOUR_GOOGLE_APPS_SCRIPT')) {
-    try {
-      await fetch(googleSheetsWebhook, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestPayload)
-      });
-      console.log('Booking request dispatched to Google Sheets Webhook.');
-      sheetsSuccess = true;
-    } catch (error) {
-      console.error('Error logging to Google Sheets:', error);
-    }
-  }
-
-  if (resendSuccess || sheetsSuccess) {
+  if (apiSuccess) {
     return { success: true };
   }
 
-  // If no backend is active, fall back to dev simulation mode
-  if (!useResend && (!googleSheetsWebhook || googleSheetsWebhook.includes('YOUR_GOOGLE_APPS_SCRIPT'))) {
-    console.log('No backend webhooks configured. Running in simulated mode.');
+  // Pure developer simulation mode if nothing configured
+  if ((!googleSheetsWebhook || googleSheetsWebhook.includes('YOUR_GOOGLE_APPS_SCRIPT')) && import.meta.env.VITE_USE_RESEND !== 'true') {
+    console.log('No webhook backend configured. Running in simulated mode.');
     await new Promise(resolve => setTimeout(resolve, 1000));
     return { success: true };
   }
