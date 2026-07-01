@@ -285,7 +285,19 @@ export default function Footer({ currentView, onViewChange }) {
         </div>
 
         <div className="footer-bottom">
-          <p>&copy; {new Date().getFullYear()} oddwebs. All rights reserved. | Web Design Agency serving the US & Canada.</p>
+          <p>
+            &copy; {new Date().getFullYear()} oddwebs. All rights reserved. | Web Design Agency serving the US & Canada. |{' '}
+            <a
+              href="#admin"
+              onClick={(e) => {
+                e.preventDefault();
+                onViewChange('admin');
+              }}
+              style={{ color: 'var(--text-secondary)', textDecoration: 'none', borderBottom: '1px dotted currentColor' }}
+            >
+              Admin Portal
+            </a>
+          </p>
         </div>
       </div>
     </footer>

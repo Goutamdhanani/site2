@@ -24,6 +24,8 @@ import { trackEvent, trackPageView } from './utils/analytics';
 import { ANALYTICS_EVENTS } from './utils/analyticsEvents';
 
 const AtmosphericCanvas = lazy(() => import('./components/AtmosphericCanvas'));
+const AdminLogin = lazy(() => import('./components/admin/AdminLogin'));
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout'));
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -36,9 +38,29 @@ export default function App() {
     if (hash === '#demo') return 'demo';
     if (hash === '#services-page') return 'services-page';
     if (hash === '#analytics') return 'analytics';
+    if (hash === '#admin') return 'admin';
     return 'home';
   });
+  const [adminUser, setAdminUser] = useState(null);
   const lenisRef = useRef(null);
+
+  // Check active admin session on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const res = await fetch('/api/auth/session');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.authenticated) {
+            setAdminUser(data);
+          }
+        }
+      } catch (err) {
+        console.error('Session check failed:', err);
+      }
+    };
+    checkSession();
+  }, []);
 
   // Hash-based view switching listener
   useEffect(() => {
@@ -65,6 +87,8 @@ export default function App() {
         setCurrentView('services-page');
       } else if (hash === '#analytics') {
         setCurrentView('analytics');
+      } else if (hash === '#admin') {
+        setCurrentView('admin');
       } else {
         setCurrentView('home');
       }
@@ -103,6 +127,8 @@ export default function App() {
       window.location.hash = '#services-page';
     } else if (view === 'analytics') {
       window.location.hash = '#analytics';
+    } else if (view === 'admin') {
+      window.location.hash = '#admin';
     }
   };
 
@@ -783,6 +809,19 @@ export default function App() {
       intervals.forEach(clearTimeout);
     };
   }, [siteVisible]);
+
+  if (currentView === 'admin') {
+    return (
+      <Suspense fallback={<div className="skeleton-loading-full">Loading CRM Control Centre...</div>}>
+        {adminUser ? (
+          <AdminLayout adminUser={adminUser} onLogout={() => setAdminUser(null)} />
+        ) : (
+          <AdminLogin onLoginSuccess={(user) => setAdminUser(user)} />
+        )}
+        <div className="film-grain" aria-hidden="true" />
+      </Suspense>
+    );
+  }
 
   return (
     <>

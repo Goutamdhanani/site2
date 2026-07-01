@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { createClient } from '@supabase/supabase-js';
 
 // Helper to sanitize HTML input
 function escapeHtml(unsafe) {
@@ -9,6 +10,13 @@ function escapeHtml(unsafe) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function getSupabase() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key);
 }
 
 export default async function handler(req, res) {
@@ -24,29 +32,81 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid payload: missing booking details.' });
   }
 
-  // 0. Post to Google Sheets CRM (Server-side to bypass CORS & client-side ad-blockers)
-  const sheetsWebhook = process.env.VITE_GOOGLE_SHEETS_WEBHOOK || process.env.GOOGLE_SHEETS_WEBHOOK;
-  let sheetsStatus = 'Not configured';
-  let sheetsSuccess = false;
-  if (sheetsWebhook && !sheetsWebhook.includes('YOUR_GOOGLE_APPS_SCRIPT')) {
+  // 0. Store lead in Supabase database
+  let dbStatus = 'Not configured';
+  let dbSuccess = false;
+  const supabase = getSupabase();
+  
+  if (supabase) {
     try {
-      const sheetsResponse = await fetch(sheetsWebhook, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-      if (sheetsResponse.ok) {
-        const sheetsRes = await sheetsResponse.json();
-        sheetsStatus = `Success: ${JSON.stringify(sheetsRes)}`;
-        sheetsSuccess = true;
+      // Parse numeric budget
+      let budgetVal = 2500;
+      const budgetStr = data.details?.budget || '';
+      if (budgetStr.includes('25,000')) budgetVal = 30000;
+      else if (budgetStr.includes('10,000')) budgetVal = 17500;
+      else if (budgetStr.includes('5,000') && budgetStr.includes('10')) budgetVal = 7500;
+
+      const leadRow = {
+        lead_id: data.id,
+        name: data.details?.name || 'Unknown',
+        email: data.details?.email || null,
+        phone: data.details?.whatsapp || null,
+        company: data.details?.company || null,
+        description: data.description || null,
+        services: Array.isArray(data.services) ? data.services : [],
+        meeting_date: data.booking?.date || null,
+        meeting_time: data.booking?.timeSlot || null,
+        meeting_timezone: data.booking?.timezone || data.details?.timezone || null,
+        budget: data.details?.budget || 'Under $5,000',
+        timeline: data.details?.timeline || 'Flexible',
+        source: data.metadata?.utmSource || 'direct',
+        landing_page: data.metadata?.landingPageUrl || null,
+        referral_url: data.metadata?.referralUrl || null,
+        utm_source: data.metadata?.utmSource || null,
+        utm_medium: data.metadata?.utmMedium || null,
+        utm_campaign: data.metadata?.utmCampaign || null,
+        utm_term: data.metadata?.utmTerm || null,
+        utm_content: data.metadata?.utmContent || null,
+        lead_score: data.metadata?.leadScore || 50,
+        spam_score: data.metadata?.spamScore || 0,
+        browser: data.metadata?.browser || null,
+        browser_version: data.metadata?.browserVersion || null,
+        os: data.metadata?.os || null,
+        device_type: data.metadata?.deviceType || 'desktop',
+        screen_size: data.metadata?.screenResolution || null,
+        viewport_size: data.metadata?.viewportSize || null,
+        language: data.metadata?.language || null,
+        country: data.details?.country || null,
+        timezone: data.details?.timezone || null,
+        session_id: data.metadata?.sessionId || null,
+        visitor_id: data.metadata?.visitorId || null,
+        user_agent: data.metadata?.userAgent || null,
+        network_type: data.metadata?.networkType || null,
+        dark_mode: data.metadata?.darkMode || false,
+        touch_device: data.metadata?.touchDevice || false,
+        connection_speed: data.metadata?.connectionSpeed || null,
+        form_completion_time: data.metadata?.formCompletionTime || null,
+        scroll_percentage: data.metadata?.scrollPercentage || null,
+        time_on_page: data.metadata?.timeOnPage || null,
+        visit_number: data.metadata?.visitNumber || '1',
+        returning_visitor: data.metadata?.returningVisitor || false,
+        priority: (data.metadata?.leadScore || 50) >= 70 ? 'High' : 'Medium'
+      };
+
+      const { error: insertError } = await supabase
+        .from('leads')
+        .insert(leadRow);
+
+      if (insertError) {
+        console.error('Supabase insert error:', insertError);
+        dbStatus = `Error: ${insertError.message}`;
       } else {
-        sheetsStatus = `Error: ${sheetsResponse.status} ${sheetsResponse.statusText}`;
+        dbStatus = 'Success';
+        dbSuccess = true;
       }
     } catch (err) {
-      console.error('Failed to post to Google Sheets Webhook:', err);
-      sheetsStatus = `Failed: ${err.message}`;
+      console.error('Failed to store lead in database:', err);
+      dbStatus = `Failed: ${err.message}`;
     }
   }
 
@@ -54,10 +114,10 @@ export default async function handler(req, res) {
   if (!apiKey) {
     console.warn('RESEND_API_KEY is not configured. Email dispatch skipped.');
     return res.status(200).json({
-      success: sheetsSuccess,
-      message: sheetsSuccess ? 'Lead logged to Google Sheet. Email dispatch skipped (RESEND_API_KEY missing).' : 'Failed to process lead: RESEND_API_KEY is missing and Sheets Webhook failed.',
+      success: dbSuccess,
+      message: dbSuccess ? 'Lead stored in database. Email dispatch skipped (RESEND_API_KEY missing).' : 'Failed to process lead.',
       clientEmailStatus: 'Skipped (RESEND_API_KEY missing)',
-      sheetsStatus: sheetsStatus
+      dbStatus
     });
   }
 
@@ -312,7 +372,7 @@ export default async function handler(req, res) {
       success: true, 
       message: 'Lead processed successfully.', 
       clientEmailStatus: clientStatus,
-      sheetsStatus: sheetsStatus
+      dbStatus
     });
 
   } catch (error) {
