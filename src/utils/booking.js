@@ -197,6 +197,14 @@ function doPost(e) {
     // Insert new row at row 2 (newest leads appear at the top, just below header)
     sheet.insertRowBefore(2);
     
+    // Parse numeric budget value for CRM calculations
+    var budgetVal = 2500;
+    var budgetStr = data.details?.budget || "";
+    if (budgetStr.indexOf("5,000 - 10,000") !== -1) budgetVal = 7500;
+    else if (budgetStr.indexOf("10,000 - 25,000") !== -1) budgetVal = 17500;
+    else if (budgetStr.indexOf("25,000+") !== -1) budgetVal = 30000;
+    else if (budgetStr.indexOf("Under 5,000") !== -1 || budgetStr.indexOf("5,000") !== -1) budgetVal = 2500;
+
     // Prepare column array matching the headers exactly
     var rowValues = [
       leadId,                         // Lead ID
@@ -209,7 +217,7 @@ function doPost(e) {
       data.details?.whatsapp || "",   // Phone
       data.details?.country || "United States", // Country
       data.services?.join(", ") || "General Inquiry", // Service
-      data.details?.budget || "Under $5,000", // Budget
+      budgetVal,                      // Budget (Numeric for sum/average calculations)
       data.details?.timeline || "Flexible", // Timeline
       meetingDate,                    // Meeting Date
       meetingTime,                    // Meeting Time
@@ -448,6 +456,8 @@ function checkAndSetupSheets() {
     newLeadsSheet.setColumnWidth(7, 180); // Email
     newLeadsSheet.setColumnWidth(8, 120); // Phone
     
+    newLeadsSheet.getRange("K:K").setNumberFormat("$#,##0");
+    
     // Create filters
     newLeadsSheet.getRange(1, 1, 1, headers.length).createFilter();
     
@@ -474,6 +484,16 @@ function checkAndSetupSheets() {
   if (!dashSheet) {
     dashSheet = ss.insertSheet("Dashboard", 0);
     buildDashboard(dashSheet);
+  }
+  
+  // 5. Clean up default Sheet1/Sheet 1 if empty
+  try {
+    var defaultSheet = ss.getSheetByName("Sheet1") || ss.getSheetByName("Sheet 1");
+    if (defaultSheet && ss.getSheets().length > 1) {
+      ss.deleteSheet(defaultSheet);
+    }
+  } catch(e) {
+    Logger.log("Could not delete default sheet: " + e.toString());
   }
 }
 
@@ -508,28 +528,32 @@ function buildDashboard(sheet) {
   // Card Helper
   var createKpiCard = function(cellRange, title, formula, isPercentage) {
     var range = sheet.getRange(cellRange);
-    range.merge().setBackground("#fcfcfb")
+    range.setBackground("#fcfcfb")
          .setBorder(true, true, true, true, false, false, "#e7e5e4", SpreadsheetApp.BorderStyle.SOLID);
     
     var cells = cellRange.split(":");
     var startCell = cells[0];
+    var endCell = cells[1];
     
-    // Label Row (font size 8, grey, bold)
-    sheet.getRange(startCell).setValue(title).setFontColor("#78716c").setFontSize(9).setFontWeight("bold").setVerticalAlignment("top");
+    var startColLetter = startCell.charAt(0);
+    var startRow = parseInt(startCell.substring(1));
+    var endColLetter = endCell.charAt(0);
+    var endRow = parseInt(endCell.substring(1));
     
-    // Value Row (we write value below)
-    var col = startCell.charCodeAt(0) - 65; // 'B' -> 1
-    var row = parseInt(startCell.substring(1));
+    // Merge title row
+    var titleRange = sheet.getRange(startColLetter + startRow + ":" + endColLetter + startRow);
+    titleRange.merge().setValue(title).setFontColor("#78716c").setFontSize(9).setFontWeight("bold").setHorizontalAlignment("center").setVerticalAlignment("middle");
     
-    var valCell = sheet.getRange(row + 1, col + 1);
-    valCell.setFormula(formula).setFontSize(22).setFontWeight("bold").setFontColor("#1c1917").setVerticalAlignment("middle");
+    // Merge value row
+    var valRange = sheet.getRange(startColLetter + (startRow + 1) + ":" + endColLetter + endRow);
+    valRange.merge().setFormula(formula).setFontSize(22).setFontWeight("bold").setFontColor("#1c1917").setHorizontalAlignment("center").setVerticalAlignment("middle");
     
     if (isPercentage) {
-      valCell.setNumberFormat("0.00%");
+      valRange.setNumberFormat("0.00%");
     } else if (title.indexOf("Revenue") !== -1 || title.indexOf("Budget") !== -1) {
-      valCell.setNumberFormat("$#,##0");
+      valRange.setNumberFormat("$#,##0");
     } else {
-      valCell.setNumberFormat("#,##0");
+      valRange.setNumberFormat("#,##0");
     }
   };
   
