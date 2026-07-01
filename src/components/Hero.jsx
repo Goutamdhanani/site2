@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from '../utils/motion';
 import { isLite } from '../utils/device';
+import { trackCTA } from '../utils/analytics';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -580,12 +581,22 @@ function HeroMobile({ startTyping }) {
             </p>
 
             <div ref={actionsRef} className={`hero-actions ${showSubAndActions ? 'visible' : ''}`}>
-              <a href="#demo" className="btn-primary magnetic">
+              <a
+                href="#demo"
+                className="btn-primary magnetic"
+                onClick={() => trackCTA('hero_demo_mobile', 'click', { position: 'mobile_hero' })}
+                onMouseEnter={() => trackCTA('hero_demo_mobile', 'hover', { position: 'mobile_hero' })}
+              >
                 Schedule Free Demo <span className="btn-arrow">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </span>
               </a>
-              <a href="#work" className="btn-ghost magnetic">
+              <a
+                href="#work"
+                className="btn-ghost magnetic"
+                onClick={() => trackCTA('hero_work_mobile', 'click', { position: 'mobile_hero' })}
+                onMouseEnter={() => trackCTA('hero_work_mobile', 'hover', { position: 'mobile_hero' })}
+              >
                 <span style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>View Work</span>
               </a>
               <p className="hero-small-line" style={{ opacity: 0.6, fontSize: 'var(--text-body-sm)', fontFamily: 'var(--font-mono)', marginTop: '20px', textShadow: '0 2px 4px rgba(0,0,0,0.8)', letterSpacing: '0.05em', width: '100%', textAlign: 'center' }}>
@@ -993,12 +1004,22 @@ function HeroDesktop() {
             </p>
 
             <div ref={actionsRef} className="hero-actions" style={{ opacity: 0 }}>
-              <a href="#demo" className="btn-primary magnetic">
+              <a
+                href="#demo"
+                className="btn-primary magnetic"
+                onClick={() => trackCTA('hero_demo_desktop', 'click', { position: 'desktop_hero' })}
+                onMouseEnter={() => trackCTA('hero_demo_desktop', 'hover', { position: 'desktop_hero' })}
+              >
                 Schedule Free Demo <span className="btn-arrow">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </span>
               </a>
-              <a href="#work" className="btn-ghost magnetic">
+              <a
+                href="#work"
+                className="btn-ghost magnetic"
+                onClick={() => trackCTA('hero_work_desktop', 'click', { position: 'desktop_hero' })}
+                onMouseEnter={() => trackCTA('hero_work_desktop', 'hover', { position: 'desktop_hero' })}
+              >
                 <span style={{ textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>View Work</span>
               </a>
               <p className="hero-small-line" style={{ opacity: 0.6, fontSize: 'var(--text-body-sm)', fontFamily: 'var(--font-mono)', marginTop: '20px', textShadow: '0 2px 4px rgba(0,0,0,0.8)', letterSpacing: '0.05em', width: '100%', textAlign: 'center' }}>

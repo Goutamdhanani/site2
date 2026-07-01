@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { gsap } from 'gsap';
 import { isLite } from '../utils/device';
+import { trackCTA } from '../utils/analytics';
 
 export default function Navbar({ currentView, onViewChange }) {
   const [scrolled, setScrolled] = useState(false);
@@ -42,7 +43,15 @@ export default function Navbar({ currentView, onViewChange }) {
     <>
       <nav id="navbar" ref={navRef} className={scrolled ? 'scrolled' : ''} data-hero-nav>
         <div className="nav-container">
-          <a href="#home" onClick={(e) => { e.preventDefault(); onViewChange('home'); }} className="nav-logo">
+          <a
+            href="#home"
+            onClick={(e) => {
+              e.preventDefault();
+              trackCTA('nav_logo', 'click');
+              onViewChange('home');
+            }}
+            className="nav-logo"
+          >
             <span className="nav-logo-mark">OW</span>
             <span className="nav-logo-word">oddwebs</span>
           </a>
@@ -52,17 +61,66 @@ export default function Navbar({ currentView, onViewChange }) {
               <a 
                 href="#portfolio" 
                 className={`nav-link ${currentView === 'portfolio' ? 'active' : ''}`}
-                onClick={(e) => { e.preventDefault(); onViewChange('portfolio'); }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  trackCTA('nav_portfolio', 'click');
+                  onViewChange('portfolio');
+                }}
               >
                 Our Work
               </a>
             </li>
-            <li><a href="#services-page" className={`nav-link ${currentView === 'services-page' ? 'active' : ''}`} onClick={(e) => { e.preventDefault(); onViewChange('services-page'); }}>Services</a></li>
-            <li><a href="#process" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('home', '#process'); }}>Process</a></li>
-            <li><a href="#testimonials" className="nav-link" onClick={(e) => { e.preventDefault(); onViewChange('home', '#testimonials'); }}>About</a></li>
+            <li>
+              <a
+                href="#services-page"
+                className={`nav-link ${currentView === 'services-page' ? 'active' : ''}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  trackCTA('nav_services', 'click');
+                  onViewChange('services-page');
+                }}
+              >
+                Services
+              </a>
+            </li>
+            <li>
+              <a
+                href="#process"
+                className="nav-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  trackCTA('nav_process', 'click');
+                  onViewChange('home', '#process');
+                }}
+              >
+                Process
+              </a>
+            </li>
+            <li>
+              <a
+                href="#testimonials"
+                className="nav-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  trackCTA('nav_about', 'click');
+                  onViewChange('home', '#testimonials');
+                }}
+              >
+                About
+              </a>
+            </li>
           </ul>
 
-          <a href="#demo" onClick={(e) => { e.preventDefault(); onViewChange('demo'); }} className="nav-cta magnetic">
+          <a
+            href="#demo"
+            onClick={(e) => {
+              e.preventDefault();
+              trackCTA('nav_demo', 'click');
+              onViewChange('demo');
+            }}
+            onMouseEnter={() => trackCTA('nav_demo', 'hover')}
+            className="nav-cta magnetic"
+          >
             Schedule Free Demo <span className="nav-cta-arrow">↗</span>
           </a>
 

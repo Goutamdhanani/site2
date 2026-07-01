@@ -18,6 +18,10 @@ import CustomCursor from './components/CustomCursor';
 import PortfolioPage from './components/PortfolioPage';
 import BookingFlow from './components/BookingFlow';
 import ServicesPage from './components/ServicesPage';
+import ComplianceBanner from './components/ComplianceBanner';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
+import { trackEvent, trackPageView } from './utils/analytics';
+import { ANALYTICS_EVENTS } from './utils/analyticsEvents';
 
 const AtmosphericCanvas = lazy(() => import('./components/AtmosphericCanvas'));
 
@@ -31,6 +35,7 @@ export default function App() {
     if (hash === '#portfolio') return 'portfolio';
     if (hash === '#demo') return 'demo';
     if (hash === '#services-page') return 'services-page';
+    if (hash === '#analytics') return 'analytics';
     return 'home';
   });
   const lenisRef = useRef(null);
@@ -58,6 +63,8 @@ export default function App() {
         setCurrentView('demo');
       } else if (hash === '#services-page') {
         setCurrentView('services-page');
+      } else if (hash === '#analytics') {
+        setCurrentView('analytics');
       } else {
         setCurrentView('home');
       }
@@ -94,6 +101,8 @@ export default function App() {
       window.location.hash = '#demo';
     } else if (view === 'services-page') {
       window.location.hash = '#services-page';
+    } else if (view === 'analytics') {
+      window.location.hash = '#analytics';
     }
   };
 
@@ -136,8 +145,45 @@ export default function App() {
     }
   }, [currentView, siteVisible]);
 
+  // Track page view on currentView changes
+  useEffect(() => {
+    if (!loading) {
+      trackPageView(currentView);
+    }
+  }, [currentView, loading]);
+
+  // Track scroll depth
+  useEffect(() => {
+    if (!siteVisible || currentView === 'analytics') return;
+
+    let trackedDepths = { 25: false, 50: false, 75: false, 100: false };
+
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (scrollHeight <= 0) return;
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+      const percentage = Math.round((scrollTop / scrollHeight) * 100);
+
+      [25, 50, 75, 100].forEach(depth => {
+        if (percentage >= depth && !trackedDepths[depth]) {
+          trackedDepths[depth] = true;
+          trackEvent(ANALYTICS_EVENTS.SCROLL_DEPTH, {
+            depth_percentage: depth,
+            page_path: currentView
+          });
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [siteVisible, currentView]);
+
   const handlePreloaderComplete = () => {
     setLoading(false);
+    trackEvent(ANALYTICS_EVENTS.SITE_LOADED);
     requestAnimationFrame(() => {
       setSiteVisible(true);
     });
@@ -785,12 +831,17 @@ export default function App() {
             <PortfolioPage onViewChange={handleViewChange} />
           ) : currentView === 'services-page' ? (
             <ServicesPage onViewChange={handleViewChange} />
+          ) : currentView === 'analytics' ? (
+            <AnalyticsDashboard onViewChange={handleViewChange} />
           ) : (
             <BookingFlow onViewChange={handleViewChange} />
           )}
         </main>
 
         <Footer currentView={currentView} onViewChange={handleViewChange} />
+
+        {/* Consent Banner */}
+        <ComplianceBanner />
 
         {/* Cursor */}
         <CustomCursor />

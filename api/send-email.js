@@ -35,14 +35,20 @@ export default async function handler(req, res) {
 
   const fromEmail = process.env.RESEND_FROM_EMAIL || 'oddwebs <onboarding@resend.dev>';
   const adminEmail = process.env.VITE_ADMIN_EMAIL || 'hello@oddwebs.com';
-  const clientEmail = data.details.email;
+  const clientEmail = data.details?.email;
   const servicesList = Array.isArray(data.services) ? data.services.join(', ') : 'General Inquiry';
+  
+  const whatsappNumber = data.details?.whatsapp || '';
+  const cleanWhatsapp = whatsappNumber.replace(/[^0-9]/g, '');
+  const bookingDate = data.booking?.date || 'Not scheduled';
+  const bookingSlot = data.booking?.timeSlot || 'Not scheduled';
+  const bookingTimezone = data.booking?.timezone || data.details?.timezone || 'UTC';
 
   try {
     // ----------------------------------------------------
     // 1. ADMIN EMAIL: Alert admin of new lead
     // ----------------------------------------------------
-    const adminSubject = `[New Lead] oddwebs Booking ${data.id} - ${data.details.name}`;
+    const adminSubject = `[New Lead] oddwebs Booking ${data.id} - ${data.details?.name}`;
     const adminHtml = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #fafafa;">
         <h2 style="color: #f95738; margin-top: 0; font-size: 22px; font-weight: 800;">New Lead Demo Request</h2>
@@ -55,7 +61,7 @@ export default async function handler(req, res) {
           </tr>
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Lead Name</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-weight: 600;">${escapeHtml(data.details.name)}</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-weight: 600;">${escapeHtml(data.details?.name)}</td>
           </tr>
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Email</td>
@@ -66,20 +72,40 @@ export default async function handler(req, res) {
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">WhatsApp</td>
             <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">
-              <a href="https://wa.me/${data.details.whatsapp.replace(/[^0-9]/g, '')}" style="color: #f95738; text-decoration: none;">${escapeHtml(data.details.whatsapp)}</a>
+              <a href="https://wa.me/${cleanWhatsapp}" style="color: #f95738; text-decoration: none;">${escapeHtml(whatsappNumber || 'Not provided')}</a>
             </td>
           </tr>
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Company</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(data.details.company || 'Not provided')}</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(data.details?.company || 'Not provided')}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Website</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(data.details?.website || 'None')}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Industry</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(data.details?.industry || 'Other')}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Business Size</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(data.details?.businessSize || '1-10 employees')}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Budget</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #15803d; font-weight: bold;">${escapeHtml(data.details?.budget || 'Under $5,000')}</td>
+          </tr>
+          <tr>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Timeline</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(data.details?.timeline || 'Flexible')}</td>
           </tr>
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Location & TZ</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(data.details.country)} (${escapeHtml(data.details.timezone)})</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${escapeHtml(data.details?.country || 'Unknown')} (${escapeHtml(data.details?.timezone || 'Unknown')})</td>
           </tr>
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Meeting Target</td>
-            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-weight: 600;">${escapeHtml(data.booking.date)} @ ${escapeHtml(data.booking.timeSlot)}</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-weight: 600;">${escapeHtml(bookingDate)} @ ${escapeHtml(bookingSlot)}</td>
           </tr>
           <tr>
             <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569;">Services Stack</td>
@@ -89,21 +115,25 @@ export default async function handler(req, res) {
             <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569; vertical-align: top;">Project Brief</td>
             <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #334155; line-height: 1.4;">${escapeHtml(data.description || 'None provided.')}</td>
           </tr>
+          <tr>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #475569; vertical-align: top;">Additional Notes</td>
+            <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #334155; line-height: 1.4;">${escapeHtml(data.details?.additionalNotes || 'None provided.')}</td>
+          </tr>
         </table>
 
         <h3 style="color: #ee9b00; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 24px; margin-bottom: 8px;">Marketing Metadata</h3>
         <table style="width: 100%; font-size: 12px; color: #64748b;">
           <tr>
             <td style="width: 140px; padding: 4px 0;">Referral Source</td>
-            <td>${escapeHtml(data.metadata.referralUrl)}</td>
+            <td>${escapeHtml(data.metadata?.referralUrl || 'direct')}</td>
           </tr>
           <tr>
             <td style="padding: 4px 0;">UTM Stack</td>
-            <td>Source: ${escapeHtml(data.metadata.utmSource)} | Med: ${escapeHtml(data.metadata.utmMedium)} | Camp: ${escapeHtml(data.metadata.utmCampaign)}</td>
+            <td>Source: ${escapeHtml(data.metadata?.utmSource || 'direct')} | Med: ${escapeHtml(data.metadata?.utmMedium || 'none')} | Camp: ${escapeHtml(data.metadata?.utmCampaign || 'none')}</td>
           </tr>
           <tr>
             <td style="padding: 4px 0;">Device Profiler</td>
-            <td>${escapeHtml(data.metadata.deviceType)} (${escapeHtml(data.metadata.screenResolution)})</td>
+            <td>${escapeHtml(data.metadata?.deviceType || 'unknown')} (${escapeHtml(data.metadata?.screenResolution || 'unknown')})</td>
           </tr>
         </table>
       </div>
@@ -146,7 +176,7 @@ export default async function handler(req, res) {
                     </table>
 
                     <div style="color: #eae5e2; font-size: 15px; line-height: 1.6; margin-bottom: 20px;">
-                      Hi ${escapeHtml(data.details.name)},
+                      Hi ${escapeHtml(data.details?.name)},
                     </div>
                     <div style="color: #eae5e2; font-size: 14px; line-height: 1.6; margin-bottom: 24px;">
                       Your free live demo call is confirmed! Our engineering team is currently reviewing your project details to prepare your custom technical roadmap proposal.
@@ -160,7 +190,7 @@ export default async function handler(req, res) {
                       <tr>
                         <td style="padding: 8px 0; vertical-align: top; width: 50%;">
                           <div style="font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;">VISITOR</div>
-                          <div style="font-size: 14px; font-weight: 700; color: #eae5e2;">${escapeHtml(data.details.name)}</div>
+                          <div style="font-size: 14px; font-weight: 700; color: #eae5e2;">${escapeHtml(data.details?.name)}</div>
                         </td>
                         <td style="padding: 8px 0; vertical-align: top; width: 50%; text-align: right;">
                           <div style="font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;">REFERENCE</div>
@@ -170,17 +200,17 @@ export default async function handler(req, res) {
                       <tr>
                         <td style="padding: 12px 0 8px 0; vertical-align: top;" colspan="2">
                           <div style="font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;">MEETING TARGET</div>
-                          <div style="font-size: 14px; font-weight: 700; color: #eae5e2;">${escapeHtml(data.booking.date)}</div>
+                          <div style="font-size: 14px; font-weight: 700; color: #eae5e2;">${escapeHtml(bookingDate)}</div>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding: 8px 0; vertical-align: top;">
                           <div style="font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;">TIME SLOT</div>
-                          <div style="font-size: 14px; font-weight: 700; color: #eae5e2;">${escapeHtml(data.booking.timeSlot)}</div>
+                          <div style="font-size: 14px; font-weight: 700; color: #eae5e2;">${escapeHtml(bookingSlot)}</div>
                         </td>
                         <td style="padding: 8px 0; vertical-align: top; text-align: right;">
                           <div style="font-family: monospace; font-size: 9px; color: #7f6c65; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px;">TIMEZONE</div>
-                          <div style="font-size: 13px; font-weight: 600; color: #eae5e2;">${escapeHtml(data.booking.timezone)}</div>
+                          <div style="font-size: 13px; font-weight: 600; color: #eae5e2;">${escapeHtml(bookingTimezone)}</div>
                         </td>
                       </tr>
                       <tr>

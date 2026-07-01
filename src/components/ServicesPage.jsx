@@ -3,6 +3,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SplitHeading from './SplitHeading';
 import { isLite } from '../utils/device';
+import { trackEvent, trackCTA } from '../utils/analytics';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -193,11 +194,21 @@ export default function ServicesPage({ onViewChange }) {
 
   const handleBundleToggle = (idx) => {
     setSelectedBundle(prev => {
+      let nextBundle;
       if (prev.includes(idx)) {
-        return prev.filter(i => i !== idx);
+        nextBundle = prev.filter(i => i !== idx);
       } else {
-        return [...prev, idx];
+        nextBundle = [...prev, idx];
       }
+      
+      const serviceTitle = serviceCategories[idx].title;
+      const isSelected = nextBundle.includes(idx);
+      trackEvent('growth_stack_selection_change', {
+        service_name: serviceTitle,
+        action: isSelected ? 'checked' : 'unchecked',
+        total_selected: nextBundle.length
+      });
+      return nextBundle;
     });
   };
 
@@ -223,6 +234,13 @@ export default function ServicesPage({ onViewChange }) {
     
     const uniqueServices = Array.from(new Set(mappedServices));
     sessionStorage.setItem('preferred_services', JSON.stringify(uniqueServices));
+    
+    trackCTA('claim_bundle_discount', 'click', {
+      selected_services: uniqueServices,
+      has_discount: selectedBundle.length >= 2,
+      total_selections: selectedBundle.length
+    });
+    
     onViewChange('demo');
   };
 
