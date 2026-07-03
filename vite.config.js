@@ -96,6 +96,9 @@ export default defineConfig(({ mode }) => {
   };
 
   return {
+    server: {
+      allowedHosts: true,
+    },
     plugins: [
       react(),
       {
