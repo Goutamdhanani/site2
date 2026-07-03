@@ -187,16 +187,152 @@ export default function CaseStudies() {
 
   useEffect(() => {
     if (!isMobile || !isVisible) return;
-    const track = trackRef.current;
-    if (!track) return;
+    const scrollContainer = sectionRef.current;
+    if (!scrollContainer) return;
 
     const handleScroll = () => {
       updateCarouselDynamics();
     };
 
-    track.addEventListener('scroll', handleScroll, { passive: true });
-    return () => track.removeEventListener('scroll', handleScroll);
+    scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+    return () => scrollContainer.removeEventListener('scroll', handleScroll);
   }, [isMobile, isVisible]);
+
+  // Desktop Click-and-Drag / Touch-Swipe to slide horizontal scroll cards
+  useEffect(() => {
+    if (isMobile) return;
+
+    const track = trackRef.current;
+    const section = sectionRef.current;
+    if (!track || !section) return;
+
+    let isDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let startScrollY = 0;
+    let hasMoved = false;
+
+    const handleMouseDown = (e) => {
+      if (e.button !== 0) return;
+      if (e.target.closest('a, button, .cs-card__action')) {
+        return;
+      }
+
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      startScrollY = window.scrollY;
+      hasMoved = false;
+      section.classList.add('grabbing');
+    };
+
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      if (Math.abs(dx) > 6 || Math.abs(dy) > 6) {
+        hasMoved = true;
+      }
+
+      if (hasMoved) {
+        e.preventDefault();
+        const targetScroll = startScrollY - dx;
+        if (window.lenis) {
+          window.lenis.scrollTo(targetScroll, { immediate: true });
+        } else {
+          window.scrollTo(0, targetScroll);
+        }
+      }
+    };
+
+    const handleMouseUp = (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      section.classList.remove('grabbing');
+      
+      if (hasMoved) {
+        e.preventDefault();
+        e.stopPropagation();
+        setTimeout(() => {
+          hasMoved = false;
+        }, 0);
+      }
+    };
+
+    const handleTouchStart = (e) => {
+      if (e.target.closest('a, button, .cs-card__action')) {
+        return;
+      }
+      const touch = e.touches[0];
+      isDragging = true;
+      startX = touch.clientX;
+      startY = touch.clientY;
+      startScrollY = window.scrollY;
+      hasMoved = false;
+    };
+
+    const handleTouchMove = (e) => {
+      if (!isDragging) return;
+      const touch = e.touches[0];
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if (Math.abs(dx) > 6) {
+          hasMoved = true;
+        }
+        if (hasMoved) {
+          if (e.cancelable) {
+            e.preventDefault();
+          }
+          const targetScroll = startScrollY - dx;
+          if (window.lenis) {
+            window.lenis.scrollTo(targetScroll, { immediate: true });
+          } else {
+            window.scrollTo(0, targetScroll);
+          }
+        }
+      } else {
+        isDragging = false;
+      }
+    };
+
+    const handleTouchEnd = () => {
+      isDragging = false;
+    };
+
+    const handleClickCapture = (e) => {
+      if (hasMoved) {
+        e.preventDefault();
+        e.stopPropagation();
+        hasMoved = false;
+      }
+    };
+
+    section.addEventListener('mousedown', handleMouseDown, { passive: false });
+    window.addEventListener('mousemove', handleMouseMove, { passive: false });
+    window.addEventListener('mouseup', handleMouseUp, { capture: true, passive: false });
+    section.addEventListener('click', handleClickCapture, { capture: true });
+
+    section.addEventListener('touchstart', handleTouchStart, { passive: true });
+    section.addEventListener('touchmove', handleTouchMove, { passive: false });
+    section.addEventListener('touchend', handleTouchEnd);
+    section.addEventListener('touchcancel', handleTouchEnd);
+
+    return () => {
+      section.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp, { capture: true });
+      section.removeEventListener('click', handleClickCapture, { capture: true });
+
+      section.removeEventListener('touchstart', handleTouchStart);
+      section.removeEventListener('touchmove', handleTouchMove);
+      section.removeEventListener('touchend', handleTouchEnd);
+      section.removeEventListener('touchcancel', handleTouchEnd);
+    };
+  }, [isMobile]);
 
   // Desktop ScrollTrigger Setup (pinning & horizontal translation)
   useLayoutEffect(() => {
@@ -366,7 +502,7 @@ export default function CaseStudies() {
       ))}
 
       {/* Horizontal Carousel Track */}
-      <div ref={trackRef} className="cs-track" style={{ width: isMobile ? 'auto' : '500vw' }}>
+      <div ref={trackRef} className="cs-track" data-cursor="drag" style={{ width: isMobile ? 'auto' : '500vw' }}>
         {/* Title Slide */}
         <article
           className="cs-card cs-card--title"

@@ -237,6 +237,7 @@ export default function App() {
       });
 
       lenisRef.current = lenis;
+      window.lenis = lenis;
 
       lenis.on('scroll', ScrollTrigger.update);
 
@@ -394,7 +395,10 @@ export default function App() {
     return () => {
       if (onTick) gsap.ticker.remove(onTick);
       if (handleAnchorClick) document.removeEventListener('click', handleAnchorClick);
-      if (lenis) lenis.destroy();
+      if (lenis) {
+        lenis.destroy();
+        window.lenis = null;
+      }
     };
   }, []);
 

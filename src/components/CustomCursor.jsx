@@ -7,6 +7,7 @@ export default function CustomCursor() {
 
   const dotRef = useRef(null);
   const ringRef = useRef(null);
+  const textRef = useRef(null);
   const trailsRef = useRef([]);
   const mouse = useRef({ x: 0, y: 0 });
   const ring = useRef({ x: 0, y: 0 });
@@ -67,25 +68,34 @@ export default function CustomCursor() {
     const handleHoverIn = (e) => {
       const isButton = e.target.closest('a, button, .magnetic');
       const isCard = e.target.closest('.project-card, .testimonial-card, .service-row, .stat-card');
+      const isDrag = e.target.closest('.cs-card, [data-cursor="drag"]');
+      const textEl = textRef.current;
 
       if (isButton) {
-         gsap.to(ringEl, { width: 56, height: 56, opacity: 0.4, borderColor: 'var(--accent-ember)', duration: 0.3 });
+        gsap.to(ringEl, { width: 56, height: 56, opacity: 0.4, borderColor: 'var(--accent-ember)', duration: 0.3 });
         gsap.to(dot, { width: 0, height: 0, opacity: 0, duration: 0.2 });
+        if (textEl) gsap.to(textEl, { opacity: 0, scale: 0.5, duration: 0.2 });
+      } else if (isDrag) {
+        gsap.to(ringEl, { width: 72, height: 72, opacity: 0.5, borderColor: 'var(--accent-ember)', duration: 0.3 });
+        gsap.to(dot, { width: 0, height: 0, opacity: 0, duration: 0.2 });
+        if (textEl) gsap.to(textEl, { opacity: 1, scale: 1, duration: 0.3 });
       } else if (isCard) {
         gsap.to(ringEl, { width: 80, height: 80, opacity: 0.15, duration: 0.4 });
         gsap.to(dot, { width: 4, height: 4, opacity: 0.8, duration: 0.2 });
+        if (textEl) gsap.to(textEl, { opacity: 0, scale: 0.5, duration: 0.2 });
       }
     };
 
     const handleHoverOut = () => {
       gsap.to(ringEl, { width: 36, height: 36, opacity: 0.5, borderColor: 'rgba(255,255,255,0.3)', duration: 0.4, ease: 'elastic.out(1, 0.6)' });
       gsap.to(dot, { width: 6, height: 6, opacity: 1, duration: 0.3 });
+      if (textRef.current) gsap.to(textRef.current, { opacity: 0, scale: 0.5, duration: 0.2 });
     };
 
     // Attach to interactive elements
     let interactables = [];
     const attachListeners = () => {
-      interactables = Array.from(document.querySelectorAll('a, button, [data-cursor], .service-row, .project-card, .testimonial-card, .stat-card'));
+      interactables = Array.from(document.querySelectorAll('a, button, [data-cursor], .service-row, .project-card, .testimonial-card, .stat-card, .cs-card'));
       interactables.forEach(el => {
         el.addEventListener('mouseenter', handleHoverIn);
         el.addEventListener('mouseleave', handleHoverOut);
@@ -115,7 +125,9 @@ export default function CustomCursor() {
   return (
     <>
       <div className="cursor-dot" ref={dotRef} aria-hidden="true" />
-      <div className="cursor-ring" ref={ringRef} aria-hidden="true" />
+      <div className="cursor-ring" ref={ringRef} aria-hidden="true">
+        <span className="cursor-text" ref={textRef}>DRAG</span>
+      </div>
       {/* Motion trails */}
       {[0, 1, 2, 3, 4].map(i => (
         <div
