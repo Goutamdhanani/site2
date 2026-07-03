@@ -59,6 +59,86 @@ export default function PortfolioPage({ onViewChange }) {
   const containerRef = useRef(null);
   const stageRef = useRef(null);
 
+  // ─── SWIPE/DRAG INTERACTION TO CHANGE PROJECTS ───
+  const dragStart = useRef({ x: 0, y: 0, isDragging: false });
+
+  const handleDragStart = (e) => {
+    if (e.type === 'mousedown' && e.button !== 0) return;
+    if (e.target.closest('a, button, .pt-console-btn-primary, .pt-console-btn-secondary')) return;
+
+    const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+
+    dragStart.current = {
+      x: clientX,
+      y: clientY,
+      isDragging: true
+    };
+
+    if (stageRef.current) {
+      stageRef.current.classList.add('grabbing');
+    }
+
+    if (e.type === 'mousedown') {
+      e.preventDefault();
+    }
+  };
+
+  useEffect(() => {
+    const handleWindowMouseUp = (e) => {
+      if (!dragStart.current.isDragging) return;
+      dragStart.current.isDragging = false;
+
+      if (stageRef.current) {
+        stageRef.current.classList.remove('grabbing');
+      }
+
+      const dx = e.clientX - dragStart.current.x;
+      const dy = e.clientY - dragStart.current.y;
+
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) {
+          const nextIdx = (activeIdx + 1) % projects.length;
+          handleProjectSelect(nextIdx);
+        } else {
+          const prevIdx = (activeIdx - 1 + projects.length) % projects.length;
+          handleProjectSelect(prevIdx);
+        }
+      }
+    };
+
+    const handleWindowTouchEnd = (e) => {
+      if (!dragStart.current.isDragging) return;
+      dragStart.current.isDragging = false;
+
+      if (stageRef.current) {
+        stageRef.current.classList.remove('grabbing');
+      }
+
+      const touch = e.changedTouches[0];
+      const dx = touch.clientX - dragStart.current.x;
+      const dy = touch.clientY - dragStart.current.y;
+
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) {
+          const nextIdx = (activeIdx + 1) % projects.length;
+          handleProjectSelect(nextIdx);
+        } else {
+          const prevIdx = (activeIdx - 1 + projects.length) % projects.length;
+          handleProjectSelect(prevIdx);
+        }
+      }
+    };
+
+    window.addEventListener('mouseup', handleWindowMouseUp);
+    window.addEventListener('touchend', handleWindowTouchEnd);
+
+    return () => {
+      window.removeEventListener('mouseup', handleWindowMouseUp);
+      window.removeEventListener('touchend', handleWindowTouchEnd);
+    };
+  }, [activeIdx, isAnimating]);
+
   const activeProject = projects[activeIdx];
 
   // ─── 3D PERSPECTIVE PARALLAX TILT ───
@@ -245,6 +325,8 @@ export default function PortfolioPage({ onViewChange }) {
             className="pt-visual-column"
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
+            onMouseDown={handleDragStart}
+            onTouchStart={handleDragStart}
           >
             <div className="hud-brackets" aria-hidden="true">
               <div className="hud-corner-r tl" />
@@ -270,7 +352,7 @@ export default function PortfolioPage({ onViewChange }) {
               
               {/* Image viewport */}
               <div className="pt-browser-body">
-                <img src={activeProject.image} alt={activeProject.title} className="pt-browser-img" />
+                <img src={activeProject.image} alt={activeProject.title} className="pt-browser-img" draggable="false" />
               </div>
             </div>
 

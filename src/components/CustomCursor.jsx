@@ -68,7 +68,7 @@ export default function CustomCursor() {
     const handleHoverIn = (e) => {
       const isButton = e.target.closest('a, button, .magnetic');
       const isCard = e.target.closest('.project-card, .testimonial-card, .service-row, .stat-card');
-      const isDrag = e.target.closest('.cs-card, [data-cursor="drag"]');
+      const isDrag = e.target.closest('.cs-card, [data-cursor="drag"], .pt-visual-column');
       const textEl = textRef.current;
 
       if (isButton) {
@@ -95,7 +95,7 @@ export default function CustomCursor() {
     // Attach to interactive elements
     let interactables = [];
     const attachListeners = () => {
-      interactables = Array.from(document.querySelectorAll('a, button, [data-cursor], .service-row, .project-card, .testimonial-card, .stat-card, .cs-card'));
+      interactables = Array.from(document.querySelectorAll('a, button, [data-cursor], .service-row, .project-card, .testimonial-card, .stat-card, .cs-card, .pt-visual-column'));
       interactables.forEach(el => {
         el.addEventListener('mouseenter', handleHoverIn);
         el.addEventListener('mouseleave', handleHoverOut);

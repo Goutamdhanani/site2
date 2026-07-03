@@ -6409,6 +6409,9 @@ html, body, .cinematic-wrapper {
   filter: brightness(0.9) contrast(1.02);
   will-change: transform;
   transition: filter 0.5s ease;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .cs-card:hover .cs-card__img {
@@ -7632,6 +7635,12 @@ html, body, .cinematic-wrapper {
   perspective: 1200px;
   overflow: hidden;
   padding: 40px;
+  cursor: grab;
+}
+
+.pt-visual-column.grabbing,
+.pt-visual-column.grabbing * {
+  cursor: grabbing !important;
 }
 
 .hud-brackets {
@@ -7728,6 +7737,9 @@ html, body, .cinematic-wrapper {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 /* Floating Card Overlay Badges */

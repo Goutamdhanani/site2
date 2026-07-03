@@ -602,6 +602,7 @@ export default function CaseStudies() {
                         alt={project.title}
                         className="cs-card__img"
                         loading="lazy"
+                        draggable="false"
                       />
                     )}
                     <div
