@@ -6,37 +6,37 @@ export default function AboutPage({ onViewChange }) {
   const containerRef = useRef(null);
   const eyeFrameRef = useRef(null);
   
-  // Interactive Gaze Landing Page Simulator State
+  // Interactive Landing Page Simulator State
   const [activeElement, setActiveElement] = useState('headline'); // 'headline', 'cta', 'badges', 'integrations'
   
   const elementMetrics = {
     headline: {
       title: "01 / Editorial Typography",
-      delay: "50ms (Retinal Detection)",
-      trigger: "Instant Authority",
-      description: "Sophisticated typography (Cormorant & Satoshi) structured with absolute spatial balance. The eye instantly reads credibility. Good typography isn't just readable; it signals prestige.",
-      impact: "+40% Visitor Stay Duration"
+      delay: "First Focus Area",
+      trigger: "Brand Authority & Prestige",
+      description: "Sophisticated typography (Cormorant & Satoshi) structured with absolute spatial balance. The user instantly reads credibility. Clean, modern typography isn't just about reading; it establishes your brand value.",
+      impact: "+40% Average Visit Duration"
     },
     cta: {
-      title: "02 / Glowing Call to Action",
-      delay: "150ms (Action Recognition)",
-      trigger: "Eliminated Friction",
-      description: "Our glowing champagne CTA buttons stand out from the canvas. By offering a '100% Free Custom Homepage Demo', we remove the psychological barrier of upfront payments. Trust is earned before capital is exchanged.",
-      impact: "3.4x Booking Click-Throughs"
+      title: "02 / Highly Visible Call to Action",
+      delay: "Action-Oriented Zone",
+      trigger: "Risk-Free Trial Offer",
+      description: "Our glowing champagne CTA buttons stand out from the canvas. By offering a '100% Free Custom Homepage Demo', we remove the initial payment barrier. Trust is built before you spend a single dollar.",
+      impact: "3.4x Calendar Booking Rate"
     },
     badges: {
-      title: "03 / Trust Signals & SEO Vitals",
-      delay: "300ms (Cognitive Evaluation)",
-      trigger: "Proof of Performance",
-      description: "Subtle numeric markers and live speed metrics. When user eyes scan the speed metrics showing sub-500ms TTFB and 100% Core Web Vitals, cognitive friction drops to zero. Technical execution builds financial confidence.",
+      title: "03 / Speed & Performance Indicators",
+      delay: "Trust & Credibility Signals",
+      trigger: "Zero-Friction Loading Speed",
+      description: "Live speed metrics and performance scores. Showing sub-500ms TTFB and 100% Core Web Vitals scores eliminates concern about site latency. Fast loading builds financial confidence.",
       impact: "-28% Bounce Rate Reduction"
     },
     integrations: {
-      title: "04 / AI & Automation Indicators",
-      delay: "450ms (Value Realization)",
-      trigger: "Operational Efficiency",
-      description: "Highlighting custom LLM connectors, autonomous agents, and systems integrations. Visual indicators show how the front-end hooks directly into back-end intelligence (Make, Zapier, and custom GPT models) to automate human tasks.",
-      impact: "Hundreds of Hours Saved"
+      title: "04 / Workflows & AI Automations",
+      delay: "Operational Efficiency Focus",
+      trigger: "Process Automation",
+      description: "Highlighting integrations with databases, CRM platforms, and artificial intelligence connectors. We show how your website hooks directly into back-end engines (Make, Zapier, and custom LLM APIs) to automate lead capture and operations.",
+      impact: "Hundreds of Manual Hours Saved"
     }
   };
 
@@ -124,7 +124,7 @@ export default function AboutPage({ onViewChange }) {
         {/* Poetic Intro Block */}
         <header className="about-header">
           <div className="about-grid-top">
-            {/* Left Column: Visual focal point of the Eye */}
+            {/* Left Column: Visual centerpiece */}
             <div 
               ref={eyeFrameRef}
               className="ab-eye-frame"
@@ -140,33 +140,33 @@ export default function AboutPage({ onViewChange }) {
               <div className="ab-eye-artwork-wrap">
                 <img 
                   src="/assets/gaze_eye_artwork.png" 
-                  alt="Human Gaze Resonance Artwork" 
+                  alt="Design Philosophy Artwork" 
                   className="ab-eye-image"
                   draggable="false"
                 />
               </div>
-              <div className="ab-eye-label">[ THE DESIGN APERTURE ]</div>
+              <div className="ab-eye-label">[ THE DESIGN PHILOSOPHY ]</div>
             </div>
 
-            {/* Right Column: High-Impact Perception Philosophy */}
+            {/* Right Column: High-Impact Copy */}
             <div className="ab-hero-text">
-              <span className="ab-eyebrow eyebrow">THE PSYCHOLOGY OF GAZE</span>
-              <h1 className="ab-title display-sm">Custom websites designed for the human eye.</h1>
+              <span className="ab-eyebrow eyebrow">DESIGNED FOR IMPACT</span>
+              <h1 className="ab-title display-sm">Custom websites built to command attention.</h1>
               <p className="ab-lead body-lg">
-                We do not build generic templates. We design and code premium web platforms, custom AI systems, and search architectures mapped directly to human visual attention and cognitive trust.
+                We design and code premium web platforms, custom AI systems, and SEO frameworks engineered to maximize user engagement, authority, and conversion.
               </p>
               <p className="ab-text body-md">
-                Every visitor to your site forms a subconscious buying judgment in under 50 milliseconds. We combine elite software engineering, high-fidelity dark aesthetics, and conversions psychology to command authority, lower cognitive friction, and turn passive traffic into loyal paying customers.
+                Every visitor to your site forms a subconscious buying judgment in under a second. We combine elite software engineering, high-fidelity dark aesthetics, and clear positioning to capture interest immediately, establish direct credibility, and turn passive traffic into paying customers.
               </p>
             </div>
           </div>
         </header>
 
-        {/* Cognitive Manifesto Pillars */}
+        {/* Value Manifesto Pillars */}
         <section className="about-manifesto-section">
           <div className="about-section-header">
             <span className="eyebrow">THE ODDWEBS DIFFERENCE</span>
-            <h2 className="heading-md">How We Sell & Deliver Value</h2>
+            <h2 className="heading-md">How We Deliver Value</h2>
           </div>
 
           <div className="manifesto-grid">
@@ -182,7 +182,7 @@ export default function AboutPage({ onViewChange }) {
                 <span className="manifesto-num">01 // 100% FREE LIVE DEMO</span>
                 <h3 className="manifesto-label">Zero Upfront Risk</h3>
                 <p className="manifesto-desc body-sm">
-                  We build your custom-designed homepage preview for free before you sign anything or pay a single cent. You see the exact, premium design tailored to your brand, removing all contract anxiety.
+                  We build your custom homepage preview for free before you sign contracts or pay a single cent. You see the exact, premium design tailored to your brand, removing all contract anxiety.
                 </p>
               </div>
             </div>
@@ -223,13 +223,13 @@ export default function AboutPage({ onViewChange }) {
           </div>
         </section>
 
-        {/* Interactive Gaze Attention Simulator Panel */}
+        {/* Interactive Layout Simulator Panel */}
         <section className="about-interactive-section">
           <div className="about-section-header">
-            <span className="eyebrow">CONVERSION ANALYSIS</span>
-            <h2 className="heading-md">The Retinal Mapping Simulator</h2>
+            <span className="eyebrow">CONVERSION OPTIMIZATION</span>
+            <h2 className="heading-md">The Conversion Anatomy Mockup</h2>
             <p className="body-md" style={{ color: 'var(--text-secondary)', maxWidth: '600px', margin: '12px auto 0' }}>
-              Explore how we design key interfaces to guide visual attention and optimize user action. Hover over the mockup blocks on the left to review the technical details.
+              Explore how we design key interfaces to guide visual attention and optimize user action. Hover over the mockup blocks on the left to review the strategy.
             </p>
           </div>
 
@@ -310,25 +310,25 @@ export default function AboutPage({ onViewChange }) {
                     </div>
                   </div>
                 </div>
-                <div className="simulator-overlay-label">// INTERACTIVE LANDING PREVIEW (HOVER TO SCAN)</div>
+                <div className="simulator-overlay-label">// LANDING PAGE MOCKUP (HOVER BLOCKS TO EXPLORE)</div>
               </div>
 
-              {/* Right Column: Real-Time Cognitive Telemetry */}
+              {/* Right Column: Real-Time Telemetry */}
               <div className="simulator-telemetry-wrap">
-                <span className="eyebrow">// NEUROLOGICAL READOUT</span>
+                <span className="eyebrow">// STRATEGY & METRICS</span>
                 <h3 className="sim-title">{elementMetrics[activeElement].title}</h3>
                 
                 <div className="telemetry-hud-rows">
                   <div className="hud-row">
-                    <span className="hud-lbl">SCANNED DELAY</span>
+                    <span className="hud-lbl">USER ENGAGEMENT FOCUS</span>
                     <span className="hud-val text-accent">{elementMetrics[activeElement].delay}</span>
                   </div>
                   <div className="hud-row">
-                    <span className="hud-lbl">COGNITIVE TRIGGER</span>
+                    <span className="hud-lbl">PSYCHOLOGICAL TRIGGERS</span>
                     <span className="hud-val">{elementMetrics[activeElement].trigger}</span>
                   </div>
                   <div className="hud-row text-highlight">
-                    <span className="hud-lbl" style={{ color: 'var(--accent-ember)' }}>MEASURED IMPACT</span>
+                    <span className="hud-lbl" style={{ color: 'var(--accent-ember)' }}>REVENUE & VALUE IMPACT</span>
                     <span className="hud-val" style={{ color: 'var(--accent-ember)', fontWeight: 'bold' }}>{elementMetrics[activeElement].impact}</span>
                   </div>
                 </div>
@@ -338,19 +338,19 @@ export default function AboutPage({ onViewChange }) {
                 </p>
 
                 <div className="sim-footer-note">
-                  * Cognitive scan maps how layout hierarchy, fonts, and speed elements eliminate bounce rates and drive commercial trust.
+                  * These values demonstrate how precise visual design, clean code, and fast hosting directly drive customer action and reduce bounce rates.
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Poetic Closing & Action Section */}
+        {/* Closing CTA Section */}
         <section className="about-footer-cta">
           <div className="about-cta-card">
             <h2 className="heading-md about-cta-heading">Get your homepage built for free.</h2>
             <p className="body-md about-cta-sub">
-              Experience the psychological difference. We will design and build a custom landing page for your brand completely free. No deposit, no commitments.
+              Experience the performance difference. We will design and build a custom landing page for your brand completely free. No deposit, no commitments.
             </p>
             <div className="about-cta-actions">
               <button 
