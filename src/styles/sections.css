@@ -1,0 +1,214 @@
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SECTION GLOW LINE â€” animated gradient border between sections
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.section-glow-line {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.06) 20%,
+    rgba(255,255,255,0.1) 50%,
+    rgba(255,255,255,0.06) 80%,
+    transparent 100%
+  );
+  margin-bottom: var(--space-4xl);
+  transform-origin: center;
+}
+
+@keyframes glowLineShift {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   GIANT SECTION TITLE â€” Shopify "Sidekick" style
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.section-title-reveal {
+  will-change: transform, opacity, filter;
+}
+
+.services-big-title,
+.metrics-big-title {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: var(--weight-black);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+@keyframes titleGradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+   SERVICES SECTION (rebuilt)
+   â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+.services-header {
+  text-align: center;
+  margin-bottom: var(--space-4xl);
+}
+
+.services-subtitle {
+  font-size: var(--text-body-lg);
+  color: var(--text-secondary);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.services-subtitle em {
+  color: var(--accent-ember);
+  font-style: italic;
+}
+
+.services-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.service-row {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.service-row:hover {
+  border-color: var(--service-color, var(--border-hover));
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--service-color, var(--accent-ember)) 10%, transparent);
+}
+
+.service-row.open {
+  border-color: var(--service-color, var(--accent-ember));
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.service-row-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  padding: var(--space-xl) var(--space-xl);
+  cursor: pointer;
+  user-select: none;
+  transition: padding 0.3s ease;
+}
+
+.service-row.open .service-row-header {
+  padding-bottom: var(--space-sm);
+}
+
+.service-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  color: var(--service-color, var(--text-muted));
+  letter-spacing: var(--tracking-wide);
+  min-width: 24px;
+}
+
+.service-title {
+  font-family: var(--font-display);
+  font-size: var(--text-display-sm);
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  flex: 1;
+  letter-spacing: -0.02em;
+}
+
+.service-arrow-wrap {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+
+.service-row.open .service-arrow-wrap {
+  transform: rotate(180deg);
+  background: var(--service-color, var(--accent-ember));
+  border-color: transparent;
+  color: white;
+}
+
+.service-row-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0 var(--space-xl);
+}
+
+.service-row.open .service-row-body {
+  max-height: 200px;
+  padding: 0 var(--space-xl) var(--space-xl);
+}
+
+.service-row-body p {
+  font-size: var(--text-body-md);
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--space-md);
+  max-width: 600px;
+  padding-left: calc(24px + var(--space-lg) + var(--space-lg));
+}
+
+/* ─── Animated Atmospheric Container ─── */
+.atmospheric-container {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.atmos-space-base {
+  position: absolute;
+  inset: 0;
+  background: #0b0705;
+  z-index: 0;
+}
+
+/* ─── Gradient Mesh Blobs — Organic drifting colors ─── */
+.atmos-grad-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  will-change: transform;
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+
+.atmos-grad-blob--ember {
+  width: clamp(400px, 60vw, 900px);
+  height: clamp(400px, 60vw, 900px);
+  background: radial-gradient(circle, rgba(249, 87, 56, 0.18) 0%, transparent 70%);
+  top: -15%;
+  left: -10%;
+}
+
+.atmos-grad-blob--amber {
+  width: clamp(350px, 55vw, 800px);
+  height: clamp(350px, 55vw, 800px);
+  background: radial-gradient(circle, rgba(238, 155, 0, 0.15) 0%, transparent 70%);
+  top: 30%;
+  right: -15%;
+}
+
+.atmos-grad-blob--lacquer {
+  width: clamp(300px, 45vw, 700px);
+  height: clamp(300px, 45vw, 700px);
+  background: radial-gradient(circle, rgba(174, 32, 18, 0.12) 0%, transparent 70%);
+  bottom: 10%;
+  left: 20%;
+}
+
