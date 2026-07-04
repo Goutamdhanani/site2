@@ -1,0 +1,267 @@
+/* ==========================================================================
+   DEDICATED 404 NOT FOUND PAGE STYLES (Gravity Field & Dimensional Portals)
+   ========================================================================== */
+
+.not-found-wrapper {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #070504;
+  overflow: hidden;
+  z-index: 10;
+  transition: background 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nf-physics-container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: auto;
+}
+
+.nf-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+}
+
+/* ─── Glowing Ambient Lights ─── */
+.nf-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(140px);
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 1;
+  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nf-glow--champagne {
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(199, 154, 75, 0.4) 0%, transparent 70%);
+  top: -10%;
+  left: -10%;
+}
+
+.nf-glow--accent {
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(249, 87, 56, 0.3) 0%, transparent 70%);
+  bottom: -10%;
+  right: -10%;
+}
+
+/* ─── Theme Shifts driven by Hovering ─── */
+.theme-home .nf-glow--champagne {
+  background: radial-gradient(circle, rgba(199, 154, 75, 0.65) 0%, transparent 70%);
+  opacity: 0.25;
+}
+
+.theme-portfolio .nf-glow--accent {
+  background: radial-gradient(circle, rgba(238, 155, 0, 0.6) 0%, transparent 70%);
+  opacity: 0.25;
+}
+
+.theme-demo .nf-glow--accent {
+  background: radial-gradient(circle, rgba(249, 87, 56, 0.6) 0%, transparent 70%);
+  opacity: 0.25;
+}
+
+/* ─── Main Content Box ─── */
+.nf-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 650px;
+  padding: 0 var(--section-padding-x);
+}
+
+.nf-content-inner {
+  position: relative;
+  background: rgba(13, 10, 9, 0.65);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 56px 40px;
+  text-align: center;
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.8);
+  transition: filter 0.2s ease;
+}
+
+@media (max-width: 480px) {
+  .nf-content-inner {
+    padding: 36px 20px;
+  }
+}
+
+/* ─── Telemetry HUD Layout ─── */
+.nf-telemetry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 12px;
+  margin-bottom: 32px;
+}
+
+.nf-telemetry-footer {
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 16px;
+  margin-top: 32px;
+}
+
+/* ─── Glitching 404 Typography ─── */
+.nf-num-wrap {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 24px;
+}
+
+.nf-num {
+  font-family: var(--font-display);
+  font-size: 110px;
+  font-weight: var(--weight-black);
+  line-height: 1;
+  color: var(--text-primary);
+  letter-spacing: -0.04em;
+  position: relative;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.nf-num::before,
+.nf-num::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: transparent;
+}
+
+.nf-num::before {
+  color: var(--accent-ember);
+  text-shadow: -2px 0 var(--accent-ember);
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitchLines 5s infinite linear alternate-reverse;
+}
+
+.nf-num::after {
+  color: var(--accent-amber);
+  text-shadow: 2px 0 var(--accent-amber);
+  clip: rect(85px, 450px, 140px, 0);
+  animation: glitchLines2 5s infinite linear alternate-reverse;
+}
+
+@keyframes glitchLines {
+  0% { clip: rect(15px, 9999px, 66px, 0); transform: skew(0.5deg); }
+  5% { clip: rect(85px, 9999px, 5px, 0); transform: skew(0.8deg); }
+  10% { clip: rect(34px, 9999px, 55px, 0); transform: skew(-0.3deg); }
+  15% { clip: rect(0px, 0px, 0px, 0px); }
+  100% { clip: rect(0px, 0px, 0px, 0px); }
+}
+
+@keyframes glitchLines2 {
+  0% { clip: rect(0px, 0px, 0px, 0px); }
+  15% { clip: rect(44px, 9999px, 85px, 0); transform: skew(-0.5deg); }
+  20% { clip: rect(12px, 9999px, 115px, 0); transform: skew(0.3deg); }
+  25% { clip: rect(0px, 0px, 0px, 0px); }
+  100% { clip: rect(0px, 0px, 0px, 0px); }
+}
+
+/* ─── Typography details ─── */
+.nf-eyebrow {
+  color: var(--accent-amber);
+}
+
+.nf-title {
+  margin: 12px 0 16px;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+}
+
+.nf-desc {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto 36px;
+}
+
+/* ─── Portal Links Grid ─── */
+.nf-portal-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .nf-portal-actions {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.nf-portal-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-mono) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.08em;
+  padding: 14px 10px !important;
+  border-radius: var(--radius-md) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.01) !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.nf-portal-item .portal-indicator {
+  color: var(--text-muted);
+  transition: color 0.3s ease;
+}
+
+.nf-portal-item:hover {
+  transform: translateY(-2px) !important;
+}
+
+.theme-home .nf-portal-item:nth-child(1) {
+  border-color: var(--accent-gold) !important;
+  color: var(--accent-gold) !important;
+  box-shadow: 0 0 15px rgba(199, 154, 75, 0.15) !important;
+  background: rgba(199, 154, 75, 0.04) !important;
+}
+.theme-home .nf-portal-item:nth-child(1) .portal-indicator {
+  color: var(--accent-gold);
+}
+
+.theme-portfolio .nf-portal-item:nth-child(2) {
+  border-color: var(--accent-amber) !important;
+  color: var(--accent-amber) !important;
+  box-shadow: 0 0 15px rgba(238, 155, 0, 0.15) !important;
+  background: rgba(238, 155, 0, 0.04) !important;
+}
+.theme-portfolio .nf-portal-item:nth-child(2) .portal-indicator {
+  color: var(--accent-amber);
+}
+
+.theme-demo .nf-portal-item:nth-child(3) {
+  border-color: var(--accent-ember) !important;
+  color: var(--accent-ember) !important;
+  box-shadow: 0 0 15px rgba(249, 87, 56, 0.15) !important;
+  background: rgba(249, 87, 56, 0.04) !important;
+}
+.theme-demo .nf-portal-item:nth-child(3) .portal-indicator {
+  color: var(--accent-ember);
+}

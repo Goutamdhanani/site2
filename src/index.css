@@ -40,6 +40,7 @@
 @import "./styles/services-page.css";
 @import "./styles/compliance.css";
 @import "./styles/analytics.css";
+@import "./styles/not-found.css";
 
 /* LXS Premium Engine & Porsche Configurator Integrations */
 @import "./styles/lxs-integrations.css";

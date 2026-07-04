@@ -19,6 +19,7 @@ import PortfolioPage from './components/PortfolioPage';
 import AboutPage from './components/AboutPage';
 import BookingFlow from './components/BookingFlow';
 import ServicesPage from './components/ServicesPage';
+import NotFoundPage from './components/NotFoundPage';
 import ComplianceBanner from './components/ComplianceBanner';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import { trackEvent, trackPageView } from './utils/analytics';
@@ -41,7 +42,8 @@ export default function App() {
     if (hash === '#services-page') return 'services-page';
     if (hash === '#analytics') return 'analytics';
     if (hash === '#admin') return 'admin';
-    return 'home';
+    if (hash === '' || hash === '#home') return 'home';
+    return '404';
   });
   const [adminUser, setAdminUser] = useState(null);
   const lenisRef = useRef(null);
@@ -92,8 +94,10 @@ export default function App() {
         setCurrentView('analytics');
       } else if (hash === '#admin') {
         setCurrentView('admin');
-      } else {
+      } else if (hash === '' || hash === '#home') {
         setCurrentView('home');
+      } else {
+        setCurrentView('404');
       }
     };
     window.addEventListener('hashchange', handleHashChange);
@@ -879,8 +883,10 @@ export default function App() {
             <ServicesPage onViewChange={handleViewChange} />
           ) : currentView === 'analytics' ? (
             <AnalyticsDashboard onViewChange={handleViewChange} adminUser={adminUser} />
-          ) : (
+          ) : currentView === 'demo' ? (
             <BookingFlow onViewChange={handleViewChange} />
+          ) : (
+            <NotFoundPage onViewChange={handleViewChange} />
           )}
         </main>
 
