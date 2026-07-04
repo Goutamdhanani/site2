@@ -798,36 +798,47 @@ nav#navbar.scrolled {
 .nav-burger {
   display: none;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
   padding: 8px;
-  z-index: 10;
+  z-index: 1000;
 }
 
 .nav-burger span {
   display: block;
-  width: 24px;
-  height: 1.5px;
+  width: 22px;
+  height: 2px;
   background: var(--text-primary);
-  transition: all var(--duration-base) ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center;
 }
 
-/* Mobile overlay */
+.nav-burger.open span:nth-child(1) {
+  transform: translateY(3.5px) rotate(45deg);
+}
+
+.nav-burger.open span:nth-child(2) {
+  transform: translateY(-3.5px) rotate(-45deg);
+}
+
+/* Minimalist & Beautiful Mobile Overlay Menu */
 .mobile-menu {
   display: none;
   position: fixed;
   inset: 0;
-  background: var(--bg-primary);
+  background: rgba(7, 7, 7, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   z-index: 999;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 28px;
   opacity: 0;
   pointer-events: none;
-  transition: opacity var(--duration-base) ease;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 40px 24px;
 }
 
 .mobile-menu.active {
@@ -836,19 +847,105 @@ nav#navbar.scrolled {
   pointer-events: all;
 }
 
-.mobile-menu a {
-  font-family: var(--font-display);
-  font-size: 32px;
-  font-weight: 300;
-  color: var(--text-primary);
-  text-decoration: none;
-  letter-spacing: 0.02em;
-  text-transform: none;
-  transition: color 0.3s ease;
+.mobile-menu-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  height: 80vw;
+  max-width: 500px;
+  max-height: 500px;
+  background: radial-gradient(circle, rgba(199, 154, 75, 0.08) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-.mobile-menu a:hover {
+.mobile-menu-links {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  max-width: 320px;
+  align-items: stretch;
+}
+
+.mobile-menu-item {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding-bottom: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.mobile-menu.active .mobile-menu-item {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-menu.active .mobile-menu-item:nth-child(1) { transition-delay: 0.1s; }
+.mobile-menu.active .mobile-menu-item:nth-child(2) { transition-delay: 0.16s; }
+.mobile-menu.active .mobile-menu-item:nth-child(3) { transition-delay: 0.22s; }
+.mobile-menu.active .mobile-menu-item:nth-child(4) { transition-delay: 0.28s; }
+.mobile-menu.active .mobile-menu-item:nth-child(5) { transition-delay: 0.34s; }
+
+.menu-item-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
   color: var(--accent-ember);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.menu-item-label {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.menu-item-desc {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.mobile-menu-item:hover .menu-item-label {
+  color: var(--accent-amber);
+  transform: translateX(4px);
+}
+
+.mobile-menu-item.highlight .menu-item-label {
+  color: var(--accent-ember);
+}
+
+.mobile-menu-item.highlight:hover .menu-item-label {
+  color: var(--accent-amber);
+}
+
+.mobile-menu-footer {
+  position: absolute;
+  bottom: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 40px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
 }
 
 @media (max-width: 900px) {

@@ -125,22 +125,51 @@ export default function Navbar({ currentView, onViewChange }) {
           </a>
 
           <button
-            className="nav-burger"
+            className={`nav-burger ${menuOpen ? 'open' : ''}`}
             aria-label="Menu"
             onClick={() => setMenuOpen(!menuOpen)}
           >
-            <span style={menuOpen ? { transform: 'rotate(45deg) translate(3px, 3px)' } : {}} />
-            <span style={menuOpen ? { transform: 'rotate(-45deg) translate(3px, -3px)' } : {}} />
+            <span />
+            <span />
           </button>
         </div>
       </nav>
 
       <div className={`mobile-menu ${menuOpen ? 'active' : ''}`}>
-        <a href="#portfolio" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('portfolio'); }}>Our Work</a>
-        <a href="#services-page" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('services-page'); }}>Services</a>
-        <a href="#process" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#process'); }}>Process</a>
-        <a href="#testimonials" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#testimonials'); }}>About</a>
-        <a href="#demo" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('demo'); }}>Schedule Free Demo</a>
+        <div className="mobile-menu-glow" aria-hidden="true" />
+        
+        <div className="mobile-menu-links">
+          <a href="#portfolio" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('portfolio'); }} className="mobile-menu-item">
+            <span className="menu-item-num">01</span>
+            <span className="menu-item-label">Our Work</span>
+            <span className="menu-item-desc">Selected Case Studies</span>
+          </a>
+          <a href="#services-page" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('services-page'); }} className="mobile-menu-item">
+            <span className="menu-item-num">02</span>
+            <span className="menu-item-label">Services</span>
+            <span className="menu-item-desc">Premium Growth Solutions</span>
+          </a>
+          <a href="#process" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#process'); }} className="mobile-menu-item">
+            <span className="menu-item-num">03</span>
+            <span className="menu-item-label">Process</span>
+            <span className="menu-item-desc">48H Design Workflow</span>
+          </a>
+          <a href="#testimonials" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#testimonials'); }} className="mobile-menu-item">
+            <span className="menu-item-num">04</span>
+            <span className="menu-item-label">About</span>
+            <span className="menu-item-desc">Agency & Testimonials</span>
+          </a>
+          <a href="#demo" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('demo'); }} className="mobile-menu-item highlight">
+            <span className="menu-item-num">05</span>
+            <span className="menu-item-label">Schedule Demo</span>
+            <span className="menu-item-desc">Claim Free Growth Session ↗</span>
+          </a>
+        </div>
+        
+        <div className="mobile-menu-footer">
+          <span className="footer-secured">// SSL SECURED</span>
+          <span className="footer-copyright">&copy; {new Date().getFullYear()} oddwebs</span>
+        </div>
       </div>
     </>
   );
