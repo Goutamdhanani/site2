@@ -98,12 +98,12 @@ export default function Navbar({ currentView, onViewChange }) {
             </li>
             <li>
               <a
-                href="#testimonials"
-                className="nav-link"
+                href="#about"
+                className={`nav-link ${currentView === 'about' ? 'active' : ''}`}
                 onClick={(e) => {
                   e.preventDefault();
                   trackCTA('nav_about', 'click');
-                  onViewChange('home', '#testimonials');
+                  onViewChange('about');
                 }}
               >
                 About
@@ -154,10 +154,10 @@ export default function Navbar({ currentView, onViewChange }) {
             <span className="menu-item-label">Process</span>
             <span className="menu-item-desc">48H Design Workflow</span>
           </a>
-          <a href="#testimonials" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#testimonials'); }} className="mobile-menu-item">
+          <a href="#about" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('about'); }} className="mobile-menu-item">
             <span className="menu-item-num">04</span>
             <span className="menu-item-label">About</span>
-            <span className="menu-item-desc">Agency & Testimonials</span>
+            <span className="menu-item-desc">Visual Love & Impact</span>
           </a>
           <a href="#demo" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('demo'); }} className="mobile-menu-item highlight">
             <span className="menu-item-num">05</span>

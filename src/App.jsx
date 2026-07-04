@@ -16,6 +16,7 @@ import FinalCTA from './components/FinalCTA';
 import Footer from './components/Footer';
 import CustomCursor from './components/CustomCursor';
 import PortfolioPage from './components/PortfolioPage';
+import AboutPage from './components/AboutPage';
 import BookingFlow from './components/BookingFlow';
 import ServicesPage from './components/ServicesPage';
 import ComplianceBanner from './components/ComplianceBanner';
@@ -35,6 +36,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState(() => {
     const hash = window.location.hash;
     if (hash === '#portfolio') return 'portfolio';
+    if (hash === '#about') return 'about';
     if (hash === '#demo') return 'demo';
     if (hash === '#services-page') return 'services-page';
     if (hash === '#analytics') return 'analytics';
@@ -68,7 +70,6 @@ export default function App() {
       const hash = window.location.hash;
       
       // Kill all GSAP ScrollTriggers BEFORE React unmounts components
-      // This removes .pin-spacer wrappers so React's DOM tree matches expectations
       ScrollTrigger.getAll().forEach(t => t.kill());
 
       // Reset scroll position immediately to prevent page bottom scroll clamp bugs
@@ -81,6 +82,8 @@ export default function App() {
 
       if (hash === '#portfolio') {
         setCurrentView('portfolio');
+      } else if (hash === '#about') {
+        setCurrentView('about');
       } else if (hash === '#demo') {
         setCurrentView('demo');
       } else if (hash === '#services-page') {
@@ -870,6 +873,8 @@ export default function App() {
             </>
           ) : currentView === 'portfolio' ? (
             <PortfolioPage onViewChange={handleViewChange} />
+          ) : currentView === 'about' ? (
+            <AboutPage onViewChange={handleViewChange} />
           ) : currentView === 'services-page' ? (
             <ServicesPage onViewChange={handleViewChange} />
           ) : currentView === 'analytics' ? (

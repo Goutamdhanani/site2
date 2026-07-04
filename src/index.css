@@ -35,6 +35,7 @@
 
 /* Dedicated Page & Feature Modules */
 @import "./styles/portfolio-page.css";
+@import "./styles/about.css";
 @import "./styles/booking-flow.css";
 @import "./styles/services-page.css";
 @import "./styles/compliance.css";

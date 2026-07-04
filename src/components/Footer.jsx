@@ -186,11 +186,11 @@ export default function Footer({ onViewChange }) {
               </li>
               <li>
                 <a
-                  href="#testimonials"
+                  href="#about"
                   onClick={(e) => {
                     e.preventDefault();
                     trackCTA('footer_about', 'click');
-                    onViewChange('home', '#testimonials');
+                    onViewChange('about');
                   }}
                 >
                   About
