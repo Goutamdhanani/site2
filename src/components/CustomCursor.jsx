@@ -11,6 +11,7 @@ export default function CustomCursor() {
   const ring = useRef({ x: 0, y: 0 });
   const trailPositions = useRef([]);
   const raf = useRef(null);
+  const hasMoved = useRef(false);
 
   useEffect(() => {
     if (isLite) return;
@@ -27,6 +28,18 @@ export default function CustomCursor() {
     const onMove = (e) => {
       mouse.current.x = e.clientX;
       mouse.current.y = e.clientY;
+
+      // Fade in cursor on first move
+      if (!hasMoved.current) {
+        hasMoved.current = true;
+        gsap.to(dot, { opacity: 1, duration: 0.3 });
+        gsap.to(ringEl, { opacity: 0.6, duration: 0.3 });
+        trails.forEach((trail, i) => {
+          if (trail) {
+            gsap.to(trail, { opacity: 0.3 - i * 0.05, duration: 0.3 });
+          }
+        });
+      }
 
       // Dot follows with slight physics
       gsap.to(dot, {
@@ -62,61 +75,67 @@ export default function CustomCursor() {
       raf.current = requestAnimationFrame(animate);
     };
 
-    // ─── HOVER EFFECTS ───
-    const handleHoverIn = (e) => {
-      const isButton = e.target.closest('a, button, .magnetic');
-      const isCard = e.target.closest('.project-card, .testimonial-card, .service-row, .stat-card');
-      const isDrag = e.target.closest('.cs-card, [data-cursor="drag"], .pt-visual-column');
+    // ─── HOVER EFFECTS (Event Delegation) ───
+    const handleMouseOver = (e) => {
+      if (!hasMoved.current) return;
+      const target = e.target;
+      if (!target) return;
+
+      const isButton = target.closest('a, button, .magnetic, .btn-primary, .btn-ghost, .btn-outline, .nav-cta, .compliance-btn, .nav-burger');
+      const isCard = target.closest('.project-card, .testimonial-card, .service-row, .stat-card, .pt-floating-card, .pt-console-btn-secondary');
+      const isDrag = target.closest('.cs-card, [data-cursor="drag"], .pt-visual-column');
       const textEl = textRef.current;
 
       if (isButton) {
-        gsap.to(ringEl, { width: 56, height: 56, opacity: 0.4, borderColor: 'var(--accent-ember)', duration: 0.3 });
-        gsap.to(dot, { width: 0, height: 0, opacity: 0, duration: 0.2 });
-        if (textEl) gsap.to(textEl, { opacity: 0, scale: 0.5, duration: 0.2 });
+        gsap.to(ringEl, { width: 56, height: 56, opacity: 0.4, borderColor: 'var(--accent-ember)', duration: 0.3, overwrite: 'auto' });
+        gsap.to(dot, { width: 0, height: 0, opacity: 0, duration: 0.2, overwrite: 'auto' });
+        if (textEl) gsap.to(textEl, { opacity: 0, scale: 0.5, duration: 0.2, overwrite: 'auto' });
       } else if (isDrag) {
-        gsap.to(ringEl, { width: 72, height: 72, opacity: 0.5, borderColor: 'var(--accent-ember)', duration: 0.3 });
-        gsap.to(dot, { width: 0, height: 0, opacity: 0, duration: 0.2 });
-        if (textEl) gsap.to(textEl, { opacity: 1, scale: 1, duration: 0.3 });
+        gsap.to(ringEl, { width: 72, height: 72, opacity: 0.5, borderColor: 'var(--accent-ember)', duration: 0.3, overwrite: 'auto' });
+        gsap.to(dot, { width: 0, height: 0, opacity: 0, duration: 0.2, overwrite: 'auto' });
+        if (textEl) gsap.to(textEl, { opacity: 1, scale: 1, duration: 0.3, overwrite: 'auto' });
       } else if (isCard) {
-        gsap.to(ringEl, { width: 80, height: 80, opacity: 0.15, duration: 0.4 });
-        gsap.to(dot, { width: 4, height: 4, opacity: 0.8, duration: 0.2 });
-        if (textEl) gsap.to(textEl, { opacity: 0, scale: 0.5, duration: 0.2 });
+        gsap.to(ringEl, { width: 80, height: 80, opacity: 0.15, duration: 0.4, overwrite: 'auto' });
+        gsap.to(dot, { width: 4, height: 4, opacity: 0.8, duration: 0.2, overwrite: 'auto' });
+        if (textEl) gsap.to(textEl, { opacity: 0, scale: 0.5, duration: 0.2, overwrite: 'auto' });
+      } else {
+        // Normal cursor state
+        gsap.to(ringEl, { width: 36, height: 36, opacity: 0.6, borderColor: 'rgba(255,255,255,0.3)', duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
+        gsap.to(dot, { width: 6, height: 6, opacity: 1, duration: 0.3, overwrite: 'auto' });
+        if (textEl) gsap.to(textEl, { opacity: 0, scale: 0.5, duration: 0.2, overwrite: 'auto' });
       }
     };
 
-    const handleHoverOut = () => {
-      gsap.to(ringEl, { width: 36, height: 36, opacity: 0.5, borderColor: 'rgba(255,255,255,0.3)', duration: 0.4, ease: 'elastic.out(1, 0.6)' });
-      gsap.to(dot, { width: 6, height: 6, opacity: 1, duration: 0.3 });
-      if (textRef.current) gsap.to(textRef.current, { opacity: 0, scale: 0.5, duration: 0.2 });
-    };
-
-    // Attach to interactive elements
-    let interactables = [];
-    const attachListeners = () => {
-      interactables = Array.from(document.querySelectorAll('a, button, [data-cursor], .service-row, .project-card, .testimonial-card, .stat-card, .cs-card, .pt-visual-column'));
-      interactables.forEach(el => {
-        el.addEventListener('mouseenter', handleHoverIn);
-        el.addEventListener('mouseleave', handleHoverOut);
+    // ─── VIEWPORT ENTER / LEAVE DETECTOR ───
+    const handleMouseLeaveViewport = () => {
+      gsap.to([dot, ringEl], { opacity: 0, duration: 0.25 });
+      trails.forEach((trail) => {
+        if (trail) gsap.to(trail, { opacity: 0, duration: 0.25 });
       });
     };
 
-    // Delayed attach for DOM readiness
-    const timer = setTimeout(() => {
-      attachListeners();
-    }, 1000);
+    const handleMouseEnterViewport = () => {
+      if (!hasMoved.current) return;
+      gsap.to(dot, { opacity: 1, duration: 0.25 });
+      gsap.to(ringEl, { opacity: 0.6, duration: 0.25 });
+      trails.forEach((trail, i) => {
+        if (trail) gsap.to(trail, { opacity: 0.3 - i * 0.05, duration: 0.25 });
+      });
+    };
 
     document.addEventListener('mousemove', onMove, { passive: true });
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseleave', handleMouseLeaveViewport);
+    document.addEventListener('mouseenter', handleMouseEnterViewport);
+    
     raf.current = requestAnimationFrame(animate);
 
     return () => {
-      clearTimeout(timer);
       document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseleave', handleMouseLeaveViewport);
+      document.removeEventListener('mouseenter', handleMouseEnterViewport);
       if (raf.current) cancelAnimationFrame(raf.current);
-      // Clean up hover listeners
-      interactables.forEach(el => {
-        el.removeEventListener('mouseenter', handleHoverIn);
-        el.removeEventListener('mouseleave', handleHoverOut);
-      });
     };
   }, []);
 
@@ -136,7 +155,6 @@ export default function CustomCursor() {
           ref={el => trailsRef.current[i] = el}
           aria-hidden="true"
           style={{
-            opacity: 0.3 - i * 0.05,
             width: 4 - i * 0.5,
             height: 4 - i * 0.5,
           }}
