@@ -732,20 +732,30 @@ function HeroDesktop() {
       };
     }
 
-    // 2. Preload remaining frames
+    // 2. Preload remaining frames with safety fallback
+    let fallbackTimer;
+
     const startPreload = () => {
       let loadedCount = 0;
       const images = [];
       const criticalFramesCount = 10;
       let criticalLoaded = false;
 
+      // Start safety timer to ensure the overlay is dismissed even if network fails/hangs
+      fallbackTimer = setTimeout(() => {
+        console.warn('Hero preloader safety fallback triggered (forced loaded state)');
+        setLoaded(true);
+      }, 4000);
+
       const handleFrameLoad = () => {
         loadedCount++;
         // Release loader as soon as the first 10 frames are ready for smooth first impression
         if (!criticalLoaded && loadedCount >= Math.min(totalFrames, criticalFramesCount)) {
           criticalLoaded = true;
+          clearTimeout(fallbackTimer);
           setLoaded(true);
         } else if (loadedCount === totalFrames) {
+          clearTimeout(fallbackTimer);
           setLoaded(true);
         }
       };
@@ -770,24 +780,12 @@ function HeroDesktop() {
       imagesRef.current = images;
     };
 
-    const handleWindowLoad = () => {
-      timerId = setTimeout(startPreload, 100);
-    };
-
-    if ('requestIdleCallback' in window) {
-      idleId = requestIdleCallback(startPreload, { timeout: 3000 });
-    } else {
-      if (document.readyState === 'complete') {
-        timerId = setTimeout(startPreload, 100);
-      } else {
-        window.addEventListener('load', handleWindowLoad);
-      }
-    }
+    // Trigger preload directly after mount (defer slightly to let the first frame paint)
+    timerId = setTimeout(startPreload, 100);
 
     return () => {
-      if (idleId) cancelIdleCallback(idleId);
+      clearTimeout(fallbackTimer);
       if (timerId) clearTimeout(timerId);
-      window.removeEventListener('load', handleWindowLoad);
       // Cancel active network requests & clean up memory
       imagesRef.current.forEach((img) => {
         img.onload = null;

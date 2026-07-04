@@ -5,7 +5,37 @@ import { useState, useEffect, useRef, useCallback } from 'react';
  * All metrics are computed from actual tracked events in window.__oddwebs_analytics_events
  * and live browser Performance APIs.
  */
-export default function AnalyticsDashboard({ onViewChange }) {
+export default function AnalyticsDashboard({ onViewChange, adminUser }) {
+  const pin = import.meta.env.VITE_ANALYTICS_PIN;
+  const [enteredPin, setEnteredPin] = useState('');
+  const [pinError, setPinError] = useState('');
+  const [isAuthorized, setIsAuthorized] = useState(() => {
+    if (adminUser) return true;
+    if (!pin) return true; // If no PIN is configured, bypass so user doesn't get locked out
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('oddwebs_analytics_authorized') === 'true';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (adminUser) {
+      setIsAuthorized(true);
+    }
+  }, [adminUser]);
+
+  const handlePinSubmit = (e) => {
+    e.preventDefault();
+    if (enteredPin === pin) {
+      setIsAuthorized(true);
+      sessionStorage.setItem('oddwebs_analytics_authorized', 'true');
+      setPinError('');
+    } else {
+      setPinError('Access Denied. Invalid security credentials.');
+      setEnteredPin('');
+    }
+  };
+
   const [liveEvents, setLiveEvents] = useState([]);
   const [webVitals, setWebVitals] = useState({ lcp: null, inp: null, cls: null, fcp: null, ttfb: null });
   const [sessionStart] = useState(() => Date.now());
@@ -210,6 +240,80 @@ export default function AnalyticsDashboard({ onViewChange }) {
     { name: '6. Demo Confirmed', count: stats.bookings, icon: '✅' },
   ];
   const funnelMax = Math.max(1, funnelSteps[0].count);
+
+  if (!isAuthorized) {
+    return (
+      <div className="analytics-gate-wrapper">
+        <div className="analytics-gate-card">
+          <div className="analytics-gate-icon">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h2 className="analytics-gate-title">Security Access</h2>
+          <p className="analytics-gate-subtitle">
+            Enter the analytics PIN to view live product telemetry.
+          </p>
+
+          {pinError && (
+            <div className="analytics-gate-error">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span>{pinError}</span>
+            </div>
+          )}
+
+          <form onSubmit={handlePinSubmit} className="analytics-gate-form">
+            <div className="analytics-gate-input-group">
+              <label className="analytics-gate-label">Security PIN</label>
+              <input
+                type="password"
+                className="analytics-gate-input"
+                value={enteredPin}
+                onChange={(e) => setEnteredPin(e.target.value)}
+                placeholder="••••"
+                maxLength={8}
+                required
+                autoFocus
+              />
+            </div>
+
+            <button type="submit" className="analytics-gate-btn">
+              Authorize Device
+            </button>
+          </form>
+
+          <div className="analytics-gate-footer">
+            <a href="#" className="analytics-gate-link" onClick={() => onViewChange('home')}>
+              Back to Website
+            </a>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="analytics-dashboard">

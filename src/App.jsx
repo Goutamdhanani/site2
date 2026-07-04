@@ -209,10 +209,8 @@ export default function App() {
 
   const handlePreloaderComplete = () => {
     setLoading(false);
+    setSiteVisible(true);
     trackEvent(ANALYTICS_EVENTS.SITE_LOADED);
-    requestAnimationFrame(() => {
-      setSiteVisible(true);
-    });
   };
 
   // ─── LENIS SMOOTH SCROLL (desktop only) ───
@@ -875,7 +873,7 @@ export default function App() {
           ) : currentView === 'services-page' ? (
             <ServicesPage onViewChange={handleViewChange} />
           ) : currentView === 'analytics' ? (
-            <AnalyticsDashboard onViewChange={handleViewChange} />
+            <AnalyticsDashboard onViewChange={handleViewChange} adminUser={adminUser} />
           ) : (
             <BookingFlow onViewChange={handleViewChange} />
           )}
