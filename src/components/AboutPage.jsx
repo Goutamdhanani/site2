@@ -199,7 +199,7 @@ export default function AboutPage({ onViewChange }) {
                 <span className="manifesto-num">02 // NO MONTHLY RETAINER CHAINS</span>
                 <h3 className="manifesto-label">Flat-Rate Engineering</h3>
                 <p className="manifesto-desc body-sm">
-                  We charge flat-rate services starting at $499. No rigid lock-in contracts. You have full ownership of your code with the freedom to buy out your build or let us manage it at an affordable scale.
+                  We charge transparent flat-rate services starting from $650 for landing pages and $3,500 for full custom platforms. No rigid lock-in contracts. You have full ownership of your code with the freedom to buy out your build or let us manage it at an affordable scale.
                 </p>
               </div>
             </div>

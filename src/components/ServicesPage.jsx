@@ -15,7 +15,11 @@ import {
   ChevronRight,
   ArrowUpRight,
   Sparkles,
-  AlertCircle
+  ShieldCheck,
+  Zap,
+  DollarSign,
+  Clock,
+  HelpCircle
 } from 'lucide-react';
 import { isLite } from '../utils/device';
 import { trackEvent, trackCTA } from '../utils/analytics';
@@ -24,102 +28,165 @@ gsap.registerPlugin(ScrollTrigger);
 
 const serviceCategories = [
   {
-    title: 'Web Design & Build',
-    tag: 'CORE SYSTEM',
-    price: 499,
+    title: 'Full Website Redesign',
+    tag: 'CORE PLATFORM',
+    price: 3500,
     icon: Layers,
-    description: 'Crafted without compromise. High-fidelity, custom-coded web architectures inspired by Apple, Linear, and modern luxury automotive portals. Optimized for speed and premium conversion.',
+    description: 'Custom-coded React & Next.js architectures built for SMBs, contractors, medical clinics, and professional practices. Designed for high conversion, sub-500ms load speeds, and absolute authority.',
     subServices: [
-      'Tailored UI/UX Layouts',
-      'Next.js & React Architectures',
-      'Editorial Typography & Motion',
-      'Conversion-Optimized Landing Pages',
-      'Performance Fine-Tuning'
+      'Full Website Redesign (from $3,500)',
+      'Homepage Redesign (from $1,200)',
+      'Premium Landing Page (from $650)',
+      'CMS / Headless CMS ($950–$2,000)',
+      'Speed & Core Web Vitals ($450–$750)'
     ]
   },
   {
-    title: 'AI & Automation',
-    tag: 'INTELLIGENCE',
-    price: 599,
+    title: 'AI & Automation Systems',
+    tag: 'HIGH PROFIT / INTELLIGENCE',
+    price: 2000,
     icon: Cpu,
-    description: 'Integrate artificial intelligence directly into your daily operations. Build autonomous agent workflows, custom LLM pipelines, and intelligent automations that save hundreds of hours.',
+    description: 'Integrate artificial intelligence directly into your daily operations. Build autonomous customer support agents, lead qualification bots, and automated CRM workflows that save hundreds of hours.',
     subServices: [
-      'Custom LLM & GPT Pipelines',
-      'Workflow Automations (Make, Zapier)',
-      'Agentic Operations & Chatbots',
-      'AI-Driven Analytics & Mining',
-      'Intelligent API Connectors'
+      'AI Workflow & CRM Automation ($2,000)',
+      'AI Lead Qualification Bot ($2,000)',
+      'AI Customer Support Assistant ($2,500)',
+      'AI Voice Receptionist ($4,500)',
+      'AI Appointment Booking Assistant ($1,800)'
     ]
   },
   {
-    title: 'Hosting & Infrastructure',
-    tag: 'ENGINE ROOM',
-    price: 199,
-    icon: Globe,
-    description: 'Sleek, secure, and always online. We design and manage global edge-hosting infrastructure with high-availability CDNs, SSL certificates, and 24/7 technical surveillance.',
-    subServices: [
-      'Managed Global CDN (Vercel, AWS)',
-      'SSL Security & Firewalls',
-      'Domain & DNS Management',
-      'Automated Backups & Monitoring',
-      'Infinite Scalability Tuning'
-    ]
-  },
-  {
-    title: 'Google & Local SEO',
-    tag: 'TRAFFIC ENGINE',
-    price: 349,
+    title: 'Technical & Local SEO',
+    tag: 'TRAFFIC & SEARCH',
+    price: 650,
     icon: Search,
-    description: 'Dominate organic search rankings and AI-driven searches. Technical audits, core vitals optimization, schema architecture, and local authority growth tailored for North America.',
+    description: 'Dominate Google local search rankings and AI search engines. Technical audits, local map pack optimization, schema architecture, and Google Business profile authority.',
     subServices: [
-      'Technical SEO Auditing',
-      'Schema & Structured Data Markup',
-      'Core Web Vitals Optimization',
-      'Keyword Mapping & Intelligence',
-      'Google Profile Authority Build'
+      'Technical SEO Setup ($650)',
+      'Local SEO Setup ($550)',
+      'Google Business Profile Setup ($250)',
+      'Google Analytics 4 + Search Console ($200)',
+      'Core Web Vitals Optimization ($750)'
     ]
   },
   {
-    title: 'Branding',
+    title: 'Brand Identity & Design',
     tag: 'VISUAL SYSTEM',
-    price: 299,
+    price: 2000,
     icon: Award,
-    description: 'Establish absolute trust and prestige. Editorial logo design, curated typography, brand books, and complete design languages that command premium prices.',
+    description: 'Establish absolute trust and prestige. Editorial logo design, curated typography, brand guidelines, and complete visual systems that command premium prices.',
     subServices: [
-      'Brand Identity & Systems',
-      'Sleek Logo Mark Drafting',
-      'Luxury Typography Selection',
-      'Comprehensive Brand Guidelines',
-      'Corporate Presentation Assets'
+      'Complete Brand Identity ($2,000)',
+      'Logo Design ($650)',
+      'Brand Guidelines ($1,000)',
+      'Social Media Kit ($450)',
+      'Business Card & Media ($200)'
     ]
   },
   {
-    title: 'Content & Copy',
+    title: 'E-Commerce Store',
+    tag: 'DIGITAL STOREFRONT',
+    price: 3500,
+    icon: Globe,
+    description: 'High-converting online store built for speed and seamless checkout. Supports up to 50 initial products with integrated payment gateways and inventory management.',
+    subServices: [
+      'E-Commerce Store (≤50 Products) ($3,500)',
+      'Every Additional 100 Products ($750)',
+      'Stripe & Square Integration ($450)',
+      'Payment Gateway Integration ($450)'
+    ]
+  },
+  {
+    title: 'Conversion Copywriting',
     tag: 'NARRATIVE',
-    price: 249,
+    price: 600,
     icon: Edit3,
-    description: 'Copywriting that commands attention. Technical storytelling, SEO authority articles, and conversion-focused microcopy designed for sophisticated audiences.',
+    description: 'Copywriting that commands attention. Technical storytelling, high-converting section copy, and brand voice architecture tailored for your target market.',
     subServices: [
       'High-Conversion Website Copy',
-      'Technical Product Copywriting',
-      'SEO Authority Blog Posts',
-      'Editorial Proofreading & Voice'
+      'Technical Product Copywriting ($120/sec)',
+      'SEO Authority Articles',
+      'Brand Messaging & Voice Guidelines'
     ]
   },
   {
-    title: 'Ads & Marketing',
-    tag: 'ACCELERATOR',
-    price: 449,
+    title: 'Monthly Growth & Care Plans',
+    tag: 'RECURRING CARE',
+    price: 179,
     icon: TrendingUp,
-    description: 'Maximize performance marketing ROI. Premium ad creatives, landing page funnels, and data-driven PPC campaigns designed to capture high-value customer acquisitions.',
+    description: 'Continuous optimization, security updates, uptime surveillance, backups, and priority engineer support to keep your digital asset operating at peak performance.',
     subServices: [
-      'Google Search & Display PPC',
-      'High-Prestige Social Campaigning',
-      'Conversion Funnel Engineering',
-      'Advanced Attribution Analytics'
+      'Essential Care Plan ($79/mo)',
+      'Growth Care Plan ($179/mo)',
+      'Premium Care Plan ($349/mo)',
+      'Security Updates & Backups',
+      'Priority Engineer Support'
     ]
   }
 ];
+
+const rateCardMatrix = {
+  web: [
+    { service: 'Full Website Redesign', price: '$3,500', note: 'Complete custom-coded platform' },
+    { service: 'Homepage Redesign', price: '$1,200', note: 'Hero, sections, CTA overhaul' },
+    { service: 'Premium Landing Page', price: '$650', note: 'High-conversion campaign page' },
+    { service: 'Additional Website Page', price: '$250', note: 'Per inner page' },
+    { service: 'E-Commerce Store (≤50 Products)', price: '$3,500', note: 'Full catalog & checkout' },
+    { service: 'Every Additional 100 Products', price: '$750', note: 'Bulk catalog ingestion' },
+    { service: 'CMS Integration', price: '$950', note: 'Sanity, Strapi, or WordPress' },
+    { service: 'Headless CMS Architecture', price: '$2,000', note: 'Decoupled API platform' },
+    { service: 'Client Dashboard', price: '$3,000', note: 'Custom portal & telemetry' },
+    { service: 'Admin Dashboard', price: '$4,000', note: 'Full CRM & control panel' },
+    { service: 'Membership Portal', price: '$2,500', note: 'Gated accounts & paywalls' },
+    { service: 'Booking System', price: '$600', note: 'Calendar & slot management' },
+    { service: 'Payment Gateway (Stripe/Square)', price: '$450', note: 'Secure checkout integration' },
+    { service: 'Website Speed Optimization', price: '$450', note: 'Sub-500ms load tuning' },
+    { service: 'Core Web Vitals Optimization', price: '$750', note: '100/100 Google lighthouse audit' },
+    { service: 'Technical SEO Setup', price: '$650', note: 'Schema, sitemaps, indexing' },
+    { service: 'Local SEO Setup', price: '$550', note: 'Map pack & local authority' },
+    { service: 'Google Analytics + Search Console', price: '$200', note: 'GA4 + GSC configuration' },
+    { service: 'Google Business Profile Setup', price: '$250', note: 'Verification & optimization' },
+    { service: 'Dark Mode Support', price: '$400', note: 'Custom CSS variable toggle' }
+  ],
+  ai: [
+    { service: 'AI Voice Receptionist', price: '$4,500', note: '24/7 automated call handler' },
+    { service: 'AI Sales Chatbot', price: '$3,000', note: 'Conversational sales engine' },
+    { service: 'AI Customer Support Assistant', price: '$2,500', note: 'Trained on company docs' },
+    { service: 'AI Lead Qualification Bot', price: '$2,000', note: 'Qualifies & routes leads' },
+    { service: 'AI Appointment Booking Assistant', price: '$1,800', note: 'Auto-books calendar slots' },
+    { service: 'AI FAQ Chatbot', price: '$1,200', note: 'Answers routine questions' },
+    { service: 'AI Workflow & CRM Automation', price: '$2,000', note: 'Zapier, Make, custom GPTs' },
+    { service: 'CRM Automation', price: '$2,500', note: 'HubSpot, ActiveCampaign sync' },
+    { service: 'WhatsApp Automation', price: '$1,800', note: 'Automated messaging flows' },
+    { service: 'SMS Automation', price: '$1,200', note: 'Instant appointment alerts' },
+    { service: 'Email Marketing Automation', price: '$1,500', note: 'Drip campaigns & follow-ups' },
+    { service: 'Internal Business Automation', price: '$2,500–$10,000', note: 'Custom enterprise engine' }
+  ],
+  branding: [
+    { service: 'Brand Identity System', price: '$2,000', note: 'Full visual guidelines & logo' },
+    { service: 'Logo Design', price: '$650', note: 'Vector marks & lockups' },
+    { service: 'Brand Guidelines Document', price: '$1,000', note: 'Typography & color rules' },
+    { service: 'Social Media Kit', price: '$450', note: 'Banners, templates, icons' },
+    { service: 'Copywriting (Website Sections)', price: '$120/sec', note: 'High-converting copy' },
+    { service: 'Business Card Design', price: '$200', note: 'Print-ready vector cards' }
+  ],
+  care: [
+    { service: 'Essential Care Plan', price: '$79/mo', note: 'Security, backups, performance monitoring' },
+    { service: 'Growth Care Plan', price: '$179/mo', note: 'Essential + speed tuning & small edits' },
+    { service: 'Premium Care Plan', price: '$349/mo', note: 'Growth + priority engineer support & AI monitoring' }
+  ],
+  hourly: [
+    { service: 'Design Rate', price: '$90/hr', note: 'UI/UX & graphic design' },
+    { service: 'Development Rate', price: '$110/hr', note: 'React, Next.js, APIs' },
+    { service: 'AI Consulting Rate', price: '$150/hr', note: 'Workflow & agent architecture' },
+    { service: 'Emergency Work Rate', price: '$175/hr', note: 'Immediate same-day fix' },
+    { service: 'Minor Text / Image Change', price: '$40', note: 'Single text/image update' },
+    { service: 'Minor Layout Adjustment', price: '$90', note: 'Spacing/mobile tweaks' },
+    { service: 'New Section (Homepage / Internal)', price: '$200–$300', note: 'Custom layout section' },
+    { service: 'Major Layout Revision', price: '$700', note: 'Substantial structural rewrite' },
+    { service: 'Emergency Same-Day Rush Fee', price: '+$150', note: 'Added to standard rate' }
+  ]
+};
 
 const comparisonData = [
   {
@@ -134,17 +201,17 @@ const comparisonData = [
     metric: "02",
     feature: "Lock-in & Retainers",
     usVal: "No Rigid Contracts",
-    usDesc: "Option to buy out 100% of the code for a one-time fee, or keep flexible low-cost monthly management.",
-    themVal: "$1,500 - $3,000/mo Chains",
-    themDesc: "Locks you into rigid monthly retainers for hosting, simple text updates, and support."
+    usDesc: "Option to buy out 100% of the code for a one-time fee, or keep flexible low-cost monthly care.",
+    themVal: "$1,500 - $3,000/mo Retainers",
+    themDesc: "Locks you into rigid monthly retainers for hosting, simple text updates, and basic support."
   },
   {
     metric: "03",
     feature: "Overhead Costing",
-    usVal: "Direct Engineer Flat-Rate",
-    usDesc: "Starts at $499. Every single dollar goes directly into design and software engineering.",
-    themVal: "$5,000+ Baseline Minimums",
-    themDesc: "Bloated pricing to fund sales commissions, managers, and expensive luxury offices."
+    usVal: "Direct Engineer Pricing",
+    usDesc: "Transparent project pricing starting at $650 for landing pages and $3,500 for full custom platforms. Every dollar goes directly into design and engineering.",
+    themVal: "$15,000+ - $30,000+ Agency Bloat",
+    themDesc: "Bloated agency minimums to fund sales commissions, project managers, and luxury Vancouver/Toronto office overhead."
   },
   {
     metric: "04",
@@ -169,14 +236,13 @@ export default function ServicesPage({ onViewChange }) {
 
   // Configurator Selection
   const [selectedServices, setSelectedServices] = useState([0]); // Web Design checked by default
-  const [displayedPrice, setDisplayedPrice] = useState(499);
+  const [displayedPrice, setDisplayedPrice] = useState(3500);
   
+  // Rate Card Active Tab
+  const [rateCardTab, setRateCardTab] = useState('web'); // 'web', 'ai', 'branding', 'care', 'hourly'
+
   // Sticky CTA visibility
   const [showStickyCta, setShowStickyCta] = useState(false);
-
-  // Timeline Scroll Animation Setup
-  const timelineRef = useRef(null);
-  const timelineProgressLineRef = useRef(null);
 
   // Floating ambient lighting mouse tracking
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -206,12 +272,6 @@ export default function ServicesPage({ onViewChange }) {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  // Ambient mouse position update
-  const handleMouseMoveGlobal = (e) => {
-    if (isLite) return;
-    setMousePos({ x: e.clientX, y: e.clientY });
-  };
 
   const originalTotal = selectedServices.reduce((sum, idx) => sum + serviceCategories[idx].price, 0);
   const hasDiscount = selectedServices.length >= 2;
@@ -300,302 +360,107 @@ export default function ServicesPage({ onViewChange }) {
     const walk = (x - startXRef.current) * 1.5;
     carousel.scrollLeft = scrollLeftRef.current - walk;
     
-    // Tilt calculations based on mouse speed
-    const diff = x - lastXRef.current;
-    lastXRef.current = x;
-    const targetTilt = Math.min(Math.max(diff * 0.25, -8), 8);
-    setTiltAngle(targetTilt);
+    // Tilt calculations
+    const deltaX = e.pageX - lastXRef.current;
+    setTiltAngle(Math.max(-8, Math.min(8, deltaX * 0.5)));
+    lastXRef.current = e.pageX;
   };
 
   const handleMouseUpOrLeave = () => {
     setIsDragging(false);
-    // Smooth release back to 0 tilt
-    gsap.to({ a: tiltAngle }, {
-      a: 0,
-      duration: 0.4,
-      ease: 'power2.out',
-      onUpdate: function() {
-        setTiltAngle(this.targets()[0].a);
-      }
-    });
+    setTiltAngle(0);
   };
 
-  // Carousel Arrow Navigation
   const scrollCarousel = (direction) => {
     const carousel = carouselRef.current;
     if (!carousel) return;
-    const cardWidth = carousel.querySelector('.lxs-card-wrapper').offsetWidth;
-    const scrollAmount = direction === 'left' ? -cardWidth * 0.9 : cardWidth * 0.9;
-    carousel.scrollTo({
-      left: carousel.scrollLeft + scrollAmount,
+    const scrollAmount = carousel.clientWidth * 0.75;
+    carousel.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth'
     });
   };
 
-  // GSAP ScrollTrigger Animations
-  useEffect(() => {
-    if (isLite) return;
-
-    const ctx = gsap.context(() => {
-      // 1. Hero text fade-in upward
-      gsap.fromTo('.lxs-hero-label', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', delay: 0.2 });
-      gsap.fromTo('.lxs-hero-title', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: 1, ease: 'power3.out', delay: 0.3 });
-      gsap.fromTo('.lxs-hero-desc', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out', delay: 0.5 });
-      gsap.fromTo('.lxs-hero-features li', { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.6, stagger: 0.08, ease: 'power2.out', delay: 0.6 });
-      gsap.fromTo('.lxs-hero-ctas', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out', delay: 0.8 });
-
-      // 2. Timeline vertical line drawing
-      const tlSection = timelineRef.current;
-      if (tlSection) {
-        gsap.fromTo(timelineProgressLineRef.current, 
-          { scaleY: 0 }, 
-          {
-            scaleY: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: tlSection,
-              start: 'top 40%',
-              end: 'bottom 60%',
-              scrub: true
-            }
-          }
-        );
-
-        // Highlight milestones on scroll
-        gsap.utils.toArray('.lxs-timeline-step').forEach((step) => {
-          gsap.fromTo(step, 
-            { opacity: 0.2, filter: 'blur(3px)', scale: 0.95 },
-            {
-              opacity: 1,
-              filter: 'blur(0px)',
-              scale: 1,
-              duration: 0.6,
-              ease: 'power2.out',
-              scrollTrigger: {
-                trigger: step,
-                start: 'top 70%',
-                end: 'top 35%',
-                toggleActions: 'play reverse play reverse'
-              }
-            }
-          );
-        });
-      }
-
-      // 3. Why Choose Us Alternating reveal
-      gsap.utils.toArray('.lxs-why-row').forEach((row) => {
-        const textCol = row.querySelector('.lxs-why-text-col');
-        const imgCol = row.querySelector('.lxs-why-img-col');
-        
-        gsap.fromTo(textCol, 
-          { opacity: 0, x: -30 }, 
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: row,
-              start: 'top 75%',
-              once: true
-            }
-          }
-        );
-
-        gsap.fromTo(imgCol, 
-          { opacity: 0, scale: 0.92, filter: 'blur(10px)' }, 
-          {
-            opacity: 1,
-            scale: 1,
-            filter: 'blur(0px)',
-            duration: 1.2,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: row,
-              start: 'top 70%',
-              once: true
-            }
-          }
-        );
-      });
-
-      // 4. Comparison columns reveal
-      gsap.fromTo('.lxs-comp-panel--us', 
-        { opacity: 0, x: -50, scale: 0.98 },
-        {
-          opacity: 1,
-          x: 0,
-          scale: 1,
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.lxs-comp-grid',
-            start: 'top 75%',
-            once: true
-          }
-        }
-      );
-      gsap.fromTo('.lxs-comp-panel--them', 
-        { opacity: 0, x: 50, scale: 0.98 },
-        {
-          opacity: 1,
-          x: 0,
-          scale: 1,
-          duration: 0.9,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.lxs-comp-grid',
-            start: 'top 75%',
-            once: true
-          }
-        }
-      );
-
-      // 5. Pricing Philosophy Underline
-      gsap.fromTo('.lxs-phil-underline', 
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          duration: 1.2,
-          ease: 'power3.inOut',
-          scrollTrigger: {
-            trigger: '.lxs-phil-title',
-            start: 'top 80%',
-            once: true
-          }
-        }
-      );
-
-      // 6. Configurator Card count-ups when active
-      gsap.fromTo('.lxs-configurator-box', 
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: '.lxs-configurator-box',
-            start: 'top 80%',
-            once: true
-          }
-        }
-      );
-    }, pageRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <div id="services-page" ref={pageRef} onMouseMove={handleMouseMoveGlobal} className="lxs-wrapper">
+    <div ref={pageRef} className="sp-wrapper">
       
-      {/* Cinematic Ambient Lighting (Dynamic Follower) */}
-      {!isLite && (
+      {/* Background Ambient Lighting Container */}
+      <div className="sp-bg-lighting" aria-hidden="true">
         <div 
-          className="lxs-ambient-light" 
+          className="sp-ambient-cursor-glow"
           style={{
             transform: `translate3d(${mousePos.x - 300}px, ${mousePos.y - 300}px, 0)`,
-            transition: 'transform 0.15s cubic-bezier(0.1, 0.8, 0.3, 1)'
           }}
         />
-      )}
-      <div className="lxs-ambient-light-static" />
+        <div className="sp-grid-overlay" />
+      </div>
 
-      <div className="container lxs-container">
+      <div className="sp-container container">
         
-        {/* Floating Status Badge (Capsule watch-style) */}
-        <div className="lxs-badge-container">
-          <div className="lxs-status-badge">
-            <span className="lxs-status-dot"></span>
-            <span className="lxs-status-text">Only 2 Build Slots Left This Month</span>
+        {/* HERO HEADER */}
+        <header className="sp-header">
+          <div className="sp-header-badge">
+            <Sparkles size={12} className="sp-badge-icon" />
+            <span>PREMIUM CANADIAN AGENCY CAPABILITIES</span>
           </div>
-        </div>
+          <h1 className="sp-title">
+            Digital Engineering & <br />
+            <span className="sp-title-gradient">AI Automation Engine</span>
+          </h1>
+          <p className="sp-subtitle">
+            Transparent pricing for growing SMBs, medical practices, law firms, and trades. Built with high-fidelity React, Next.js, and automated workflow systems.
+          </p>
+        </header>
 
-        {/* HERO SECTION */}
-        <section className="lxs-hero">
-          <div className="lxs-hero-content">
-            <span className="lxs-hero-label">TAILORED DIGITAL SYSTEMS</span>
-            <h1 className="lxs-hero-title">
-              Every Business Deserves <br className="desktop-break" />
-              a <span className="lxs-text-gold">Custom Engine.</span>
-            </h1>
-            <p className="lxs-hero-desc">
-              We design and code bespoke digital infrastructure that eliminates middle managers, replaces rigid retainers, and loads at peak velocities.
-            </p>
-            
-            <ul className="lxs-hero-features">
-              <li><span className="lxs-gold-check">✓</span> Free Live Demo</li>
-              <li><span className="lxs-gold-check">✓</span> No Contracts</li>
-              <li><span className="lxs-gold-check">✓</span> Starts at $499</li>
-              <li><span className="lxs-gold-check">✓</span> Built by Engineers</li>
-            </ul>
-
-            <div className="lxs-hero-ctas">
-              <a 
-                href="#demo" 
-                onClick={(e) => { e.preventDefault(); onViewChange('demo'); }} 
-                className="lxs-btn lxs-btn--primary"
-              >
-                Book Free Strategy Call
-                <ArrowRight size={14} className="lxs-arrow-slide" />
-              </a>
-              <a 
-                href="#demo" 
-                onClick={(e) => { e.preventDefault(); onViewChange('demo'); }} 
-                className="lxs-btn lxs-btn--secondary"
-              >
-                Watch Demo
-              </a>
-            </div>
-          </div>
-        </section>
-
-        {/* SERVICES HORIZONTAL SNAP CAROUSEL */}
+        {/* HORIZONTAL CAROUSEL SHOWCASE */}
         <section className="lxs-carousel-section">
-          <div className="lxs-section-header">
-            <span className="lxs-eyebrow">CAPABILITIES</span>
-            <h2 className="lxs-section-title">Crafted Without Compromise</h2>
-            <p className="lxs-section-subtitle">
-              Drag or swipe through our core capabilities. Every system is machined from clean code, fully bespoke, and hosted on premium edge networks.
-            </p>
-          </div>
-
-          {/* Carousel Arrows (Desktop only) */}
-          <div className="lxs-carousel-controls">
-            <button className="lxs-carousel-arrow" onClick={() => scrollCarousel('left')} aria-label="Scroll left">
-              <ChevronLeft size={16} />
-            </button>
-            <button className="lxs-carousel-arrow" onClick={() => scrollCarousel('right')} aria-label="Scroll right">
-              <ChevronRight size={16} />
-            </button>
+          <div className="lxs-carousel-header">
+            <div>
+              <span className="lxs-eyebrow">SERVICES & PLATFORMS</span>
+              <h2 className="lxs-section-title">Core Capability Modules</h2>
+            </div>
+            
+            <div className="lxs-carousel-nav">
+              <button 
+                onClick={() => scrollCarousel('left')} 
+                className="lxs-nav-btn"
+                aria-label="Previous service"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              <button 
+                onClick={() => scrollCarousel('right')} 
+                className="lxs-nav-btn"
+                aria-label="Next service"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
           </div>
 
           <div 
-            className={`lxs-carousel-track ${isDragging ? 'dragging' : ''}`}
             ref={carouselRef}
+            className={`lxs-carousel-track ${isDragging ? 'dragging' : ''}`}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUpOrLeave}
             onMouseLeave={handleMouseUpOrLeave}
           >
             {serviceCategories.map((service, idx) => {
-              const IconComponent = service.icon;
+              const Icon = service.icon;
               return (
-                <div key={idx} className="lxs-card-wrapper">
+                <div key={idx} className="lxs-carousel-slide">
                   <article 
                     className="lxs-card"
                     style={{
                       transform: isDragging ? `rotateY(${tiltAngle}deg) scale(0.99)` : 'none',
-                      transition: isDragging ? 'none' : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease'
                     }}
                   >
-                    <div className="lxs-card-noise" />
-                    
-                    <div className="lxs-card-header">
-                      <div className="lxs-card-icon-wrap">
-                        <IconComponent className="lxs-card-icon" size={28} strokeWidth={1} />
-                      </div>
+                    <div className="lxs-card-top">
                       <span className="lxs-card-tag">{service.tag}</span>
+                      <div className="lxs-card-icon-wrap">
+                        <Icon size={20} strokeWidth={1.5} className="lxs-card-icon" />
+                      </div>
                     </div>
 
                     <h3 className="lxs-card-title">{service.title}</h3>
@@ -612,8 +477,8 @@ export default function ServicesPage({ onViewChange }) {
 
                     <div className="lxs-card-footer">
                       <div className="lxs-card-scope">
-                        <span className="lxs-scope-label">PROJECT SCOPE</span>
-                        <span className="lxs-scope-price">Starts from ${service.price}</span>
+                        <span className="lxs-scope-label">STARTING PRICE</span>
+                        <span className="lxs-scope-price">From ${service.price} USD</span>
                       </div>
                       <button 
                         className="lxs-card-btn" 
@@ -638,10 +503,10 @@ export default function ServicesPage({ onViewChange }) {
           </div>
         </section>
 
-        {/* INTERACTIVE PRICING (Tesla Configurator Style) */}
+        {/* INTERACTIVE PRICING BUNDLE BUILDER (Tesla Configurator Style) */}
         <section id="configurator-section" className="lxs-configurator-section">
           <div className="lxs-section-header">
-            <span className="lxs-eyebrow">CONFIGURATOR</span>
+            <span className="lxs-eyebrow">INTERACTIVE CONFIGURATOR</span>
             <h2 className="lxs-section-title">Design Your Custom Engine</h2>
             <p className="lxs-section-subtitle">
               Select the capabilities required to accelerate your business. Combine 2 or more systems to automatically unlock a 20% bundle discount.
@@ -650,7 +515,7 @@ export default function ServicesPage({ onViewChange }) {
 
           <div className="lxs-configurator-box">
             
-            {/* Left: Tesla-style Selector Pills */}
+            {/* Left: Selector Pills */}
             <div className="lxs-configurator-selector">
               <span className="lxs-config-label">BUILD OPTIONS</span>
               <div className="lxs-configurator-list">
@@ -669,7 +534,7 @@ export default function ServicesPage({ onViewChange }) {
                       <Icon size={16} strokeWidth={1.5} className="lxs-pill-icon" />
                       <div className="lxs-pill-info">
                         <span className="lxs-pill-name">{service.title}</span>
-                        <span className="lxs-pill-price">+${service.price}</span>
+                        <span className="lxs-pill-price">From +${service.price}</span>
                       </div>
                     </button>
                   );
@@ -677,7 +542,7 @@ export default function ServicesPage({ onViewChange }) {
               </div>
             </div>
 
-            {/* Right: Premium Summary Card */}
+            {/* Right: Summary Card */}
             <div className="lxs-configurator-summary">
               <div className="lxs-summary-top">
                 <span className="lxs-config-label">ENGINE SPECIFICATION</span>
@@ -732,11 +597,81 @@ export default function ServicesPage({ onViewChange }) {
                   <ArrowRight size={14} />
                 </button>
                 <span className="lxs-summary-footer-text">
-                  *Completely custom scoped. No contracts. 100% money-back guarantee.
+                  *Completely custom scoped. Transparent pricing. 100% Free Live Demo.
                 </span>
               </div>
             </div>
 
+          </div>
+        </section>
+
+        {/* FULL AGENCY SERVICE RATE CARD & MATRIX */}
+        <section className="lxs-ratecard-section" style={{ margin: '120px 0' }}>
+          <div className="lxs-section-header">
+            <span className="lxs-eyebrow">TRANSPARENT PRICING MATRIX</span>
+            <h2 className="lxs-section-title">Itemized Service Rate Card</h2>
+            <p className="lxs-section-subtitle">
+              Fair, upfront pricing tailored for Canadian small and medium businesses, medical clinics, trades, and professional practices.
+            </p>
+          </div>
+
+          {/* Rate Card Tabs */}
+          <div className="lxs-rate-tabs" style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '32px' }}>
+            {[
+              { id: 'web', label: 'Web Architecture' },
+              { id: 'ai', label: 'AI & Automation (Highest ROI)' },
+              { id: 'branding', label: 'Branding & Copywriting' },
+              { id: 'care', label: 'Monthly Care Plans' },
+              { id: 'hourly', label: 'Hourly Rates & Edits' }
+            ].map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setRateCardTab(tab.id)}
+                className={`lxs-btn ${rateCardTab === tab.id ? 'lxs-btn--primary' : 'lxs-btn--ghost'}`}
+                style={{ padding: '10px 18px', fontSize: '12px' }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Rate Matrix Table Container */}
+          <div className="lxs-rate-matrix-box" style={{ background: 'rgba(13, 10, 9, 0.6)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)', padding: '32px', backdropFilter: 'blur(16px)' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>
+                    <th style={{ padding: '12px 16px' }}>SERVICE / CAPABILITY</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'right' }}>PRICE (USD)</th>
+                    <th style={{ padding: '12px 16px' }}>SCOPE DETAILS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rateCardMatrix[rateCardTab].map((item, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', transition: 'background 0.2s ease' }}>
+                      <td style={{ padding: '14px 16px', fontFamily: 'var(--font-body)', fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px' }}>
+                        {item.service}
+                      </td>
+                      <td style={{ padding: '14px 16px', fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--accent-gold)', fontSize: '14px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                        {item.price}
+                      </td>
+                      <td style={{ padding: '14px 16px', fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--text-muted)' }}>
+                        {item.note}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-muted)' }}>
+                * All rates in USD. Customized enterprise scopes available upon request.
+              </span>
+              <button onClick={() => onViewChange('demo')} className="lxs-btn lxs-btn--primary" style={{ padding: '8px 18px', fontSize: '11px' }}>
+                Request Custom Proposal ↗
+              </button>
+            </div>
           </div>
         </section>
 
@@ -748,231 +683,43 @@ export default function ServicesPage({ onViewChange }) {
               <span className="lxs-phil-underline" />
             </h2>
             <p className="lxs-phil-text">
-              We eliminate bloated overhead, middle management telephone tags, and monthly retainer chains. Premium software engineering, flat-rates, direct access, complete transparency.
+              We eliminate traditional agency bloat. No account managers playing telephone, no expensive office minimums. Direct software engineering flat-rates starting from $650 for landing pages and $3,500 for full custom platforms.
             </p>
           </div>
         </section>
 
-        {/* COMPARISON SECTION (OddWebs vs Traditional Agency) */}
+        {/* COMPARISON MATRIX TABLE */}
         <section className="lxs-comparison-section">
           <div className="lxs-section-header">
-            <span className="lxs-eyebrow">SMART CONTRAST</span>
-            <h2 className="lxs-section-title">OD Model vs Traditional Agencies</h2>
-            <p className="lxs-section-subtitle">
-              We engineered a production model that favors builders over managers. No upfront risk. No retainer chains. Just pure velocity.
-            </p>
+            <span className="lxs-eyebrow">TRANSPARENCY</span>
+            <h2 className="lxs-section-title">The OddWebs Advantage</h2>
           </div>
 
-          <div className="lxs-comp-grid">
-            
-            {/* Left: OddWebs (Emerald Panel) */}
-            <div className="lxs-comp-panel lxs-comp-panel--us">
-              <div className="lxs-comp-panel-glow" />
-              <div className="lxs-comp-panel-header">
-                <span className="lxs-comp-panel-label">ODDWEBS WORKFLOW</span>
-                <h3 className="lxs-comp-panel-title">Crafted Architecture</h3>
-              </div>
-              <ul className="lxs-comp-list">
-                {comparisonData.map((data, idx) => (
-                  <li key={idx} className="lxs-comp-item">
-                    <div className="lxs-comp-item-header">
-                      <span className="lxs-comp-num">{data.metric}</span>
-                      <div className="lxs-comp-check-icon success">
-                        <Check size={12} strokeWidth={3} />
-                      </div>
-                      <span className="lxs-comp-feature-name">{data.feature}</span>
-                    </div>
-                    <div className="lxs-comp-item-content">
-                      <span className="lxs-comp-highlight success">{data.usVal}</span>
-                      <p className="lxs-comp-desc" dangerouslySetInnerHTML={{ __html: data.usDesc }} />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Right: Traditional Agency (Crimson Panel) */}
-            <div className="lxs-comp-panel lxs-comp-panel--them">
-              <div className="lxs-comp-panel-header">
-                <span className="lxs-comp-panel-label">TRADITIONAL AGENCY</span>
-                <h3 className="lxs-comp-panel-title">Legacy Bureaucracy</h3>
-              </div>
-              <ul className="lxs-comp-list">
-                {comparisonData.map((data, idx) => (
-                  <li key={idx} className="lxs-comp-item">
-                    <div className="lxs-comp-item-header">
-                      <span className="lxs-comp-num">{data.metric}</span>
-                      <div className="lxs-comp-check-icon failure">
-                        <AlertCircle size={10} strokeWidth={2.5} />
-                      </div>
-                      <span className="lxs-comp-feature-name">{data.feature}</span>
-                    </div>
-                    <div className="lxs-comp-item-content">
-                      <span className="lxs-comp-highlight failure">{data.themVal}</span>
-                      <p className="lxs-comp-desc" dangerouslySetInnerHTML={{ __html: data.themDesc }} />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-          </div>
-        </section>
-
-        {/* TIMELINE SECTION (Vertical Roadmap) */}
-        <section ref={timelineRef} className="lxs-timeline-section">
-          <div className="lxs-section-header">
-            <span className="lxs-eyebrow">ROADMAP</span>
-            <h2 className="lxs-section-title">The Engineering Cycle</h2>
-            <p className="lxs-section-subtitle">
-              How we take your system from conception to deployment. A modular timeline designed to avoid red tape and optimize velocity.
-            </p>
-          </div>
-
-          <div className="lxs-timeline-wrapper">
-            {/* Connected glowing vertical line */}
-            <div className="lxs-timeline-line">
-              <div className="lxs-timeline-line-background" />
-              <div ref={timelineProgressLineRef} className="lxs-timeline-line-progress" />
-            </div>
-
-            <div className="lxs-timeline-steps">
-              
-              <div className="lxs-timeline-step">
-                <div className="lxs-timeline-step-indicator">
-                  <div className="lxs-timeline-step-dot" />
-                  <span className="lxs-timeline-step-num">01</span>
+          <div className="lxs-comparison-grid">
+            {comparisonData.map((item, idx) => (
+              <div key={idx} className="lxs-comp-card">
+                <div className="lxs-comp-header">
+                  <span className="lxs-comp-num">{item.metric}</span>
+                  <h3 className="lxs-comp-feature">{item.feature}</h3>
                 </div>
-                <div className="lxs-timeline-step-content">
-                  <h3 className="lxs-timeline-step-title">Discovery & Strategy</h3>
-                  <p className="lxs-timeline-step-desc">
-                    We hop on a 20-minute strategy call to align on your technical specifications. No sales pitches, just developers assessing your architecture.
-                  </p>
+
+                <div className="lxs-comp-body">
+                  <div className="lxs-comp-side lxs-comp-side--us">
+                    <div className="lxs-side-badge">ODDWEBS</div>
+                    <span className="lxs-side-val">{item.usVal}</span>
+                    <p className="lxs-side-desc">{item.usDesc}</p>
+                  </div>
+
+                  <div className="lxs-comp-divider" />
+
+                  <div className="lxs-comp-side lxs-comp-side--them">
+                    <div className="lxs-side-badge lxs-side-badge--them">TRADITIONAL AGENCIES</div>
+                    <span className="lxs-side-val lxs-side-val--them">{item.themVal}</span>
+                    <p className="lxs-side-desc">{item.themDesc}</p>
+                  </div>
                 </div>
               </div>
-
-              <div className="lxs-timeline-step">
-                <div className="lxs-timeline-step-indicator">
-                  <div className="lxs-timeline-step-dot" />
-                  <span className="lxs-timeline-step-num">02</span>
-                </div>
-                <div className="lxs-timeline-step-content">
-                  <h3 className="lxs-timeline-step-title">Free Custom Homepage Demo</h3>
-                  <p className="lxs-timeline-step-desc">
-                    We design and develop a fully functioning, custom homepage mockup completely free of charge. Experience your layout before committing a single cent.
-                  </p>
-                </div>
-              </div>
-
-              <div className="lxs-timeline-step">
-                <div className="lxs-timeline-step-indicator">
-                  <div className="lxs-timeline-step-dot" />
-                  <span className="lxs-timeline-step-num">03</span>
-                </div>
-                <div className="lxs-timeline-step-content">
-                  <h3 className="lxs-timeline-step-title">Refinements & Feedback</h3>
-                  <p className="lxs-timeline-step-desc">
-                    We jump in a shared channel (Slack/WhatsApp) to rapidly tune details, typography, colors, and layout animations to absolute perfection.
-                  </p>
-                </div>
-              </div>
-
-              <div className="lxs-timeline-step">
-                <div className="lxs-timeline-step-indicator">
-                  <div className="lxs-timeline-step-dot" />
-                  <span className="lxs-timeline-step-num">04</span>
-                </div>
-                <div className="lxs-timeline-step-content">
-                  <h3 className="lxs-timeline-step-title">Custom Development</h3>
-                  <p className="lxs-timeline-step-desc">
-                    Our team custom-codes the rest of your system page-by-page. Zero templates, pure responsive component architecture, optimized for SEO speed metrics.
-                  </p>
-                </div>
-              </div>
-
-              <div className="lxs-timeline-step">
-                <div className="lxs-timeline-step-indicator">
-                  <div className="lxs-timeline-step-dot" />
-                  <span className="lxs-timeline-step-num">05</span>
-                </div>
-                <div className="lxs-timeline-step-content">
-                  <h3 className="lxs-timeline-step-title">Launch & Handover</h3>
-                  <p className="lxs-timeline-step-desc">
-                    We deploy your custom engine onto high-speed edge environments. 100% code buyout option completes. Secure, lightning fast, and built to rank.
-                  </p>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </section>
-
-        {/* WHY CHOOSE US (Alternating Timeline with Luxury Images) */}
-        <section className="lxs-why-section">
-          <div className="lxs-section-header">
-            <span className="lxs-eyebrow">OUR ETHOS</span>
-            <h2 className="lxs-section-title">Built for the Details</h2>
-            <p className="lxs-section-subtitle">
-              We construct digital systems for brands who demand perfection. If you obsess over design, performance, and clear communication—we are your partners.
-            </p>
-          </div>
-
-          <div className="lxs-why-rows">
-            
-            {/* Alternating Row 1 */}
-            <div className="lxs-why-row">
-              <div className="lxs-why-text-col">
-                <span className="lxs-why-num">01</span>
-                <h3 className="lxs-why-title">High-End Engineering</h3>
-                <p className="lxs-why-desc">
-                  Every pixel is placed intentionally. Our digital designs marry editorial serif typography with ultra-fast modern JS architectures. The result is a custom engine that feels as heavy, premium, and refined as a luxury watch dial.
-                </p>
-              </div>
-              <div className="lxs-why-img-col">
-                <div className="lxs-img-frame">
-                  <img src="/custom_engine_concept.jpg" alt="Luxury Technology Cybernetic Engine Concept" className="lxs-why-img" loading="lazy" />
-                  <div className="lxs-img-reflection" />
-                  <div className="lxs-img-border" />
-                </div>
-              </div>
-            </div>
-
-            {/* Alternating Row 2 */}
-            <div className="lxs-why-row lxs-why-row--reverse">
-              <div className="lxs-why-text-col">
-                <span className="lxs-why-num">02</span>
-                <h3 className="lxs-why-title">Mobile-First Obsession</h3>
-                <p className="lxs-why-desc">
-                  We optimize every element for premium, one-handed mobile layouts. Comfortable touch zones, generous breathing margins, and 60fps physics-based animations ensure a smooth, tactile experience across any screen.
-                </p>
-              </div>
-              <div className="lxs-why-img-col">
-                <div className="lxs-img-frame">
-                  <img src="/luxury_mobile_ui.jpg" alt="Premium Mobile Dashboard Interface Concept" className="lxs-why-img" loading="lazy" />
-                  <div className="lxs-img-reflection" />
-                  <div className="lxs-img-border" />
-                </div>
-              </div>
-            </div>
-
-            {/* Alternating Row 3 */}
-            <div className="lxs-why-row">
-              <div className="lxs-why-text-col">
-                <span className="lxs-why-num">03</span>
-                <h3 className="lxs-why-title">Radical Transparency</h3>
-                <p className="lxs-why-desc">
-                  No account managers playing telephone. No hidden markup fees. You collaborate directly in private Slack channels with the software engineers writing your code, keeping project updates instantaneous and accurate.
-                </p>
-              </div>
-              <div className="lxs-why-img-col">
-                <div className="lxs-img-frame">
-                  <img src="/luxury_analytics_ui.jpg" alt="Premium Custom Analytics Interface Panel" className="lxs-why-img" loading="lazy" />
-                  <div className="lxs-img-reflection" />
-                  <div className="lxs-img-border" />
-                </div>
-              </div>
-            </div>
-
+            ))}
           </div>
         </section>
 
@@ -982,7 +729,7 @@ export default function ServicesPage({ onViewChange }) {
             <span className="lxs-bottom-label">GET STARTED</span>
             <h2 className="lxs-bottom-title">Build Your Custom Engine.</h2>
             <p className="lxs-bottom-sub">
-              Claim your free roadmap design. We'll map out your custom digital structure and deliver a fully custom homepage demo within days, completely free.
+              Claim your free roadmap design. We&apos;ll map out your custom digital structure and deliver a fully custom homepage demo within days, completely free.
             </p>
             <div className="lxs-bottom-ctas">
               <button 
@@ -1003,7 +750,7 @@ export default function ServicesPage({ onViewChange }) {
       <div className={`lxs-sticky-cta ${showStickyCta ? 'visible' : ''}`}>
         <div className="lxs-sticky-content">
           <span className="lxs-sticky-dot" />
-          <span className="lxs-sticky-text">Custom Roadmap Starts at $499</span>
+          <span className="lxs-sticky-text">Custom Growth Packages Start at $650</span>
           <button 
             onClick={() => onViewChange('demo')} 
             className="lxs-sticky-btn"

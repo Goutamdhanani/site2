@@ -86,11 +86,11 @@ export default function Navbar({ currentView, onViewChange }) {
             <li>
               <a
                 href="#process"
-                className="nav-link"
+                className={`nav-link ${currentView === 'process' ? 'active' : ''}`}
                 onClick={(e) => {
                   e.preventDefault();
                   trackCTA('nav_process', 'click');
-                  onViewChange('home', '#process');
+                  onViewChange('process');
                 }}
               >
                 Process
@@ -149,10 +149,10 @@ export default function Navbar({ currentView, onViewChange }) {
             <span className="menu-item-label">Services</span>
             <span className="menu-item-desc">Premium Growth Solutions</span>
           </a>
-          <a href="#process" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('home', '#process'); }} className="mobile-menu-item">
+          <a href="#process" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('process'); }} className="mobile-menu-item">
             <span className="menu-item-num">03</span>
             <span className="menu-item-label">Process</span>
-            <span className="menu-item-desc">48H Design Workflow</span>
+            <span className="menu-item-desc">12-Phase Growth System</span>
           </a>
           <a href="#about" onClick={(e) => { e.preventDefault(); closeMenu(); onViewChange('about'); }} className="mobile-menu-item">
             <span className="menu-item-num">04</span>

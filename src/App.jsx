@@ -17,6 +17,7 @@ import Footer from './components/Footer';
 import CustomCursor from './components/CustomCursor';
 import PortfolioPage from './components/PortfolioPage';
 import AboutPage from './components/AboutPage';
+import ProcessPage from './components/ProcessPage';
 import BookingFlow from './components/BookingFlow';
 import ServicesPage from './components/ServicesPage';
 import NotFoundPage from './components/NotFoundPage';
@@ -38,6 +39,7 @@ export default function App() {
     const hash = window.location.hash;
     if (hash === '#portfolio') return 'portfolio';
     if (hash === '#about') return 'about';
+    if (hash === '#process') return 'process';
     if (hash === '#demo') return 'demo';
     if (hash === '#services-page') return 'services-page';
     if (hash === '#analytics') return 'analytics';
@@ -86,6 +88,8 @@ export default function App() {
         setCurrentView('portfolio');
       } else if (hash === '#about') {
         setCurrentView('about');
+      } else if (hash === '#process') {
+        setCurrentView('process');
       } else if (hash === '#demo') {
         setCurrentView('demo');
       } else if (hash === '#services-page') {
@@ -879,6 +883,8 @@ export default function App() {
             <PortfolioPage onViewChange={handleViewChange} />
           ) : currentView === 'about' ? (
             <AboutPage onViewChange={handleViewChange} />
+          ) : currentView === 'process' ? (
+            <ProcessPage onViewChange={handleViewChange} />
           ) : currentView === 'services-page' ? (
             <ServicesPage onViewChange={handleViewChange} />
           ) : currentView === 'analytics' ? (

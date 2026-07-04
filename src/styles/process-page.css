@@ -1,0 +1,552 @@
+/* ==========================================================================
+   THE ODDWEBS GROWTH SYSTEM (DEDICATED PROCESS PAGE STYLES)
+   ========================================================================== */
+
+.process-page-wrapper {
+  position: relative;
+  min-height: 100vh;
+  padding: 120px 0 80px;
+  overflow: hidden;
+  background: #060404; /* Deep outer-space background */
+  z-index: 2;
+}
+
+/* ─── Celestial Nebulae & Sky Overlays ─── */
+.celestial-fog-1,
+.celestial-fog-2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(150px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.15;
+}
+
+.celestial-fog-1 {
+  width: 70vw;
+  height: 70vw;
+  background: radial-gradient(circle, rgba(199, 154, 75, 0.08) 0%, transparent 70%);
+  top: -15%;
+  right: -10%;
+}
+
+.celestial-fog-2 {
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(249, 87, 56, 0.06) 0%, transparent 70%);
+  bottom: 10%;
+  left: -10%;
+}
+
+.process-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Hero Header & Sky Quote Box ─── */
+.process-header {
+  text-align: center;
+  max-width: 900px;
+  margin: 0 auto 96px;
+}
+
+.process-header h1 {
+  margin: 16px 0 32px;
+  line-height: 1.1;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+}
+
+.pr-hero-quote-box {
+  position: relative;
+  background: rgba(255, 255, 255, 0.012);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 40px 32px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.pr-hero-quote-box p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-style: italic;
+}
+
+/* ─── Phase 01 & 02: Opportunity Maps & Case Simulator ─── */
+.pr-simulator-section {
+  margin-bottom: 120px;
+}
+
+.pr-section-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.pr-section-header h2 {
+  margin-top: 12px;
+}
+
+.pr-sim-panel {
+  background: rgba(13, 10, 9, 0.5) !important;
+}
+
+.pr-sim-layout {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  align-items: stretch;
+}
+
+@media (max-width: 991px) {
+  .pr-sim-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pr-sim-timeline-control {
+  padding: 40px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 991px) {
+  .pr-sim-timeline-control {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 32px 20px;
+  }
+}
+
+.pr-sim-month-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 16px 0 24px;
+}
+
+.pr-sim-btn {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  padding: 10px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pr-sim-btn:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary);
+}
+
+.pr-sim-btn.active {
+  background: rgba(199, 154, 75, 0.08);
+  border-color: var(--accent-gold);
+  color: var(--accent-gold);
+  box-shadow: 0 0 15px rgba(199, 154, 75, 0.1);
+}
+
+/* Roadmap Month Detail Card */
+.pr-sim-card {
+  position: relative;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  flex: 1;
+}
+
+.pr-card-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.pr-card-altitude {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--accent-amber);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.pr-card-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin-top: 4px;
+}
+
+.pr-card-row {
+  margin-bottom: 16px;
+}
+
+.pr-card-row:last-child {
+  margin-bottom: 0;
+}
+
+.row-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.row-value {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.row-value.highlight-gold {
+  color: var(--accent-gold);
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(199, 154, 75, 0.15);
+}
+
+.row-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.row-list li {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  position: relative;
+  padding-left: 16px;
+}
+
+.row-list li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--accent-gold);
+}
+
+/* Forecast Chart Wrap */
+.pr-sim-chart-wrap {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.003);
+}
+
+@media (max-width: 991px) {
+  .pr-sim-chart-wrap {
+    padding: 32px 20px;
+  }
+}
+
+.chart-heading {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin: 12px 0 20px;
+}
+
+.svg-chart-container {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 20px 16px 10px;
+  position: relative;
+}
+
+.pr-svg-graph {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Chart Points Glow */
+.chart-dot {
+  fill: #060404;
+  stroke: rgba(255, 255, 255, 0.3);
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chart-dot:hover,
+.chart-dot.active {
+  stroke: var(--accent-gold);
+  stroke-width: 3;
+  r: 6.5;
+  filter: drop-shadow(0 0 8px var(--accent-gold));
+}
+
+.chart-axes-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  padding: 0 4px;
+}
+
+/* Chart metrics legends */
+.chart-metrics-legend {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  border-top: 1px dashed rgba(199, 154, 75, 0.15);
+  padding-top: 20px;
+  margin-top: 24px;
+}
+
+.legend-indicator {
+  display: flex;
+  flex-direction: column;
+}
+
+.legend-lbl {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.legend-val {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+}
+
+.legend-val.highlight-gold {
+  color: var(--accent-gold);
+  text-shadow: 0 0 10px rgba(199, 154, 75, 0.2);
+}
+
+/* ─── 12-Phase Execution Timeline ─── */
+.pr-timeline-section {
+  margin-bottom: 120px;
+}
+
+.pr-timeline-outer {
+  position: relative;
+  width: 100%;
+  max-width: 1000px;
+  margin: 64px auto 0;
+  padding: 40px 0;
+}
+
+/* Timeline Vertical Line */
+.pr-timeline-line-bg,
+.pr-timeline-line-active {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+}
+
+.pr-timeline-line-bg {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.pr-timeline-line-active {
+  background: linear-gradient(to bottom, var(--accent-ember), var(--accent-amber), var(--accent-gold));
+  transform-origin: top center;
+  scale-y: 0;
+  box-shadow: 0 0 10px rgba(199, 154, 75, 0.3);
+}
+
+@media (max-width: 900px) {
+  .pr-timeline-line-bg,
+  .pr-timeline-line-active {
+    left: 20px;
+    transform: none;
+  }
+}
+
+.timeline-phases-list {
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+}
+
+.timeline-phase-block {
+  position: relative;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-phase-block.left {
+  align-self: flex-start;
+  padding-right: 48px;
+  align-items: flex-end;
+}
+
+.timeline-phase-block.right {
+  align-self: flex-end;
+  padding-left: 48px;
+  align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+  .timeline-phase-block {
+    width: 100%;
+    align-self: flex-start !important;
+    padding-left: 48px !important;
+    padding-right: 0 !important;
+    align-items: flex-start !important;
+  }
+}
+
+/* Timeline center connector dots */
+.timeline-dot-anchor {
+  position: absolute;
+  top: 40px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #060404;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  z-index: 5;
+  transition: all 0.4s ease;
+}
+
+.timeline-phase-block.left .timeline-dot-anchor {
+  right: -6px;
+}
+
+.timeline-phase-block.right .timeline-dot-anchor {
+  left: -6px;
+}
+
+@media (max-width: 900px) {
+  .timeline-dot-anchor {
+    left: 15px !important;
+    right: auto !important;
+  }
+}
+
+/* Highlight dots when phase is scrolled past */
+.timeline-phase-block:hover .timeline-dot-anchor {
+  border-color: var(--accent-gold);
+  background: var(--accent-gold);
+  box-shadow: 0 0 12px var(--accent-gold);
+  scale: 1.25;
+}
+
+/* Phase Cards Wrapper */
+.phase-card-wrapper {
+  position: relative;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 40px;
+  width: 100%;
+  max-width: 440px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s ease;
+  will-change: transform, opacity;
+}
+
+@media (max-width: 480px) {
+  .phase-card-wrapper {
+    padding: 24px;
+  }
+}
+
+.phase-card-wrapper:hover {
+  border-color: rgba(199, 154, 75, 0.25);
+  background: rgba(255, 255, 255, 0.02);
+  transform: translateY(-4px);
+}
+
+.phase-num {
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: var(--weight-black);
+  color: var(--accent-gold);
+  line-height: 1;
+}
+
+.phase-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: var(--weight-bold);
+  color: var(--text-primary);
+  margin-top: 8px;
+}
+
+.phase-quote {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-style: italic;
+  margin: 16px 0;
+}
+
+.phase-divider {
+  border: none;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin-bottom: 20px;
+}
+
+.phase-deliverables .del-lbl {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.del-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.del-list li {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.phase-footer {
+  margin-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding-top: 12px;
+}
+
+.p-foot-lbl {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  color: var(--accent-amber);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* closing cta adjustments */
+.pr-closing-cta {
+  margin-top: 40px;
+}

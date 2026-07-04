@@ -178,7 +178,7 @@ export default function Footer({ onViewChange }) {
                   onClick={(e) => {
                     e.preventDefault();
                     trackCTA('footer_process', 'click');
-                    onViewChange('home', '#process');
+                    onViewChange('process');
                   }}
                 >
                   Process
