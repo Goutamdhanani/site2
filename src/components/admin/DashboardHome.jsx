@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import KPICard from './KPICard';
 
-export default function DashboardHome({ token }) {
+export default function DashboardHome() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 

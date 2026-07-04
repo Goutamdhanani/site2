@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import StatusBadge from './StatusBadge';
 import SearchBar from './SearchBar';
 import ExportButton from './ExportButton';
@@ -10,7 +10,7 @@ export default function LeadTable({ onSelectLead }) {
   
   // Filters and Pagination
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(15);
+  const [pageSize] = useState(15);
   const [status, setStatus] = useState('');
   const [priority, setPriority] = useState('');
   const [search, setSearch] = useState('');
@@ -45,7 +45,10 @@ export default function LeadTable({ onSelectLead }) {
   }, [page, pageSize, status, priority, search, sortBy, sortDir]);
 
   useEffect(() => {
-    fetchLeads();
+    const timer = setTimeout(() => {
+      fetchLeads();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [fetchLeads]);
 
   const handleSearch = (term) => {

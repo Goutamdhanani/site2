@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { gsap } from 'gsap';
-import { isLite } from '../utils/device';
 import { handleBookingNotifications } from '../utils/booking';
 import { trackEvent, trackForm, trackAppointment } from '../utils/analytics';
 
@@ -34,18 +33,7 @@ export default function BookingFlow({ onViewChange }) {
   const [step, setStep] = useState(1);
   
   // Step 1: Services
-  const [selectedServices, setSelectedServices] = useState(() => {
-    try {
-      const stored = sessionStorage.getItem('preferred_services');
-      if (stored) {
-        sessionStorage.removeItem('preferred_services');
-        return JSON.parse(stored);
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-    return [];
-  });
+  const [selectedServices, setSelectedServices] = useState([]);
   
   // Step 2: Description
   const [description, setDescription] = useState('');
@@ -55,35 +43,67 @@ export default function BookingFlow({ onViewChange }) {
   const [email, setEmail] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [company, setCompany] = useState('');
-  const [timezone, setTimezone] = useState('UTC');
-  const [country, setCountry] = useState('United States');
   
-  // New CRM Fields States
-  const [budget, setBudget] = useState('');
-  const [timeline, setTimeline] = useState('');
-  const [website, setWebsite] = useState('');
-  const [industry, setIndustry] = useState('');
-  const [businessSize, setBusinessSize] = useState('');
-  const [consent, setConsent] = useState(false);
-  const [additionalNotes, setAdditionalNotes] = useState('');
+  const [timezone, setTimezone] = useState(() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    } catch {
+      return 'UTC';
+    }
+  });
+
+  const [country] = useState(() => {
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz) {
+        const parts = tz.split('/');
+        if (parts[0] === 'America') return 'United States';
+        if (parts[0] === 'Europe') return 'Europe';
+        if (parts[0] === 'Asia') {
+          if (parts[1] === 'Kolkata') return 'India';
+          if (parts[1] === 'Tokyo') return 'Japan';
+          return 'Asia';
+        }
+        if (parts[0] === 'Australia') return 'Australia';
+        return parts[0] || 'Global';
+      }
+    } catch { /* ignore */ }
+    return 'United States';
+  });
   
-  const startTimeRef = useRef(performance.now());
-  const [visitNumber, setVisitNumber] = useState(1);
-  const [isReturning, setIsReturning] = useState(false);
+  
+  const startTimeRef = useRef(null);
+  useEffect(() => {
+    startTimeRef.current = performance.now();
+  }, []);
+
+  const [visitNumber] = useState(() => {
+    try {
+      const visId = localStorage.getItem('ow_visitor_id');
+      if (visId) {
+        return parseInt(localStorage.getItem('ow_visit_count') || '1') + 1;
+      }
+    } catch { /* ignore */ }
+    return 1;
+  });
+
+  const [isReturning] = useState(() => {
+    try {
+      return !!localStorage.getItem('ow_visitor_id');
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     try {
       let visId = localStorage.getItem('ow_visitor_id');
       if (visId) {
-        setIsReturning(true);
         let visits = parseInt(localStorage.getItem('ow_visit_count') || '1') + 1;
         localStorage.setItem('ow_visit_count', visits.toString());
-        setVisitNumber(visits);
       } else {
         localStorage.setItem('ow_visitor_id', 'vis-' + Math.random().toString(36).substring(2, 15));
         localStorage.setItem('ow_visit_count', '1');
-        setVisitNumber(1);
-        setIsReturning(false);
       }
     } catch(e) {
       console.warn(e);
@@ -105,18 +125,14 @@ export default function BookingFlow({ onViewChange }) {
   const containerRef = useRef(null);
 
   const [toast, setToast] = useState(null);
-  const [savedBooking, setSavedBooking] = useState(null);
-
-  useEffect(() => {
+  const [savedBooking] = useState(() => {
     try {
       const stored = localStorage.getItem('oddwebs_last_booking');
-      if (stored) {
-        setSavedBooking(JSON.parse(stored));
-      }
-    } catch (e) {
-      console.warn('Failed to parse saved booking:', e);
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
     }
-  }, []);
+  });
 
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
@@ -365,28 +381,6 @@ export default function BookingFlow({ onViewChange }) {
     }
   };
 
-  // Auto-detect timezone and country
-  useEffect(() => {
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      if (tz) {
-        setTimezone(tz);
-        // Deduce country from timezone region
-        const parts = tz.split('/');
-        if (parts[0] === 'America') setCountry('United States');
-        else if (parts[0] === 'Europe') setCountry('Europe');
-        else if (parts[0] === 'Asia') {
-          if (parts[1] === 'Kolkata') setCountry('India');
-          else if (parts[1] === 'Tokyo') setCountry('Japan');
-          else setCountry('Asia');
-        } else if (parts[0] === 'Australia') setCountry('Australia');
-        else setCountry(parts[0] || 'Global');
-      }
-    } catch (e) {
-      console.warn('Geo-detection failed, using defaults');
-    }
-  }, []);
-
   // Entrance animations for steps
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -399,7 +393,7 @@ export default function BookingFlow({ onViewChange }) {
   }, [step]);
 
   // Generate list of next 10 days (skipping weekends)
-  const getNextDays = () => {
+  const nextDays = useMemo(() => {
     const days = [];
     const today = new Date();
     let current = 1;
@@ -416,9 +410,7 @@ export default function BookingFlow({ onViewChange }) {
       current++;
     }
     return days;
-  };
-
-  const nextDays = getNextDays();
+  }, []);
 
   const [bookedSlots, setBookedSlots] = useState([]);
 
@@ -459,7 +451,7 @@ export default function BookingFlow({ onViewChange }) {
       }
     };
     fetchBookings();
-  }, []);
+  }, [nextDays]);
 
   const isSlotBooked = (date, slot) => {
     if (!date) return false;
@@ -473,7 +465,7 @@ export default function BookingFlow({ onViewChange }) {
       // Direct string comparison or parse Date to compare
       try {
         return b.date === formattedDate && b.timeSlot === slot;
-      } catch (e) {
+      } catch {
         return false;
       }
     });

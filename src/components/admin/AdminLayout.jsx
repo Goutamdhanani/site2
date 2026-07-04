@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import DashboardHome from './DashboardHome';
 import LeadTable from './LeadTable';
 import LeadDrawer from './LeadDrawer';

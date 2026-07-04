@@ -2,7 +2,6 @@ import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { prefersReducedMotion } from '../utils/motion';
-import { isLite } from '../utils/device';
 import { trackCTA } from '../utils/analytics';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -24,9 +23,9 @@ function applyScrollTransition(canvas, overlayCtx, overlayCanvas, exitProgress) 
   const lerp = (start, end, t) => start + (end - start) * t;
 
   let brightness = 1;
-  let contrast = 1;
+  let contrast;
   let invert = 0;
-  let saturate = 1;
+  let saturate;
   let blur = 0;
 
   // ─── Continuous mapping for CSS Filters ───

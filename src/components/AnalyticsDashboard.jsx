@@ -101,7 +101,7 @@ export default function AnalyticsDashboard({ onViewChange }) {
         }
       });
       lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
-    } catch (e) { /* browser doesn't support */ }
+    } catch { /* browser doesn't support */ }
 
     // FCP
     try {
@@ -113,7 +113,7 @@ export default function AnalyticsDashboard({ onViewChange }) {
         }
       });
       fcpObserver.observe({ type: 'paint', buffered: true });
-    } catch (e) { /* browser doesn't support */ }
+    } catch { /* browser doesn't support */ }
 
     // CLS
     try {
@@ -127,24 +127,28 @@ export default function AnalyticsDashboard({ onViewChange }) {
         setWebVitals(prev => ({ ...prev, cls: clsValue }));
       });
       clsObserver.observe({ type: 'layout-shift', buffered: true });
-    } catch (e) { /* browser doesn't support */ }
+    } catch { /* browser doesn't support */ }
 
     // TTFB from navigation timing
     try {
       const navEntries = performance.getEntriesByType('navigation');
       if (navEntries.length > 0) {
         const nav = navEntries[0];
-        setWebVitals(prev => ({ ...prev, ttfb: nav.responseStart - nav.requestStart }));
+        requestAnimationFrame(() => {
+          setWebVitals(prev => ({ ...prev, ttfb: nav.responseStart - nav.requestStart }));
+        });
       }
-    } catch (e) { /* */ }
+    } catch { /* */ }
   }, []);
 
   // ─── Populate from existing events + listen for new ones ───
   useEffect(() => {
     if (typeof window !== 'undefined' && window.__oddwebs_analytics_events) {
       const existing = [...window.__oddwebs_analytics_events];
-      setLiveEvents(existing);
-      setStats(computeStats(existing));
+      requestAnimationFrame(() => {
+        setLiveEvents(existing);
+        setStats(computeStats(existing));
+      });
     }
 
     const handleNewEvent = (e) => {

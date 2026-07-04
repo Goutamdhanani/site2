@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import StatusBadge from './StatusBadge';
+import { useState, useEffect } from 'react';
 
 export default function LeadDrawer({ lead, onClose, onLeadUpdated }) {
   const [activeTab, setActiveTab] = useState('overview');
@@ -23,16 +22,18 @@ export default function LeadDrawer({ lead, onClose, onLeadUpdated }) {
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
-    setStatus(lead.status);
-    setPriority(lead.priority);
-    setAssignedTo(lead.assigned_to || 'Unassigned');
-    try {
-      setNotes(typeof lead.internal_notes === 'string' 
-        ? JSON.parse(lead.internal_notes) 
-        : (lead.internal_notes || []));
-    } catch {
-      setNotes([]);
-    }
+    requestAnimationFrame(() => {
+      setStatus(lead.status);
+      setPriority(lead.priority);
+      setAssignedTo(lead.assigned_to || 'Unassigned');
+      try {
+        setNotes(typeof lead.internal_notes === 'string' 
+          ? JSON.parse(lead.internal_notes) 
+          : (lead.internal_notes || []));
+      } catch {
+        setNotes([]);
+      }
+    });
   }, [lead]);
 
   const handleUpdate = async (field, value) => {
@@ -50,7 +51,7 @@ export default function LeadDrawer({ lead, onClose, onLeadUpdated }) {
       });
 
       if (res.ok) {
-        const data = await res.json();
+        await res.json();
         onLeadUpdated();
       }
     } catch (err) {

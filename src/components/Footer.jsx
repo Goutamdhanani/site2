@@ -6,7 +6,7 @@ import { trackCTA } from '../utils/analytics';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function Footer({ currentView, onViewChange }) {
+export default function Footer({ onViewChange }) {
   const footerRef = useRef(null);
 
   useEffect(() => {

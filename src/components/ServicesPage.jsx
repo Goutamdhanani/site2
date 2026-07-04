@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import {
@@ -13,13 +13,8 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  Play,
-  Calendar,
-  Clock,
   ArrowUpRight,
   Sparkles,
-  Zap,
-  CheckCircle2,
   AlertCircle
 } from 'lucide-react';
 import { isLite } from '../utils/device';
@@ -218,15 +213,29 @@ export default function ServicesPage({ onViewChange }) {
     setMousePos({ x: e.clientX, y: e.clientY });
   };
 
-  // Pricing calculations
   const originalTotal = selectedServices.reduce((sum, idx) => sum + serviceCategories[idx].price, 0);
   const hasDiscount = selectedServices.length >= 2;
   const discountAmount = hasDiscount ? Math.round(originalTotal * 0.20) : 0;
   const finalTotal = originalTotal - discountAmount;
+  const displayedPriceRef = useRef(displayedPrice);
+  useEffect(() => {
+    displayedPriceRef.current = displayedPrice;
+  }, [displayedPrice]);
+
+  const [baseDate] = useState(Date.now);
+
+  const estimatedDeliveryDate = useMemo(() => {
+    const daysToAdd = selectedServices.length <= 1 ? 5 : selectedServices.length <= 3 ? 12 : 20;
+    return new Date(baseDate + daysToAdd * 24 * 60 * 60 * 1000).toLocaleDateString('default', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }, [selectedServices.length, baseDate]);
 
   // Animated Price Counter using GSAP
   useEffect(() => {
-    const obj = { value: displayedPrice };
+    const obj = { value: displayedPriceRef.current };
     const tween = gsap.to(obj, {
       value: finalTotal,
       duration: 0.6,
@@ -697,7 +706,7 @@ export default function ServicesPage({ onViewChange }) {
                   <div className="lxs-meta-col">
                     <span className="lxs-meta-label">Est. Delivery</span>
                     <span className="lxs-meta-val">
-                      {new Date(Date.now() + (selectedServices.length <= 1 ? 5 : selectedServices.length <= 3 ? 12 : 20) * 24 * 60 * 60 * 1000).toLocaleDateString('default', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      {estimatedDeliveryDate}
                     </span>
                   </div>
                 </div>

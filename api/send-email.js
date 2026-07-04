@@ -39,12 +39,6 @@ export default async function handler(req, res) {
   
   if (supabase) {
     try {
-      // Parse numeric budget
-      let budgetVal = 2500;
-      const budgetStr = data.details?.budget || '';
-      if (budgetStr.includes('25,000')) budgetVal = 30000;
-      else if (budgetStr.includes('10,000')) budgetVal = 17500;
-      else if (budgetStr.includes('5,000') && budgetStr.includes('10')) budgetVal = 7500;
 
       const leadRow = {
         lead_id: data.id,

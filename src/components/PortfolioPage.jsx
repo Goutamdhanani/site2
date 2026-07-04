@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
 import { isLite } from '../utils/device';
 
@@ -84,6 +84,36 @@ export default function PortfolioPage({ onViewChange }) {
     }
   };
 
+  // ─── NAVIGATE TO NEW PROJECT ───
+  const handleProjectSelect = useCallback((idx) => {
+    if (idx === activeIdx || isAnimating) return;
+    setIsAnimating(true);
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setActiveIdx(idx);
+        setIsAnimating(false);
+      }
+    });
+
+    // Transition out
+    tl.to(['.pt-browser-mockup', '.pt-float-badge-metric', '.pt-float-badge-tech'], {
+      scale: 0.85,
+      opacity: 0,
+      y: 40,
+      filter: 'blur(10px)',
+      duration: 0.35,
+      ease: 'power2.in'
+    })
+    .to('.pt-console-inner > *', {
+      opacity: 0,
+      x: -30,
+      stagger: 0.04,
+      duration: 0.3,
+      ease: 'power2.in'
+    }, 0);
+  }, [activeIdx, isAnimating]);
+
   useEffect(() => {
     const handleWindowMouseUp = (e) => {
       if (!dragStart.current.isDragging) return;
@@ -137,7 +167,8 @@ export default function PortfolioPage({ onViewChange }) {
       window.removeEventListener('mouseup', handleWindowMouseUp);
       window.removeEventListener('touchend', handleWindowTouchEnd);
     };
-  }, [activeIdx, isAnimating]);
+  }, [activeIdx, isAnimating, handleProjectSelect]);
+
 
   const activeProject = projects[activeIdx];
 
@@ -202,35 +233,7 @@ export default function PortfolioPage({ onViewChange }) {
     });
   };
 
-  // ─── NAVIGATE TO NEW PROJECT ───
-  const handleProjectSelect = (idx) => {
-    if (idx === activeIdx || isAnimating) return;
-    setIsAnimating(true);
 
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setActiveIdx(idx);
-        setIsAnimating(false);
-      }
-    });
-
-    // Transition out
-    tl.to(['.pt-browser-mockup', '.pt-float-badge-metric', '.pt-float-badge-tech'], {
-      scale: 0.85,
-      opacity: 0,
-      y: 40,
-      filter: 'blur(10px)',
-      duration: 0.35,
-      ease: 'power2.in'
-    })
-    .to('.pt-console-inner > *', {
-      opacity: 0,
-      x: -30,
-      stagger: 0.04,
-      duration: 0.3,
-      ease: 'power2.in'
-    }, 0);
-  };
 
   // ─── TRANSITION ENTRANCE ONCE INDEX UPDATES ───
   useEffect(() => {

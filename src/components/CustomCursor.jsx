@@ -3,8 +3,6 @@ import { gsap } from 'gsap';
 import { isLite } from '../utils/device';
 
 export default function CustomCursor() {
-  if (isLite) return null;
-
   const dotRef = useRef(null);
   const ringRef = useRef(null);
   const textRef = useRef(null);
@@ -121,6 +119,8 @@ export default function CustomCursor() {
       });
     };
   }, []);
+
+  if (isLite) return null;
 
   return (
     <>
