@@ -170,13 +170,13 @@ export default function BookingFlow({ onViewChange }) {
     
     // 2. Draw card background (dark gradients)
     const grad = ctx.createLinearGradient(0, 0, width, height);
-    grad.addColorStop(0, '#0e0a08');
-    grad.addColorStop(1, '#050302');
+    grad.addColorStop(0, '#0D0A09');
+    grad.addColorStop(1, '#070707');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, width, height);
     
     // Draw orange top border
-    ctx.fillStyle = '#f95738';
+    ctx.fillStyle = '#C79A4B';
     ctx.fillRect(0, 0, width, 8 * scale);
     
     // Draw borders
@@ -227,7 +227,7 @@ export default function BookingFlow({ onViewChange }) {
 
     // 3. Header Logo & Badge
     // Logo mark box
-    ctx.fillStyle = '#f95738';
+    ctx.fillStyle = '#C79A4B';
     ctx.fillRect(32 * scale, 34 * scale, 28 * scale, 20 * scale);
     drawText('OW', 46, 49, `bold ${12 * scale}px sans-serif`, '#eae5e2', 'center');
     
@@ -238,12 +238,12 @@ export default function BookingFlow({ onViewChange }) {
     const badgeText = 'AGENCY DEMO PASS';
     ctx.font = `bold ${8 * scale}px monospace`;
     const badgeWidth = ctx.measureText(badgeText).width / scale + 16;
-    ctx.fillStyle = 'rgba(238, 155, 0, 0.1)';
+    ctx.fillStyle = 'rgba(229, 199, 141, 0.1)';
     ctx.fillRect((408 - badgeWidth) * scale, 34 * scale, badgeWidth * scale, 20 * scale);
-    ctx.strokeStyle = 'rgba(238, 155, 0, 0.2)';
+    ctx.strokeStyle = 'rgba(229, 199, 141, 0.2)';
     ctx.lineWidth = 1 * scale;
     ctx.strokeRect((408 - badgeWidth) * scale, 34 * scale, badgeWidth * scale, 20 * scale);
-    drawText(badgeText, 408 - badgeWidth / 2, 47, `bold ${8 * scale}px monospace`, '#ee9b00', 'center');
+    drawText(badgeText, 408 - badgeWidth / 2, 47, `bold ${8 * scale}px monospace`, '#E5C78D', 'center');
 
     // Tear-off dashed divider at y = 76
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
@@ -253,16 +253,16 @@ export default function BookingFlow({ onViewChange }) {
     ctx.lineTo(width, 76 * scale);
     ctx.stroke();
     ctx.setLineDash([]); // Reset line dash
-
+ 
     // Draw side punch holes (half circles)
-    ctx.fillStyle = '#050302'; // Match body/container bg
+    ctx.fillStyle = '#070707'; // Match body/container bg
     ctx.beginPath();
     ctx.arc(0, 76 * scale, 8 * scale, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
     ctx.arc(width, 76 * scale, 8 * scale, 0, Math.PI * 2);
     ctx.fill();
-
+ 
     // 4. Ticket Details
     // Visitor Row
     drawText('VISITOR', 32, 115, `bold ${9 * scale}px monospace`, '#7f6c65');
@@ -270,7 +270,7 @@ export default function BookingFlow({ onViewChange }) {
     
     // Reference Row
     drawText('REFERENCE', 408, 115, `bold ${9 * scale}px monospace`, '#7f6c65', 'right');
-    drawText(referenceId, 408, 135, `bold ${15 * scale}px monospace`, '#f95738', 'right');
+    drawText(referenceId, 408, 135, `bold ${15 * scale}px monospace`, '#C79A4B', 'right');
     
     // Meeting Date Row
     drawText('MEETING DATE', 32, 185, `bold ${9 * scale}px monospace`, '#7f6c65');
@@ -290,7 +290,7 @@ export default function BookingFlow({ onViewChange }) {
     // Services
     drawText('SERVICES', 32, 325, `bold ${9 * scale}px monospace`, '#7f6c65');
     const servicesJoined = servicesArray.join(', ');
-    drawText(servicesJoined, 32, 345, `bold ${12 * scale}px monospace`, '#ee9b00');
+    drawText(servicesJoined, 32, 345, `bold ${12 * scale}px monospace`, '#E5C78D');
 
     // Tear-off dashed divider at y = 410
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
