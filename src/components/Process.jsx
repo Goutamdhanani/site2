@@ -114,9 +114,9 @@ const steps = [
         {/* Code tabs HUD */}
         <rect x="15" y="25" width="130" height="110" rx="8" stroke="rgba(255,255,255,0.06)" strokeWidth="1" fill="rgba(0,0,0,0.2)" />
         <line x1="15" y1="45" x2="145" y2="45" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-        <circle cx="27" cy="35" r="2.5" fill="#f95738" />
-        <circle cx="37" cy="35" r="2.5" fill="#ee9b00" />
-        <circle cx="47" cy="35" r="2.5" fill="#e9d8a6" />
+        <circle cx="27" cy="35" r="2.5" fill="#FF6B4A" />
+        <circle cx="37" cy="35" r="2.5" fill="#C79A4B" />
+        <circle cx="47" cy="35" r="2.5" fill="#6DE7C1" />
 
         {/* Code metrics bars */}
         <line x1="25" y1="60" x2="65" y2="60" stroke="var(--accent-gold)" strokeWidth="3" strokeLinecap="round" className="code-ln-1" />

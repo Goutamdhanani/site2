@@ -5,32 +5,53 @@
    ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */
 @media (max-width: 900px), (prefers-reduced-motion: reduce) {
 
-  /* ΓöÇΓöÇΓöÇ HERO: Fix positioning & center elements for clean mobile flow ΓöÇΓöÇΓöÇ */
+  :root {
+    --text-display-2xl: clamp(2.25rem, 8vw, 3rem);
+    --text-display-xl:  clamp(1.85rem, 6vw, 2.25rem);
+    --text-display-lg:  clamp(1.5rem, 5vw, 1.85rem);
+    --text-display-md:  clamp(1.25rem, 4vw, 1.5rem);
+    --text-display-sm:  clamp(1.1rem, 3vw, 1.25rem);
+  }
+
+  /* ─── HERO: Fix positioning & center elements for clean mobile flow ─── */
   .hero-canvas-container {
     position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
     mask-image: none !important;
     -webkit-mask-image: none !important;
+    z-index: 1 !important;
   }
 
   .hero-ui-layer {
-    position: absolute !important;
+    position: relative !important;
     display: flex !important;
+    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
-    padding: 0 var(--space-md) !important;
+    padding: 120px var(--space-md) 80px !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    z-index: 10 !important;
   }
 
   #hero {
-    overflow: hidden !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
   }
 
   .hero-sticky-container {
-    overflow: hidden !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow: visible !important;
+    position: relative !important;
   }
 
   .hero-content {
-    padding: 100px 0 40px !important;
+    padding: 20px 0 !important;
     max-width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
@@ -42,13 +63,15 @@
     font-size: clamp(32px, 8vw, 56px) !important;
     text-align: center !important;
     margin-bottom: var(--space-md) !important;
+    line-height: 1.15 !important;
   }
 
   .hero-sub {
     font-size: 0.95rem !important;
     margin-bottom: var(--space-lg) !important;
     text-align: center !important;
-    max-width: 320px !important;
+    max-width: 480px !important;
+    width: 90% !important;
   }
 
   .hero-actions {
@@ -797,15 +820,18 @@
   }
 }
 
-/* ΓöÇΓöÇΓöÇ Hero Mobile Custom Adjustments ΓöÇΓöÇΓöÇ */
+/* ─── Hero Mobile Custom Adjustments ─── */
 @media (max-width: 900px) {
   .hero-ui-layer {
-    position: absolute !important;
+    position: relative !important;
     display: flex !important;
+    flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
-    padding: 0 var(--space-md) !important;
+    padding: 120px var(--space-md) 80px !important;
+    min-height: 100vh !important;
+    height: auto !important;
     z-index: 10 !important;
   }
 
