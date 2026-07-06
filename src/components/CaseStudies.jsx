@@ -6,43 +6,44 @@ gsap.registerPlugin(ScrollTrigger);
 
 const projects = [
   {
-    title: 'LunaCart',
-    category: 'E-Commerce',
+    title: 'OddShoe',
+    category: '3D E-Commerce',
     year: '2026',
-    description: 'Luxury fashion commerce experience built to increase conversion and average order value.',
+    description: 'Futuristic 3D shoe landing page and e-commerce experience showcasing high-production sneaker drops with fluid layouts and organic aesthetics.',
     metric: '+320%',
     metricLabel: 'Revenue Growth',
     color: 'var(--accent-ember)',
     glowColor: 'rgba(249, 87, 56, 0.22)',
-    image: '/assets/projects/project-1.png',
-    tags: ['E-COMMERCE', 'NEXT.JS', 'TAILWIND', 'STRIPE', 'AI AGENT', 'MOTION', 'UI/UX'],
-    link: 'https://project-restro1.vercel.app/'
+    image: '/assets/projects/boss-shoes.png',
+    tags: ['E-COMMERCE', 'REACT', 'GSAP', '3D MOTION', 'STYLING', 'ORGANIC DESIGN', 'UI/UX'],
+    link: 'https://odd-shoe.vercel.app/'
   },
   {
-    title: 'DataFlow',
-    category: 'Analytics Platform',
-    year: '2025',
-    description: 'Enterprise analytics platform redesigned for clarity, retention, and performance.',
-    metric: '-45%',
-    metricLabel: 'Churn Reduction',
-    color: 'var(--accent-amber)',
-    glowColor: 'rgba(238, 155, 0, 0.22)',
-    image: '/assets/projects/project-2.png',
-    tags: ['SAAS', 'REACT', 'GSAP', 'REDUX', 'CYBERSECURITY', 'CHARTS', 'UI/UX'],
-    link: 'https://project-restro1.vercel.app/'
-  },
-  {
-    title: 'Payze',
-    category: 'Fintech MVP',
+    title: 'OddDoctor',
+    category: 'Healthcare Platform',
     year: '2026',
-    description: 'Fintech MVP built to look trustworthy, launch fast, and support fundraising.',
-    metric: '$2.4M',
-    metricLabel: 'Seed Funding',
-    color: 'var(--accent-lacquer)',
-    glowColor: 'rgba(174, 32, 18, 0.22)',
-    image: '/assets/projects/project-3.png',
-    tags: ['MOBILE APP', 'EXPO', 'NODE.JS', 'GOOGLE MAPS', 'REDIS', 'MOTION', 'UI/UX'],
-    link: 'https://project-restro1.vercel.app/'
+    description: 'Immersive mobile dental tracking dashboard and interactive 3D arch mapping system that connects users with real-time health data.',
+    metric: '88%',
+    metricLabel: 'Oral Health Index',
+    color: '#33ccff',
+    glowColor: 'rgba(51, 204, 255, 0.22)',
+    image: '/assets/projects/odddoctor.png',
+    tags: ['MOBILE APP', '3D MAPPING', 'DENTAL AI', 'REACT', 'GSAP', 'UI/UX'],
+    link: 'https://odddoctor-alpha.vercel.app/',
+    isMobile: true
+  },
+  {
+    title: 'Storybook',
+    category: 'Watercolor Narrative',
+    year: '2026',
+    description: 'Premium Ghibli-inspired watercolor storybook landing page and collectors workshop with custom canvas leaf-drift physics and glowing firefly animations.',
+    metric: '99.4%',
+    metricLabel: 'Visual Finesse',
+    color: '#74B45C',
+    glowColor: 'rgba(116, 180, 92, 0.22)',
+    image: '/assets/projects/storybook.jpg',
+    tags: ['CREATIVE SITE', 'REACT', 'CANVAS', 'GLASS UI', 'INTERACTIVE', 'UI/UX'],
+    link: 'https://oddscene.vercel.app/'
   },
   {
     title: 'Qitchen',
@@ -132,11 +133,11 @@ export default function CaseStudies() {
         });
       }
 
-      // Parallax image movement (shift left/right opposite to scroll direction)
-      const img = card.querySelector('.cs-card__img');
-      if (img) {
-        const parallaxX = normDist * -20;
-        gsap.set(img, { 
+      // Parallax image container movement — overflow:hidden clips the shift cleanly
+      const imgContainer = card.querySelector('.cs-card__img-container');
+      if (imgContainer) {
+        const parallaxX = normDist * -8;
+        gsap.set(imgContainer, { 
           xPercent: parallaxX,
           overwrite: 'auto'
         });
@@ -473,9 +474,9 @@ export default function CaseStudies() {
 
   const glowColors = [
     'rgba(249, 87, 56, 0.15)', // Title slide (ember)
-    'rgba(249, 87, 56, 0.22)', // LunaCart
-    'rgba(238, 155, 0, 0.22)',  // DataFlow
-    'rgba(174, 32, 18, 0.22)',  // Payze
+    'rgba(249, 87, 56, 0.22)', // OddShoe
+    'rgba(51, 204, 255, 0.22)', // OddDoctor
+    'rgba(116, 180, 92, 0.22)', // Storybook
     'rgba(233, 216, 166, 0.22)' // VoyageAI
   ];
 
@@ -594,8 +595,42 @@ export default function CaseStudies() {
                 </div>
 
                 {/* Right Side: Showcase */}
-                <div className="cs-card__showcase">
-                  <div className="cs-card__img-container">
+                <div 
+                  className={`cs-card__showcase ${project.isMobile ? 'cs-card__showcase--mobile' : ''}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    position: 'absolute',
+                    ...(isMobile ? {
+                      top: '0',
+                      right: '0',
+                      width: '100%',
+                      height: '45%',
+                    } : {
+                      right: '-50px',
+                      top: '-50px',
+                      bottom: '-50px',
+                      width: '52%',
+                    })
+                  }}
+                >
+                  <div 
+                    className="cs-card__img-container"
+                    style={{
+                      aspectRatio: project.isMobile ? '9/19.3' : '16/10',
+                      height: isMobile ? '100%' : '90%',
+                      width: 'auto',
+                      maxWidth: isMobile ? '100%' : '90%',
+                      maxHeight: isMobile ? '100%' : '90%',
+                      borderRadius: project.isMobile ? '32px' : '20px',
+                      border: project.isMobile 
+                        ? '6px solid rgba(255, 255, 255, 0.15)' 
+                        : '1px solid rgba(255, 255, 255, 0.08)',
+                      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+                      overflow: 'hidden'
+                    }}
+                  >
                     {isVisible && project.image && (
                       <img
                         src={project.image}
@@ -603,6 +638,12 @@ export default function CaseStudies() {
                         className="cs-card__img"
                         loading="lazy"
                         draggable="false"
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain',
+                          objectPosition: 'center center',
+                        }}
                       />
                     )}
                     <div

@@ -10,24 +10,24 @@ const testimonials = [
   {
     quote: '"We needed a website that looked premium and brought in leads. oddwebs delivered both."',
     name: 'Rahul Kumar',
-    role: 'Founder, LunaCart',
+    role: 'Founder, OddShoe',
     avatar: '/assets/avatar_rahul.png',
     color: 'var(--accent-ember)',
   },
   {
     quote: '"They cared about outcomes, not just visuals. That was the difference."',
     name: 'Ananya Mehta',
-    role: 'CEO, DataFlow',
+    role: 'CEO, OddDoctor',
     avatar: '/assets/avatar_ananya.png',
     featured: true,
     color: 'var(--accent-gold)',
   },
   {
-    quote: '"They built our MVP fast and clean. It helped us close funding."',
+    quote: '"They captured our hand-painted Ghibli vision perfectly. The animations are magical."',
     name: 'Vikram Patel',
-    role: 'Co-Founder, Payze',
+    role: 'Co-Founder, Storybook',
     avatar: '/assets/avatar_vikram.png',
-    color: 'var(--accent-bright)',
+    color: '#74B45C',
   }
 ];
 

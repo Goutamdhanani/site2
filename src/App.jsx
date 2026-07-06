@@ -224,6 +224,21 @@ export default function App() {
     trackEvent(ANALYTICS_EVENTS.SITE_LOADED);
   };
 
+  // ─── GLOBAL SAFETY NET ───
+  // If preloader or hero frames stall for any reason (network, GSAP error, HMR race),
+  // force the site visible after 6 seconds so the user never sees a blank screen.
+  useEffect(() => {
+    const safetyTimer = setTimeout(() => {
+      if (!siteVisible) {
+        console.warn('[Safety] Forcing site visible after 6s timeout');
+        setLoading(false);
+        setSiteVisible(true);
+      }
+    }, 6000);
+    return () => clearTimeout(safetyTimer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // ─── LENIS SMOOTH SCROLL (desktop only) ───
   useEffect(() => {
     // Lite mode: skip Lenis entirely — use native scroll

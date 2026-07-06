@@ -4,40 +4,41 @@ import { isLite } from '../utils/device';
 
 const projects = [
   {
-    title: 'LunaCart',
-    category: 'E-Commerce Platform',
+    title: 'OddShoe',
+    category: '3D E-Commerce',
     year: '2026',
-    description: 'Luxury fashion commerce experience meticulously crafted to boost sales and conversion rates.',
+    description: 'Immersive premium landing page and e-commerce experience showcasing organic 3D sneaker drops, fluid animations, and custom UI.',
     metric: '+320%',
     metricLabel: 'Revenue Growth',
     color: '#ff5c33', // Custom tailored vibrant theme color
-    image: '/assets/projects/project-1.png',
-    tags: ['NEXT.JS', 'STRIPE', 'AI RECOM', 'GSAP', 'UI/UX', 'SEO'],
-    link: 'https://project-restro1.vercel.app/'
+    image: '/assets/projects/boss-shoes.png',
+    tags: ['REACT', 'GSAP', '3D DESIGN', 'MOTION', 'UI/UX', 'SEO'],
+    link: 'https://odd-shoe.vercel.app/'
   },
   {
-    title: 'DataFlow',
-    category: 'Analytics Dashboard',
-    year: '2025',
-    description: 'Enterprise metrics panel redesigned for maximum clarity, low latency, and ease of use.',
-    metric: '-45%',
-    metricLabel: 'Churn Reduction',
-    color: '#33ccff',
-    image: '/assets/projects/project-2.png',
-    tags: ['REACT', 'HIGHCHARTS', 'TAILWIND', 'REDUX', 'UX AUDIT'],
-    link: 'https://project-restro1.vercel.app/'
-  },
-  {
-    title: 'Payze',
-    category: 'Fintech MVP',
+    title: 'OddDoctor',
+    category: 'Healthcare Platform',
     year: '2026',
-    description: 'Highly secure fintech platform built to launch fast, convert trust, and secure seed funding.',
-    metric: '$2.4M',
-    metricLabel: 'Seed Funding Secured',
-    color: '#33ffaa',
-    image: '/assets/projects/project-3.png',
-    tags: ['FINTECH', 'REACT', 'SECURITY', 'MVP', 'WEB DESIGN'],
-    link: 'https://project-restro1.vercel.app/'
+    description: 'Immersive mobile dental tracking dashboard and interactive 3D arch mapping system that connects users with real-time health data.',
+    metric: '88%',
+    metricLabel: 'Oral Health Index',
+    color: '#33ccff',
+    image: '/assets/projects/odddoctor.png',
+    tags: ['REACT', 'GSAP', '3D MAPPING', 'MOBILE', 'UI/UX'],
+    link: 'https://odddoctor-alpha.vercel.app/',
+    isMobile: true
+  },
+  {
+    title: 'Storybook',
+    category: 'Watercolor Narrative',
+    year: '2026',
+    description: 'Premium Ghibli-inspired watercolor storybook landing page and collectors workshop with custom canvas leaf-drift physics and glowing firefly animations.',
+    metric: '99.4%',
+    metricLabel: 'Visual Finesse',
+    color: '#74B45C',
+    image: '/assets/projects/storybook.jpg',
+    tags: ['CREATIVE SITE', 'REACT', 'CANVAS', 'GLASS UI', 'UI/UX'],
+    link: 'https://oddscene.vercel.app/'
   },
   {
     title: 'Qitchen',
@@ -50,6 +51,19 @@ const projects = [
     image: '/assets/projects/qitchen.png',
     tags: ['UX/UI', 'RESTAURANT', 'NEXT.JS', 'RESERVATIONS', 'BRANDING'],
     link: 'https://project-restro1.vercel.app/'
+  },
+  {
+    title: 'OddSpace',
+    category: 'Space Telemetry Dashboard',
+    year: '2026',
+    description: 'An immersive 3D space exploration and real-time planet telemetry portal with interactive orbit visualization and atmospheric analysis.',
+    metric: '12.08 MB/s',
+    metricLabel: 'Telemetry Trans Rate',
+    color: '#00f3ff',
+    image: '/assets/projects/oddspace.png',
+    tags: ['SPACE HUD', 'NEXT.JS', '3D WEBGL', 'REAL-TIME DATA', 'TELEMETRY', 'UI/UX'],
+    link: 'https://oddspace.vercel.app/',
+    isMobile: false
   },
 ];
 
@@ -342,19 +356,63 @@ export default function PortfolioPage({ onViewChange }) {
             <div className="pt-spotlight" style={{ '--spotlight-color': activeProject.color }} />
 
             {/* The main browser mockup */}
-            <div className="pt-browser-mockup" style={{ transformStyle: 'preserve-3d' }}>
-              {/* Browser window header */}
-              <div className="pt-browser-header">
-                <div className="pt-browser-dots">
-                  <span className="dot red" />
-                  <span className="dot yellow" />
-                  <span className="dot green" />
+            <div 
+              className={`pt-browser-mockup ${activeProject.isMobile ? 'pt-mobile-mockup' : ''}`} 
+              style={{ 
+                transformStyle: 'preserve-3d',
+                ...(activeProject.isMobile ? { 
+                  aspectRatio: '9/19.3', 
+                  maxWidth: '240px',
+                  borderRadius: '32px',
+                  borderWidth: '8px',
+                  borderColor: 'rgba(255,255,255,0.15)'
+                } : {})
+              }}
+            >
+              {activeProject.isMobile ? (
+                /* Mobile Phone Header / Notch */
+                <div 
+                  className="pt-mobile-header"
+                  style={{
+                    height: '24px',
+                    background: 'transparent',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'relative',
+                  }}
+                >
+                  <div 
+                    className="pt-mobile-notch"
+                    style={{
+                      width: '80px',
+                      height: '14px',
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      borderRadius: '0 0 10px 10px',
+                    }}
+                  />
                 </div>
-                <div className="pt-browser-address">{activeProject.title.toLowerCase()}.oddwebs.com</div>
-              </div>
+              ) : (
+                /* Browser window header */
+                <div className="pt-browser-header">
+                  <div className="pt-browser-dots">
+                    <span className="dot red" />
+                    <span className="dot yellow" />
+                    <span className="dot green" />
+                  </div>
+                  <div className="pt-browser-address">{activeProject.title.toLowerCase()}.oddwebs.com</div>
+                </div>
+              )}
               
               {/* Image viewport */}
-              <div className="pt-browser-body">
+              <div 
+                className={activeProject.isMobile ? "pt-mobile-body" : "pt-browser-body"}
+                style={activeProject.isMobile ? {
+                  width: '100%',
+                  height: 'calc(100% - 24px)',
+                  overflow: 'hidden',
+                } : {}}
+              >
                 <img src={activeProject.image} alt={activeProject.title} className="pt-browser-img" draggable="false" />
               </div>
             </div>
@@ -460,7 +518,7 @@ export default function PortfolioPage({ onViewChange }) {
 
         {/* Modern Interactive Timeline Navigation */}
         <nav className="pt-timeline-container">
-          <div className="pt-timeline-nav">
+          <div className="pt-timeline-nav" style={{ gridTemplateColumns: `repeat(${projects.length}, 1fr)` }}>
             {projects.map((project, idx) => (
               <button
                 key={idx}

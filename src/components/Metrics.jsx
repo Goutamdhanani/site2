@@ -13,7 +13,7 @@ const stats = [
     suffix: '%', 
     label: 'Revenue Growth', 
     color: 'var(--accent-ember)',
-    desc: 'Rebuilt LunaCart\'s headless checkout and AI fashion recommendations, generating 320% growth.',
+    desc: 'Designed and developed OddShoe\'s high-production 3D landing page and e-commerce drops, generating 320% growth.',
     icon: (
       <svg className="stat-micro-graphic" viewBox="0 0 80 30" fill="none">
         <circle cx="15" cy="15" r="4" fill="var(--accent-ember)" className="pulse-node" />
@@ -25,11 +25,11 @@ const stats = [
     )
   },
   { 
-    value: 45, 
+    value: 88, 
     suffix: '%', 
-    label: 'Churn Reduced', 
-    color: 'var(--accent-amber)',
-    desc: 'Optimized DataFlow\'s real-time SaaS analytics dashboards, reducing customer churn by 45%.',
+    label: 'Oral Health Index', 
+    color: '#33ccff',
+    desc: 'Engineered OddDoctor\'s mobile patient dashboard and interactive 3D dental mapping system, maintaining a 88% overall health score.',
     icon: (
       <svg className="stat-micro-graphic stat-micro-graphic--circle" viewBox="0 0 40 40" fill="none">
         <circle cx="20" cy="20" r="16" stroke="rgba(255, 255, 255, 0.05)" strokeWidth="3" />
@@ -39,12 +39,12 @@ const stats = [
     )
   },
   { 
-    value: 2.4, 
-    suffix: 'M', 
-    label: 'Funding Secured', 
+    value: 99.4, 
+    suffix: '%', 
+    label: 'Visual Finesse', 
     decimals: 1, 
-    color: 'var(--accent-gold)',
-    desc: 'Engineered Payze\'s mobile banking MVP in 5 weeks, helping them secure $2.4M in seed funding.',
+    color: '#74B45C',
+    desc: 'Designed and developed Storybook\'s watercolor narrative experience, achieving 99.4% pixel-perfect visual fidelity.',
     icon: (
       <svg className="stat-micro-graphic" viewBox="0 0 80 35" fill="none">
         <defs>
