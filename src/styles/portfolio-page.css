@@ -517,6 +517,167 @@
   width: 100%;
 }
 
+/* Beautiful & Animated Swipe Arrow Buttons */
+.pt-swipe-arrow-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.pt-swipe-arrow-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--arrow-theme);
+  color: var(--text-primary);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--arrow-theme) 45%, transparent);
+}
+
+.pt-swipe-arrow-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pt-swipe-arrow-btn:hover svg {
+  color: var(--text-primary);
+}
+
+.pt-swipe-left {
+  left: 20px;
+  animation: floatArrowLeft 2.2s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+}
+
+.pt-swipe-left:hover svg {
+  transform: translateX(-2px);
+}
+
+.pt-swipe-right {
+  right: 20px;
+  animation: floatArrowRight 2.2s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+}
+
+.pt-swipe-right:hover svg {
+  transform: translateX(2px);
+}
+
+/* Glassmorphic Centered Swipe/Drag Visual Guide */
+.pt-swipe-guide {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  background: rgba(11, 7, 5, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-full);
+  z-index: 15;
+  pointer-events: none;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  color: var(--text-muted);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+}
+
+.pt-swipe-guide-arrow {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: bold;
+  color: var(--guide-theme);
+  transition: color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pt-swipe-guide-arrow.left {
+  animation: pulseArrowLeft 1.6s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+}
+
+.pt-swipe-guide-arrow.right {
+  animation: pulseArrowRight 1.6s cubic-bezier(0.445, 0.05, 0.55, 0.95) infinite;
+}
+
+.pt-swipe-guide-text {
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.9) 50%, rgba(255, 255, 255, 0.4) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: textShimmer 4s linear infinite;
+}
+
+/* Animations */
+@keyframes floatArrowLeft {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translateY(-50%) translateX(-6px);
+    opacity: 1;
+  }
+}
+
+@keyframes floatArrowRight {
+  0%, 100% {
+    transform: translateY(-50%) translateX(0);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translateY(-50%) translateX(6px);
+    opacity: 1;
+  }
+}
+
+@keyframes pulseArrowLeft {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateX(-4px);
+    opacity: 1;
+  }
+}
+
+@keyframes pulseArrowRight {
+  0%, 100% {
+    transform: translateX(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateX(4px);
+    opacity: 1;
+  }
+}
+
+@keyframes textShimmer {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
 /* Custom Responsiveness overrides for Redesigned Portfolio page */
 @media (max-width: 1100px) {
   .pt-cinematic-grid {
@@ -574,6 +735,25 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
   }
+  .pt-swipe-arrow-btn {
+    width: 38px;
+    height: 38px;
+  }
+  .pt-swipe-arrow-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+  .pt-swipe-left {
+    left: 12px;
+  }
+  .pt-swipe-right {
+    right: 12px;
+  }
+  .pt-swipe-guide {
+    bottom: 16px;
+    padding: 6px 12px;
+    font-size: 8px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -589,6 +769,15 @@
   .pt-timeline-nav {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+  .pt-swipe-arrow-btn {
+    display: none;
+  }
+  .pt-swipe-guide {
+    bottom: 12px;
+    font-size: 7.5px;
+    padding: 5px 10px;
+    letter-spacing: 0.12em;
   }
 }
 

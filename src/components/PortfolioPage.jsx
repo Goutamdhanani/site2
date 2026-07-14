@@ -355,6 +355,22 @@ export default function PortfolioPage({ onViewChange }) {
             {/* Glowing spotlight effect behind the active device */}
             <div className="pt-spotlight" style={{ '--spotlight-color': activeProject.color }} />
 
+            {/* Beautiful Animated Swipe Arrow Buttons */}
+            <button 
+              className="pt-swipe-arrow-btn pt-swipe-left"
+              onClick={(e) => {
+                e.stopPropagation();
+                const prevIdx = (activeIdx - 1 + projects.length) % projects.length;
+                handleProjectSelect(prevIdx);
+              }}
+              style={{ '--arrow-theme': activeProject.color }}
+              aria-label="Previous project"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+
             {/* The main browser mockup */}
             <div 
               className={`pt-browser-mockup ${activeProject.isMobile ? 'pt-mobile-mockup' : ''}`} 
@@ -413,8 +429,36 @@ export default function PortfolioPage({ onViewChange }) {
                   overflow: 'hidden',
                 } : {}}
               >
-                <img src={activeProject.image} alt={activeProject.title} className="pt-browser-img" draggable="false" />
+                <img 
+                  src={activeProject.image} 
+                  alt={activeProject.title} 
+                  className="pt-browser-img" 
+                  style={activeProject.isMobile ? { objectFit: 'contain', height: '100%', width: '100%', background: 'rgba(0, 0, 0, 0.2)' } : {}}
+                  draggable="false" 
+                />
               </div>
+            </div>
+
+            <button 
+              className="pt-swipe-arrow-btn pt-swipe-right"
+              onClick={(e) => {
+                e.stopPropagation();
+                const nextIdx = (activeIdx + 1) % projects.length;
+                handleProjectSelect(nextIdx);
+              }}
+              style={{ '--arrow-theme': activeProject.color }}
+              aria-label="Next project"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+
+            {/* Center Swipe/Drag visual guide */}
+            <div className="pt-swipe-guide" style={{ '--guide-theme': activeProject.color }}>
+              <span className="pt-swipe-guide-arrow left">‹</span>
+              <span className="pt-swipe-guide-text">DRAG OR SWIPE</span>
+              <span className="pt-swipe-guide-arrow right">›</span>
             </div>
 
             {/* Floating Badge 1: Key Metric (parallax layers) */}
