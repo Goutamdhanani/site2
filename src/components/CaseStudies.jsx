@@ -182,6 +182,12 @@ export default function CaseStudies() {
   // Run updates on mount, visibility, or mobile layout changes
   useEffect(() => {
     updateCarouselDynamics();
+
+    const timer = setTimeout(() => {
+      updateCarouselDynamics();
+    }, 150);
+
+    return () => clearTimeout(timer);
   }, [isVisible, isMobile]);
 
   useEffect(() => {
