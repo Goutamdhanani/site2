@@ -381,8 +381,16 @@ export default function BookingFlow({ onViewChange }) {
     }
   };
 
-  // Entrance animations for steps
+  // Entrance animations and scroll reset for steps
   useEffect(() => {
+    // Auto-adjust scroll to the beginning of the page so user doesn't have to scroll up
+    if (window.lenis) {
+      window.lenis.scrollTo(0, { immediate: true });
+      window.lenis.resize();
+    } else {
+      window.scrollTo(0, 0);
+    }
+
     const ctx = gsap.context(() => {
       gsap.fromTo('.bf-step-container', 
         { opacity: 0, y: 30, filter: 'blur(10px)' },
