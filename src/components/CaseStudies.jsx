@@ -66,7 +66,6 @@ export default function CaseStudies() {
   const [isMobile, setIsMobile] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
 
   // Monitor visibility of the section to suspend active RAF loop when off-screen
   useEffect(() => {
@@ -178,9 +177,6 @@ export default function CaseStudies() {
     });
 
     setActiveIndex(closestCardIndex);
-    if (!hasScrolled && closestCardIndex > 0) {
-      setHasScrolled(true);
-    }
   };
 
   // Run updates once on visibility or native mobile scroll
@@ -519,6 +515,23 @@ export default function CaseStudies() {
           <div className="cs-card__box" style={{ background: 'transparent', border: 'none', boxShadow: 'none', backdropFilter: 'none' }}>
             <div className="cs-card__inner" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: isMobile ? '0 24px' : '40px' }}>
               <div className="cs-card__content" style={{ maxWidth: '600px', width: '100%', opacity: 1 }}>
+                {isMobile && (
+                  <div className="cs-title-swipe-indicator">
+                    <div className="cs-swipe-gesture">
+                      <div className="cs-swipe-track-glowing" />
+                      <div className="cs-swipe-hand-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5" />
+                          <path d="M14 10V5a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v5" />
+                          <path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v4.5" />
+                          <path d="M6 10v6a6 6 0 0 0 6 6h2a6 6 0 0 0 6-6v-5" />
+                          <path d="M18 11a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2" />
+                        </svg>
+                      </div>
+                    </div>
+                    <span className="cs-swipe-text">Swipe to explore</span>
+                  </div>
+                )}
                 <p className="eyebrow" style={{ color: 'var(--accent-ember)', letterSpacing: '0.25em', marginBottom: '20px' }}>
                   Selected Work
                 </p>
@@ -672,27 +685,17 @@ export default function CaseStudies() {
         ))}
       </div>
 
-      {/* Mobile Swipe Indicator + Dot Pagination */}
+      {/* Mobile Dot Pagination */}
       {isMobile && (
-        <>
-          <div className={`cs-swipe-hint ${hasScrolled ? 'cs-swipe-hint--hidden' : ''}`}>
-            <div className="cs-swipe-hint__arrow">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <span className="cs-swipe-hint__text">Swipe to explore</span>
-          </div>
-          <div className="cs-dot-pagination">
-            {[0, ...projects.map((_, i) => i + 1)].map((dotIdx) => (
-              <span
-                key={dotIdx}
-                className={`cs-dot ${activeIndex === dotIdx ? 'cs-dot--active' : ''}`}
-                style={{ '--dot-accent': dotIdx === 0 ? 'var(--accent-ember)' : (projects[dotIdx - 1]?.color || 'var(--accent-ember)') }}
-              />
-            ))}
-          </div>
-        </>
+        <div className="cs-dot-pagination">
+          {[0, ...projects.map((_, i) => i + 1)].map((dotIdx) => (
+            <span
+              key={dotIdx}
+              className={`cs-dot ${activeIndex === dotIdx ? 'cs-dot--active' : ''}`}
+              style={{ '--dot-accent': dotIdx === 0 ? 'var(--accent-ember)' : (projects[dotIdx - 1]?.color || 'var(--accent-ember)') }}
+            />
+          ))}
+        </div>
       )}
     </section>
   );

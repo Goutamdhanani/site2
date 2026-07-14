@@ -1162,4 +1162,100 @@ html, body, .cinematic-wrapper {
   box-shadow: 0 0 12px color-mix(in srgb, var(--dot-accent, var(--accent-ember)) 40%, transparent);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   TITLE CARD MOBILE SWIPE INDICATOR
+   ═══════════════════════════════════════════════════════════════ */
+.cs-title-swipe-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-left: 2px;
+}
+
+.cs-swipe-gesture {
+  position: relative;
+  width: 70px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+/* Horizontal Track Line */
+.cs-swipe-gesture::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+
+/* Glowing segment traveling along the track */
+.cs-swipe-track-glowing {
+  position: absolute;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-ember), transparent);
+  width: 35px;
+  border-radius: 2px;
+  animation: csTrackSwipe 2.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Glowing hand icon moving horizontally */
+.cs-swipe-hand-icon {
+  position: absolute;
+  left: 0;
+  color: var(--accent-ember);
+  filter: drop-shadow(0 0 8px rgba(249, 87, 56, 0.5));
+  animation: csHandSwipe 2.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-swipe-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cs-swipe-text::after {
+  content: '';
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-ember);
+  box-shadow: 0 0 8px var(--accent-ember);
+  animation: csBlink 1.5s infinite ease-in-out;
+}
+
+@keyframes csTrackSwipe {
+  0% { left: 0px; opacity: 0; }
+  15% { opacity: 0.8; }
+  85% { opacity: 0.8; }
+  100% { left: 35px; opacity: 0; }
+}
+
+@keyframes csHandSwipe {
+  0% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(35px) scale(0.9) rotate(-10deg); }
+  100% { transform: translateX(0) scale(1); }
+}
+
+@keyframes csBlink {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+
 
