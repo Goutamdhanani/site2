@@ -67,6 +67,8 @@ export default function CaseStudies() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
+  const interactionTimeoutRef = useRef(null);
 
   // Monitor visibility of the section to suspend active RAF loop when off-screen
   useEffect(() => {
@@ -197,10 +199,23 @@ export default function CaseStudies() {
 
     const handleScroll = () => {
       updateCarouselDynamics();
+      
+      setIsInteracting(true);
+      if (interactionTimeoutRef.current) {
+        clearTimeout(interactionTimeoutRef.current);
+      }
+      interactionTimeoutRef.current = setTimeout(() => {
+        setIsInteracting(false);
+      }, 1500);
     };
 
     scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
-    return () => scrollContainer.removeEventListener('scroll', handleScroll);
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll);
+      if (interactionTimeoutRef.current) {
+        clearTimeout(interactionTimeoutRef.current);
+      }
+    };
   }, [isMobile, isVisible]);
 
   // Desktop Click-and-Drag / Touch-Swipe to slide horizontal scroll cards
@@ -484,6 +499,15 @@ export default function CaseStudies() {
     'rgba(233, 216, 166, 0.22)' // VoyageAI
   ];
 
+  const handleDotClick = (idx) => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const cards = section.querySelectorAll('.cs-card');
+    if (cards[idx]) {
+      cards[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
+  };
+
   return (
     <section
       id="work"
@@ -514,11 +538,12 @@ export default function CaseStudies() {
           style={{
             '--card-accent': 'var(--accent-ember)',
             zIndex: 1,
+            position: 'relative',
           }}
         >
           <div className="cs-card__box" style={{ background: 'transparent', border: 'none', boxShadow: 'none', backdropFilter: 'none' }}>
-            <div className="cs-card__inner" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: isMobile ? '0 24px' : '40px' }}>
-              <div className="cs-card__content" style={{ maxWidth: '600px', width: '100%', opacity: 1 }}>
+            <div className="cs-card__inner" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: isMobile ? '0 24px' : '40px', position: 'relative' }}>
+              <div className="cs-card__content" style={{ maxWidth: '600px', width: '100%', opacity: 1, zIndex: 2 }}>
                 <p className="eyebrow" style={{ color: 'var(--accent-ember)', letterSpacing: '0.25em', marginBottom: '20px' }}>
                   Selected Work
                 </p>
@@ -529,6 +554,22 @@ export default function CaseStudies() {
                   Not fake “concept universes.”
                 </p>
               </div>
+              
+              {/* Background preview image for mobile/desktop to make it not feel like an empty card */}
+              <div 
+                className="cs-card__title-bg"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  backgroundImage: `url('/assets/projects/boss-shoes.png')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  opacity: isMobile ? 0.35 : 0.12,
+                  zIndex: 1,
+                  pointerEvents: 'none',
+                  mixBlendMode: 'luminosity',
+                }}
+              />
             </div>
           </div>
         </article>
@@ -674,25 +715,28 @@ export default function CaseStudies() {
 
       {/* Mobile Swipe Indicator + Dot Pagination */}
       {isMobile && (
-        <>
-          <div className={`cs-swipe-hint ${hasScrolled ? 'cs-swipe-hint--hidden' : ''}`}>
-            <div className="cs-swipe-hint__arrow">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-            <span className="cs-swipe-hint__text">Swipe to explore</span>
+        <div className="cs-mobile-controls" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '24px', marginBottom: '16px' }}>
+          <div className={`cs-swipe-discover ${hasScrolled ? 'cs-swipe-discover--hidden' : ''} ${isInteracting ? 'paused' : ''}`}>
+            <span className="cs-swipe-arrow left">←</span>
+            <span className="cs-swipe-line">────────</span>
+            <span className="cs-swipe-text">Swipe Projects</span>
+            <span className="cs-swipe-line">────────</span>
+            <span className="cs-swipe-arrow right">→</span>
           </div>
-          <div className="cs-dot-pagination">
+          <div className="cs-dot-pagination" style={{ marginTop: '16px' }}>
             {[0, ...projects.map((_, i) => i + 1)].map((dotIdx) => (
               <span
                 key={dotIdx}
                 className={`cs-dot ${activeIndex === dotIdx ? 'cs-dot--active' : ''}`}
-                style={{ '--dot-accent': dotIdx === 0 ? 'var(--accent-ember)' : (projects[dotIdx - 1]?.color || 'var(--accent-ember)') }}
+                style={{ 
+                  '--dot-accent': dotIdx === 0 ? 'var(--accent-ember)' : (projects[dotIdx - 1]?.color || 'var(--accent-ember)'),
+                  cursor: 'pointer'
+                }}
+                onClick={() => handleDotClick(dotIdx)}
               />
             ))}
           </div>
-        </>
+        </div>
       )}
     </section>
   );
