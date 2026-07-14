@@ -377,8 +377,11 @@ export default function PortfolioPage({ onViewChange }) {
               style={{ 
                 transformStyle: 'preserve-3d',
                 ...(activeProject.isMobile ? { 
-                  aspectRatio: '9/19.3', 
+                  aspectRatio: '422/761', 
                   maxWidth: '240px',
+                  maxHeight: '90%',
+                  width: '100%',
+                  height: 'auto',
                   borderRadius: '32px',
                   borderWidth: '8px',
                   borderColor: 'rgba(255,255,255,0.15)'
