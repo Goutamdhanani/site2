@@ -19,8 +19,7 @@
     inset: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    mask-image: none !important;
-    -webkit-mask-image: none !important;
+    /* mask-image already removed in desktop CSS */
     z-index: 1 !important;
   }
 

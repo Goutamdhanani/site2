@@ -429,6 +429,9 @@ export default function App() {
   // ─── SECTION TRANSITIONS + GLOBAL EFFECTS ───
   useEffect(() => {
     if (!siteVisible) return;
+    // Only register home-page section animations when the home view is active.
+    // Skipping this for other views prevents re-setting opacity:0 on sections
+    // that are still in DOM (or were rendered previously).
 
     let onScroll = null;
     let cleanupMagnetic = null;
@@ -476,7 +479,8 @@ export default function App() {
         };
       }
 
-      // ─── SECTION GLOW LINES: Draw in ───
+      // ─── SECTION GLOW LINES + EYEBROW: Draw in (home view only) ───
+      if (currentView === 'home') {
       gsap.utils.toArray('.section-glow-line').forEach(line => {
         gsap.fromTo(line, { scaleX: 0 }, {
           scaleX: 1,
@@ -486,6 +490,7 @@ export default function App() {
             trigger: line.closest('section') || line.parentElement,
             start: 'top 80%',
             once: true,
+            invalidateOnRefresh: true,
           },
         });
       });
@@ -501,305 +506,205 @@ export default function App() {
           letterSpacing: '0.12em',
           duration: 0.9,
           ease: 'power3.out',
+          clearProps: 'all',
           scrollTrigger: {
             trigger: el,
             start: 'top 88%',
             once: true,
+            invalidateOnRefresh: true,
           },
         });
       });
+      } // end if (currentView === 'home') for glow lines + eyebrows
 
       // ═══════════════════════════════════════════════════════
-      //  SECTION TRANSITIONS
-      //  Desktop: cinematic blur/clip-path/filter transitions
-      //  Lite: cheap opacity + translateY (transform/opacity only)
+      //  SECTION TRANSITIONS (home view only)
+      //  Desktop: cinematic fade/scale transitions
+      //  Lite: simple opacity + translateY
       // ═══════════════════════════════════════════════════════
-
+      if (currentView === 'home') {
       if (!isLite) {
-        // ─── DESKTOP TRANSITIONS (rewritten to trigger-once for performance and smooth scroll) ───
+        // ─── DESKTOP TRANSITIONS ───
+        // Each section starts hidden and animates in when scrolled into view.
+        // invalidateOnRefresh: true ensures scroll positions recalculate after
+        // images/fonts load (which shift layout). onEnter also fires if section
+        // is already in view when ScrollTrigger is created.
 
-        // TRANSITION 1: Marquee — Smooth fade and slide up
-        const marqueeEl = document.querySelector('[data-scene="marquee"]');
-        if (marqueeEl) {
-          gsap.fromTo(marqueeEl, {
-            y: 30,
-            opacity: 0,
-          }, {
-            y: 0,
-            opacity: 1,
-            duration: 0.7,
-            ease: 'power2.out',
+        const makeSectionTween = (el, fromVars, toVars, triggerStart = 'top 90%') => {
+          if (!el) return;
+          gsap.fromTo(el, fromVars, {
+            ...toVars,
+            clearProps: 'all',
             scrollTrigger: {
-              trigger: marqueeEl,
-              start: 'top 92%',
+              trigger: el,
+              start: triggerStart,
               toggleActions: 'play none none none',
+              invalidateOnRefresh: true,
+              onEnter: () => {
+                // If already in view when registered, play immediately
+                gsap.to(el, { ...toVars, clearProps: 'all', duration: toVars.duration || 0.8 });
+              },
             },
           });
-        }
+        };
 
-        // TRANSITION 2: CaseStudies — Smooth scale up & fade in
+        // TRANSITION 1: Marquee
+        makeSectionTween(
+          document.querySelector('[data-scene="marquee"]'),
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' },
+          'top 95%'
+        );
+
+        // TRANSITION 2: CaseStudies track
         const workEl = document.querySelector('[data-scene="work"]');
         if (workEl) {
           const trackEl = workEl.querySelector('.cs-track');
           if (trackEl) {
-            gsap.fromTo(trackEl, {
-              scale: 0.94,
-              opacity: 0,
-            }, {
-              scale: 1,
-              opacity: 1,
-              duration: 0.8,
-              ease: 'power3.out',
-              scrollTrigger: {
-                trigger: workEl,
-                start: 'top 85%',
-                toggleActions: 'play none none none',
-              },
-            });
+            gsap.fromTo(trackEl,
+              { scale: 0.96, opacity: 0 },
+              {
+                scale: 1, opacity: 1, duration: 0.8, ease: 'power3.out',
+                clearProps: 'all',
+                scrollTrigger: {
+                  trigger: workEl,
+                  start: 'top 90%',
+                  toggleActions: 'play none none none',
+                  invalidateOnRefresh: true,
+                },
+              }
+            );
           }
         }
 
-        // TRANSITION 3: Services — Smooth slide up & fade in
-        const servicesEl = document.querySelector('[data-scene="services"]');
-        if (servicesEl) {
-          gsap.fromTo(servicesEl, {
-            y: 40,
-            opacity: 0,
-          }, {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: servicesEl,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-          });
-        }
+        // TRANSITION 3: Services
+        makeSectionTween(
+          document.querySelector('[data-scene="services"]'),
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
+          'top 90%'
+        );
 
-        // TRANSITION 4: Metrics — Smooth scale up & fade in
-        const metricsEl = document.querySelector('[data-scene="metrics"]');
-        if (metricsEl) {
-          gsap.fromTo(metricsEl, {
-            scale: 0.94,
-            opacity: 0,
-          }, {
-            scale: 1,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: metricsEl,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-          });
-        }
+        // TRANSITION 4: Metrics
+        makeSectionTween(
+          document.querySelector('[data-scene="metrics"]'),
+          { scale: 0.96, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.8, ease: 'power3.out' },
+          'top 90%'
+        );
 
-        // TRANSITION 5: Process — Smooth scale up & fade in
-        const processWrapper = document.querySelector('.process-pin-wrapper');
-        const processSection = document.querySelector('#process');
-        if (processWrapper && processSection) {
-          gsap.fromTo(processSection, {
-            scale: 0.94,
-            opacity: 0,
-          }, {
-            scale: 1,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: processWrapper,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-          });
-        }
-
-        // TRANSITION 6: Testimonials — Smooth slide up & fade in
-        const testimonialsEl = document.querySelector('[data-scene="testimonials"]');
-        if (testimonialsEl) {
-          gsap.fromTo(testimonialsEl, {
-            y: 40,
-            opacity: 0,
-          }, {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: testimonialsEl,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-          });
-        }
-
-        // TRANSITION 7: FinalCTA — Smooth scale up & fade in
-        const ctaEl = document.querySelector('[data-scene="cta"]');
-        if (ctaEl) {
-          gsap.fromTo(ctaEl, {
-            scale: 0.94,
-            opacity: 0,
-          }, {
-            scale: 1,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: ctaEl,
-              start: 'top 85%',
-              toggleActions: 'play none none none',
-            },
-          });
-        }
-
-        // TRANSITION 8: Footer — Smooth slide up & fade in
-        const footerEl = document.querySelector('[data-scene="footer"]');
-        if (footerEl) {
-          gsap.fromTo(footerEl, {
-            y: 30,
-            opacity: 0,
-          }, {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: footerEl,
-              start: 'top 95%',
-              toggleActions: 'play none none none',
-            },
-          });
-        }
-
-      } else {
-        // ─── LITE MODE: High-performance mobile scroll transitions ───
-
-        // 1. Marquee: fade in & scale in
-        const marqueeEl = document.querySelector('[data-scene="marquee"]');
-        if (marqueeEl) {
-          gsap.fromTo(marqueeEl, { opacity: 0.3, scale: 0.96 }, {
-            opacity: 1, scale: 1,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: marqueeEl,
-              start: 'top 95%',
-              end: 'top 65%',
-              scrub: 1,
-            }
-          });
-        }
-
-        // 2. CaseStudies: simple fade-in of the work section container (since cards slide horizontally)
-        const workEl = document.querySelector('[data-scene="work"]');
-        if (workEl) {
-          gsap.fromTo(workEl, { opacity: 0.4 }, {
-            opacity: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: workEl,
-              start: 'top 95%',
-              end: 'top 65%',
-              scrub: 1,
-            }
-          });
-        }
-
-        // 3. Services: fade in and slide up
-        const servicesEl = document.querySelector('[data-scene="services"]');
-        if (servicesEl) {
-          gsap.fromTo(servicesEl, { opacity: 0.3, y: 30 }, {
-            opacity: 1, y: 0,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: servicesEl,
-              start: 'top 95%',
-              end: 'top 70%',
-              scrub: 1,
-            }
-          });
-        }
-
-        // 4. Metrics: fade in and scale in
-        const metricsEl = document.querySelector('[data-scene="metrics"]');
-        if (metricsEl) {
-          gsap.fromTo(metricsEl, { opacity: 0.3, scale: 0.96 }, {
-            opacity: 1, scale: 1,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: metricsEl,
-              start: 'top 95%',
-              end: 'top 70%',
-              scrub: 1,
-            }
-          });
-        }
-
-        // 5. Process: fade in
+        // TRANSITION 5: Process
         const processSection = document.querySelector('#process');
         if (processSection) {
-          gsap.fromTo(processSection, { opacity: 0.3 }, {
-            opacity: 1,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: processSection,
-              start: 'top 95%',
-              end: 'top 70%',
-              scrub: 1,
+          const processTrigger = document.querySelector('.process-pin-wrapper') || processSection;
+          gsap.fromTo(processSection,
+            { scale: 0.96, opacity: 0 },
+            {
+              scale: 1, opacity: 1, duration: 0.8, ease: 'power3.out',
+              clearProps: 'all',
+              scrollTrigger: {
+                trigger: processTrigger,
+                start: 'top 90%',
+                toggleActions: 'play none none none',
+                invalidateOnRefresh: true,
+              },
             }
-          });
+          );
         }
 
-        // 6. Testimonials: fade in and slide up
-        const testimonialsEl = document.querySelector('[data-scene="testimonials"]');
-        if (testimonialsEl) {
-          gsap.fromTo(testimonialsEl, { opacity: 0.3, y: 30 }, {
+        // TRANSITION 6: Testimonials
+        makeSectionTween(
+          document.querySelector('[data-scene="testimonials"]'),
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
+          'top 90%'
+        );
+
+        // TRANSITION 7: FinalCTA
+        makeSectionTween(
+          document.querySelector('[data-scene="cta"]'),
+          { scale: 0.96, opacity: 0 },
+          { scale: 1, opacity: 1, duration: 0.8, ease: 'power3.out' },
+          'top 90%'
+        );
+
+        // TRANSITION 8: Footer
+        makeSectionTween(
+          document.querySelector('[data-scene="footer"]'),
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power2.out' },
+          'top 98%'
+        );
+
+      } else {
+        // ─── LITE MODE: Simple fade-in only (no scrub — scrub can get stuck mid-animation) ───
+        // On mobile, scrub animations lock at an intermediate opacity if ScrollTrigger
+        // miscalculates positions. Use play-once instead.
+
+        const makeLiteTween = (el, triggerStart = 'top 95%') => {
+          if (!el) return;
+          // Set initial hidden state via JS (not CSS so it's always overridable)
+          gsap.set(el, { opacity: 0, y: 20 });
+          gsap.to(el, {
             opacity: 1, y: 0,
+            duration: 0.6,
             ease: 'power2.out',
+            clearProps: 'all',
             scrollTrigger: {
-              trigger: testimonialsEl,
-              start: 'top 95%',
-              end: 'top 70%',
-              scrub: 1,
+              trigger: el,
+              start: triggerStart,
+              toggleActions: 'play none none none',
+              invalidateOnRefresh: true,
+            },
+          });
+        };
+
+        makeLiteTween(document.querySelector('[data-scene="marquee"]'), 'top 95%');
+        makeLiteTween(document.querySelector('[data-scene="work"]'), 'top 95%');
+        makeLiteTween(document.querySelector('[data-scene="services"]'), 'top 95%');
+        makeLiteTween(document.querySelector('[data-scene="metrics"]'), 'top 95%');
+        makeLiteTween(document.querySelector('#process'), 'top 95%');
+        makeLiteTween(document.querySelector('[data-scene="testimonials"]'), 'top 95%');
+        makeLiteTween(document.querySelector('[data-scene="cta"]'), 'top 95%');
+        makeLiteTween(document.querySelector('[data-scene="footer"]'), 'top 99%');
+      } // end if(!isLite) / else
+
+      } // end if (currentView === 'home') for section transitions
+
+      // ─── AGGRESSIVE REFRESH SCHEDULE ───
+      // Images and fonts shift layout long after mount; refresh repeatedly
+      // to ensure all scroll positions are accurate.
+      [100, 300, 600, 1200, 2500, 4000].forEach(delay =>
+        setTimeout(() => ScrollTrigger.refresh(), delay)
+      );
+
+      // ─── SAFETY NET: Clear any stuck GSAP inline styles after 5s ───
+      // If a ScrollTrigger never fires (rare race condition), elements would
+      // stay invisible. This guarantee ensures content is always visible.
+      setTimeout(() => {
+        const safetyTargets = [
+          '[data-scene="marquee"]',
+          '[data-scene="work"]',
+          '[data-scene="services"]',
+          '[data-scene="metrics"]',
+          '#process',
+          '[data-scene="testimonials"]',
+          '[data-scene="cta"]',
+          '[data-scene="footer"]',
+          '.cs-track',
+          '.eyebrow',
+          '.section-glow-line',
+        ];
+        safetyTargets.forEach(selector => {
+          document.querySelectorAll(selector).forEach(el => {
+            // Only clear if element looks stuck invisible
+            const style = el.style;
+            if (style.opacity === '0' || (style.opacity && parseFloat(style.opacity) < 0.5)) {
+              gsap.set(el, { clearProps: 'all' });
             }
           });
-        }
-
-        // 7. FinalCTA: fade in and scale in
-        const ctaEl = document.querySelector('[data-scene="cta"]');
-        if (ctaEl) {
-          gsap.fromTo(ctaEl, { opacity: 0.3, scale: 0.95 }, {
-            opacity: 1, scale: 1,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: ctaEl,
-              start: 'top 90%',
-              end: 'top 70%',
-              scrub: 1,
-            }
-          });
-        }
-
-        // 8. Footer: fade in and slide up
-        const footerEl = document.querySelector('[data-scene="footer"]');
-        if (footerEl) {
-          gsap.fromTo(footerEl, { opacity: 0.3, y: 25 }, {
-            opacity: 1, y: 0,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: footerEl,
-              start: 'top 98%',
-              end: 'top 80%',
-              scrub: 1,
-            }
-          });
-        }
-      }
-
-      // Refresh ScrollTrigger after all content mounts
-      setTimeout(() => ScrollTrigger.refresh(), 300);
+        });
+      }, 5000);
 
     });
 

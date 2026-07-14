@@ -336,20 +336,12 @@ footer {
   height: 100vh;
   z-index: 0;
   overflow: hidden;
-  background: var(--bg-primary);
-  /* Dissolve bottom edge rather than hard-cut */
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black 75%,
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    to bottom,
-    black 0%,
-    black 75%,
-    transparent 100%
-  );
+  /* No background here — transparent so sections beneath show through cleanly.
+     Previously 'var(--bg-primary)' caused a black overlay over all content. */
+  background: transparent;
+  pointer-events: none;
+  /* Removed mask-image: it was clipping the bottom 25% of the canvas,
+     causing images to appear cut in half. */
 }
 
 .hero-canvas {
