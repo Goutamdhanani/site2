@@ -892,7 +892,7 @@ export default function App() {
               <Metrics />
               <Process />
               <Testimonials />
-              <FinalCTA />
+              <FinalCTA onViewChange={handleViewChange} />
             </>
           ) : currentView === 'portfolio' ? (
             <PortfolioPage onViewChange={handleViewChange} />

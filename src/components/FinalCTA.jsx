@@ -14,7 +14,7 @@ const projectParameters = [
   { label: 'Mobile App', color: 'var(--accent-bright)' },
 ];
 
-export default function FinalCTA() {
+export default function FinalCTA({ onViewChange }) {
   const sectionRef = useRef(null);
   const ctaBtnRef = useRef(null);
   const [selectedTags, setSelectedTags] = useState([]);
@@ -262,12 +262,15 @@ export default function FinalCTA() {
                   <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </a>
-              <a 
-                href={getMailtoLink()} 
+              <button 
+                onClick={() => onViewChange && onViewChange('services-page')}
                 className="btn-outline magnetic"
               >
-                Send Project Spec
-              </a>
+                View Our Services
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ marginLeft: '6px' }}>
+                  <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
             </div>
 
             {/* Trust Badges */}

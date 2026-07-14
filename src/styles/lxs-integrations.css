@@ -1679,3 +1679,65 @@ nav#navbar.nav-floating .nav-burger span {
     box-sizing: border-box;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   PREMIUM CUSTOM INTERFACE ADDITIONS (ODDWEBS)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Region Switcher buttons */
+.lxs-btn--ghost {
+  background: transparent !important;
+  color: rgba(247, 245, 252, 0.6) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+
+.lxs-btn--ghost:hover {
+  color: var(--lxs-white) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* Carousel Navigation Buttons */
+.lxs-carousel-nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.lxs-nav-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(21, 17, 15, 0.6) !important;
+  border: 1px solid rgba(199, 154, 75, 0.18) !important;
+  color: var(--lxs-champagne) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.lxs-nav-btn:hover {
+  background: rgba(199, 154, 75, 0.08) !important;
+  border-color: var(--lxs-gold) !important;
+  color: var(--lxs-white) !important;
+  transform: scale(1.08);
+  box-shadow: 
+    0 0 15px rgba(199, 154, 75, 0.25),
+    0 8px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+.lxs-nav-btn:active {
+  transform: scale(0.95);
+}
+
+/* Popular Badge styling */
+.lxs-popular-badge {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(199, 154, 75, 0.2);
+}
+

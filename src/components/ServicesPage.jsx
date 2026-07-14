@@ -26,207 +26,48 @@ import { trackEvent, trackCTA } from '../utils/analytics';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const serviceCategories = [
-  {
-    title: 'Full Website Redesign',
-    tag: 'CORE PLATFORM',
-    price: 3500,
-    icon: Layers,
-    description: 'Custom-coded React & Next.js architectures built for SMBs, contractors, medical clinics, and professional practices. Designed for high conversion, sub-500ms load speeds, and absolute authority.',
-    subServices: [
-      'Full Website Redesign (from $3,500)',
-      'Homepage Redesign (from $1,200)',
-      'Premium Landing Page (from $650)',
-      'CMS / Headless CMS ($950–$2,000)',
-      'Speed & Core Web Vitals ($450–$750)'
-    ]
-  },
-  {
-    title: 'AI & Automation Systems',
-    tag: 'HIGH PROFIT / INTELLIGENCE',
-    price: 2000,
-    icon: Cpu,
-    description: 'Integrate artificial intelligence directly into your daily operations. Build autonomous customer support agents, lead qualification bots, and automated CRM workflows that save hundreds of hours.',
-    subServices: [
-      'AI Workflow & CRM Automation ($2,000)',
-      'AI Lead Qualification Bot ($2,000)',
-      'AI Customer Support Assistant ($2,500)',
-      'AI Voice Receptionist ($4,500)',
-      'AI Appointment Booking Assistant ($1,800)'
-    ]
-  },
-  {
-    title: 'Technical & Local SEO',
-    tag: 'TRAFFIC & SEARCH',
-    price: 650,
-    icon: Search,
-    description: 'Dominate Google local search rankings and AI search engines. Technical audits, local map pack optimization, schema architecture, and Google Business profile authority.',
-    subServices: [
-      'Technical SEO Setup ($650)',
-      'Local SEO Setup ($550)',
-      'Google Business Profile Setup ($250)',
-      'Google Analytics 4 + Search Console ($200)',
-      'Core Web Vitals Optimization ($750)'
-    ]
-  },
-  {
-    title: 'Brand Identity & Design',
-    tag: 'VISUAL SYSTEM',
-    price: 2000,
-    icon: Award,
-    description: 'Establish absolute trust and prestige. Editorial logo design, curated typography, brand guidelines, and complete visual systems that command premium prices.',
-    subServices: [
-      'Complete Brand Identity ($2,000)',
-      'Logo Design ($650)',
-      'Brand Guidelines ($1,000)',
-      'Social Media Kit ($450)',
-      'Business Card & Media ($200)'
-    ]
-  },
-  {
-    title: 'E-Commerce Store',
-    tag: 'DIGITAL STOREFRONT',
-    price: 3500,
-    icon: Globe,
-    description: 'High-converting online store built for speed and seamless checkout. Supports up to 50 initial products with integrated payment gateways and inventory management.',
-    subServices: [
-      'E-Commerce Store (≤50 Products) ($3,500)',
-      'Every Additional 100 Products ($750)',
-      'Stripe & Square Integration ($450)',
-      'Payment Gateway Integration ($450)'
-    ]
-  },
-  {
-    title: 'Conversion Copywriting',
-    tag: 'NARRATIVE',
-    price: 600,
-    icon: Edit3,
-    description: 'Copywriting that commands attention. Technical storytelling, high-converting section copy, and brand voice architecture tailored for your target market.',
-    subServices: [
-      'High-Conversion Website Copy',
-      'Technical Product Copywriting ($120/sec)',
-      'SEO Authority Articles',
-      'Brand Messaging & Voice Guidelines'
-    ]
-  },
-  {
-    title: 'Monthly Growth & Care Plans',
-    tag: 'RECURRING CARE',
-    price: 179,
-    icon: TrendingUp,
-    description: 'Continuous optimization, security updates, uptime surveillance, backups, and priority engineer support to keep your digital asset operating at peak performance.',
-    subServices: [
-      'Essential Care Plan ($79/mo)',
-      'Growth Care Plan ($179/mo)',
-      'Premium Care Plan ($349/mo)',
-      'Security Updates & Backups',
-      'Priority Engineer Support'
-    ]
-  }
-];
-
-const rateCardMatrix = {
-  web: [
-    { service: 'Full Website Redesign', price: '$3,500', note: 'Complete custom-coded platform' },
-    { service: 'Homepage Redesign', price: '$1,200', note: 'Hero, sections, CTA overhaul' },
-    { service: 'Premium Landing Page', price: '$650', note: 'High-conversion campaign page' },
-    { service: 'Additional Website Page', price: '$250', note: 'Per inner page' },
-    { service: 'E-Commerce Store (≤50 Products)', price: '$3,500', note: 'Full catalog & checkout' },
-    { service: 'Every Additional 100 Products', price: '$750', note: 'Bulk catalog ingestion' },
-    { service: 'CMS Integration', price: '$950', note: 'Sanity, Strapi, or WordPress' },
-    { service: 'Headless CMS Architecture', price: '$2,000', note: 'Decoupled API platform' },
-    { service: 'Client Dashboard', price: '$3,000', note: 'Custom portal & telemetry' },
-    { service: 'Admin Dashboard', price: '$4,000', note: 'Full CRM & control panel' },
-    { service: 'Membership Portal', price: '$2,500', note: 'Gated accounts & paywalls' },
-    { service: 'Booking System', price: '$600', note: 'Calendar & slot management' },
-    { service: 'Payment Gateway (Stripe/Square)', price: '$450', note: 'Secure checkout integration' },
-    { service: 'Website Speed Optimization', price: '$450', note: 'Sub-500ms load tuning' },
-    { service: 'Core Web Vitals Optimization', price: '$750', note: '100/100 Google lighthouse audit' },
-    { service: 'Technical SEO Setup', price: '$650', note: 'Schema, sitemaps, indexing' },
-    { service: 'Local SEO Setup', price: '$550', note: 'Map pack & local authority' },
-    { service: 'Google Analytics + Search Console', price: '$200', note: 'GA4 + GSC configuration' },
-    { service: 'Google Business Profile Setup', price: '$250', note: 'Verification & optimization' },
-    { service: 'Dark Mode Support', price: '$400', note: 'Custom CSS variable toggle' }
-  ],
-  ai: [
-    { service: 'AI Voice Receptionist', price: '$4,500', note: '24/7 automated call handler' },
-    { service: 'AI Sales Chatbot', price: '$3,000', note: 'Conversational sales engine' },
-    { service: 'AI Customer Support Assistant', price: '$2,500', note: 'Trained on company docs' },
-    { service: 'AI Lead Qualification Bot', price: '$2,000', note: 'Qualifies & routes leads' },
-    { service: 'AI Appointment Booking Assistant', price: '$1,800', note: 'Auto-books calendar slots' },
-    { service: 'AI FAQ Chatbot', price: '$1,200', note: 'Answers routine questions' },
-    { service: 'AI Workflow & CRM Automation', price: '$2,000', note: 'Zapier, Make, custom GPTs' },
-    { service: 'CRM Automation', price: '$2,500', note: 'HubSpot, ActiveCampaign sync' },
-    { service: 'WhatsApp Automation', price: '$1,800', note: 'Automated messaging flows' },
-    { service: 'SMS Automation', price: '$1,200', note: 'Instant appointment alerts' },
-    { service: 'Email Marketing Automation', price: '$1,500', note: 'Drip campaigns & follow-ups' },
-    { service: 'Internal Business Automation', price: '$2,500–$10,000', note: 'Custom enterprise engine' }
-  ],
-  branding: [
-    { service: 'Brand Identity System', price: '$2,000', note: 'Full visual guidelines & logo' },
-    { service: 'Logo Design', price: '$650', note: 'Vector marks & lockups' },
-    { service: 'Brand Guidelines Document', price: '$1,000', note: 'Typography & color rules' },
-    { service: 'Social Media Kit', price: '$450', note: 'Banners, templates, icons' },
-    { service: 'Copywriting (Website Sections)', price: '$120/sec', note: 'High-converting copy' },
-    { service: 'Business Card Design', price: '$200', note: 'Print-ready vector cards' }
-  ],
-  care: [
-    { service: 'Essential Care Plan', price: '$79/mo', note: 'Security, backups, performance monitoring' },
-    { service: 'Growth Care Plan', price: '$179/mo', note: 'Essential + speed tuning & small edits' },
-    { service: 'Premium Care Plan', price: '$349/mo', note: 'Growth + priority engineer support & AI monitoring' }
-  ],
-  hourly: [
-    { service: 'Design Rate', price: '$90/hr', note: 'UI/UX & graphic design' },
-    { service: 'Development Rate', price: '$110/hr', note: 'React, Next.js, APIs' },
-    { service: 'AI Consulting Rate', price: '$150/hr', note: 'Workflow & agent architecture' },
-    { service: 'Emergency Work Rate', price: '$175/hr', note: 'Immediate same-day fix' },
-    { service: 'Minor Text / Image Change', price: '$40', note: 'Single text/image update' },
-    { service: 'Minor Layout Adjustment', price: '$90', note: 'Spacing/mobile tweaks' },
-    { service: 'New Section (Homepage / Internal)', price: '$200–$300', note: 'Custom layout section' },
-    { service: 'Major Layout Revision', price: '$700', note: 'Substantial structural rewrite' },
-    { service: 'Emergency Same-Day Rush Fee', price: '+$150', note: 'Added to standard rate' }
-  ]
-};
-
-const comparisonData = [
-  {
-    metric: "01",
-    feature: "Risk Architecture",
-    usVal: "100% Free Live Demo",
-    usDesc: "We build your custom home page for free before you sign anything. Zero deposit. Zero risk.",
-    themVal: "30% - 50% Upfront Deposit",
-    themDesc: "Forces you to lock in capital and sign blind contracts before seeing a single screen of work."
-  },
-  {
-    metric: "02",
-    feature: "Lock-in & Retainers",
-    usVal: "No Rigid Contracts",
-    usDesc: "Option to buy out 100% of the code for a one-time fee, or keep flexible low-cost monthly care.",
-    themVal: "$1,500 - $3,000/mo Retainers",
-    themDesc: "Locks you into rigid monthly retainers for hosting, simple text updates, and basic support."
-  },
-  {
-    metric: "03",
-    feature: "Overhead Costing",
-    usVal: "Direct Engineer Pricing",
-    usDesc: "Transparent project pricing starting at $650 for landing pages and $3,500 for full custom platforms. Every dollar goes directly into design and engineering.",
-    themVal: "$15,000+ - $30,000+ Agency Bloat",
-    themDesc: "Bloated agency minimums to fund sales commissions, project managers, and luxury Vancouver/Toronto office overhead."
-  },
-  {
-    metric: "04",
-    feature: "Build Speed",
-    usVal: "3 to 7 Days Delivery",
-    usDesc: "Rapid, agile sprints delivering fully functional products weeks ahead of schedule.",
-    themVal: "4 to 8 Weeks Timeline",
-    themDesc: "Bogged down by red tape, corporate account managers, and endless briefing loops."
-  }
-];
-
 export default function ServicesPage({ onViewChange }) {
   const pageRef = useRef(null);
   const carouselRef = useRef(null);
   
+  // Region Selector State: 'us_ca' (US/Canada) or 'in' (India)
+  const [region, setRegion] = useState('us_ca');
+  const [detectedRegion, setDetectedRegion] = useState('us_ca');
+
+  // Auto-detect visitor's region
+  useEffect(() => {
+    // 1. Lightweight detection using browser timezone (fast, offline, no latency)
+    let inferredRegion = 'us_ca';
+    try {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (tz && (tz.includes('Kolkata') || tz.includes('Calcutta') || tz.includes('India'))) {
+        inferredRegion = 'in';
+      }
+    } catch (e) {
+      console.warn("Timezone region detection failed, defaulting to us_ca:", e);
+    }
+    setRegion(inferredRegion);
+    setDetectedRegion(inferredRegion);
+
+    // 2. Double-check with free geo-IP api to confirm country code
+    fetch('https://ipapi.co/json/')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.country_code) {
+          if (data.country_code === 'IN') {
+            setRegion('in');
+            setDetectedRegion('in');
+          } else {
+            setRegion('us_ca');
+            setDetectedRegion('us_ca');
+          }
+        }
+      })
+      .catch(err => {
+        console.warn("Geo-IP detection failed, using timezone fallback:", err);
+      });
+  }, []);
+
   // Carousel Drag State
   const [isDragging, setIsDragging] = useState(false);
   const [tiltAngle, setTiltAngle] = useState(0);
@@ -235,8 +76,8 @@ export default function ServicesPage({ onViewChange }) {
   const lastXRef = useRef(0);
 
   // Configurator Selection
-  const [selectedServices, setSelectedServices] = useState([0]); // Web Design checked by default
-  const [displayedPrice, setDisplayedPrice] = useState(3500);
+  const [selectedServices, setSelectedServices] = useState([1]); // Business Website selected by default (index 1)
+  const [displayedPrice, setDisplayedPrice] = useState(1199);
   
   // Rate Card Active Tab
   const [rateCardTab, setRateCardTab] = useState('web'); // 'web', 'ai', 'branding', 'care', 'hourly'
@@ -247,7 +88,336 @@ export default function ServicesPage({ onViewChange }) {
   // Floating ambient lighting mouse tracking
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
-  // Navigation floating styling on mount
+  // Dynamic Service Categories based on active region
+  const serviceCategories = useMemo(() => {
+    if (region === 'us_ca') {
+      return [
+        {
+          title: 'Starter Landing Page',
+          tag: 'LANDING PAGE',
+          price: 500,
+          oldPrice: 1500,
+          icon: Layers,
+          description: 'One page. Hero, about, services, contact form, mobile optimised. Live in 5 days. Perfect for trades, solo practices, new businesses.',
+          subServices: [
+            'Starter Landing Page — $500',
+            'Mobile optimised layout',
+            'Contact form setup',
+            'Live in 5 days'
+          ]
+        },
+        {
+          title: 'Business Website',
+          tag: 'MOST POPULAR',
+          price: 1199,
+          oldPrice: 3500,
+          icon: Globe,
+          isPopular: true,
+          description: 'Up to 5 pages. Custom designed, fast-loaded, SEO-ready. The last website you\'ll need for the next 3 years. Live in 7 days.',
+          subServices: [
+            'Business Website — $1,199',
+            'Up to 5 pages custom design',
+            'SEO-ready structure',
+            'Live in 7 days'
+          ]
+        },
+        {
+          title: 'Growth Website',
+          tag: 'SCALE UP',
+          price: 2200,
+          oldPrice: 5500,
+          icon: TrendingUp,
+          description: 'Up to 10 pages plus a blog, booking system, and contact automation. Built for businesses ready to scale. Live in 10 days.',
+          subServices: [
+            'Growth Website — $2,200',
+            'Up to 10 pages + blog',
+            'Booking & Contact automation',
+            'Live in 10 days'
+          ]
+        },
+        {
+          title: 'E-Commerce Store',
+          tag: 'DIGITAL STORE',
+          price: 2500,
+          oldPrice: 6500,
+          icon: Award,
+          description: 'Up to 50 products, Stripe or Square checkout, inventory ready. One-time fee, no monthly Shopify tax. Live in 10 days.',
+          subServices: [
+            'E-Commerce Store — $2,500',
+            'Up to 50 products catalog',
+            'Stripe/Square checkout integration',
+            'No monthly platform taxes'
+          ]
+        },
+        {
+          title: 'AI & Automation Systems',
+          tag: 'AI OPERATIONS',
+          price: 900,
+          icon: Cpu,
+          description: 'Integrate artificial intelligence directly into your daily operations. Build FAQ chatbots, appointment booking assistants, and automated CRM workflows.',
+          subServices: [
+            'AI FAQ Chatbot ($900)',
+            'AI Booking Assistant ($1,400)',
+            'AI Lead Qualification Bot ($1,600)',
+            'Email/WhatsApp/CRM Automation ($1,000-$1,800)'
+          ]
+        },
+        {
+          title: 'Technical & Local SEO',
+          tag: 'TRAFFIC & SEARCH',
+          price: 200,
+          icon: Search,
+          description: 'Dominate Google local search rankings and AI search engines. Technical audits, local map pack optimization, and Google Business profile authority.',
+          subServices: [
+            'Google Business Profile Setup ($200)',
+            'Local SEO Package ($450)',
+            'Technical SEO Audit + Fix ($550)',
+            'Monthly Management ($299/mo)'
+          ]
+        },
+        {
+          title: 'Brand Identity & Copywriting',
+          tag: 'VISUAL SYSTEM',
+          price: 300,
+          icon: Edit3,
+          description: 'Establish absolute trust and prestige. Editorial logo design, brand guidelines, and high-converting copy copywriting package.',
+          subServices: [
+            'Logo Design ($350)',
+            'Brand Identity ($1,200)',
+            'Social Media Kit ($300)',
+            'Full Website Copy Package ($500)'
+          ]
+        }
+      ];
+    } else {
+      // India region (INR)
+      return [
+        {
+          title: 'Starter Landing Page',
+          tag: 'LANDING PAGE',
+          price: 5000,
+          oldPrice: 15000,
+          icon: Layers,
+          description: 'One page, fast, mobile-ready, Google-indexed. Perfect for shops, clinics, freelancers, and small businesses. Live in 5 days.',
+          subServices: [
+            'Starter Landing Page — ₹5,000',
+            'Mobile ready layout',
+            'Google indexation',
+            'Live in 5 days'
+          ]
+        },
+        {
+          title: 'Business Website',
+          tag: 'MOST POPULAR',
+          price: 11999,
+          oldPrice: 35000,
+          icon: Globe,
+          isPopular: true,
+          description: 'Up to 5 pages, custom design, contact form, WhatsApp button, SEO setup. The website your business deserves. Live in 7 days. GST included.',
+          subServices: [
+            'Business Website — ₹11,999',
+            'Up to 5 pages custom design',
+            'WhatsApp contact button',
+            'GST included'
+          ]
+        },
+        {
+          title: 'Growth Website',
+          tag: 'SCALE UP',
+          price: 19999,
+          oldPrice: 45000,
+          icon: TrendingUp,
+          description: 'Up to 10 pages, blog, booking system, and lead capture automation. Built for serious businesses. Live in 10 days. GST included.',
+          subServices: [
+            'Growth Website — ₹19,999',
+            'Up to 10 pages + blog',
+            'Booking & Lead automation',
+            'GST included'
+          ]
+        },
+        {
+          title: 'E-Commerce Store',
+          tag: 'DIGITAL STORE',
+          price: 24999,
+          oldPrice: 65000,
+          icon: Award,
+          description: 'Up to 50 products, Razorpay or Cashfree checkout, inventory management. Your own store, no monthly commission to anyone.',
+          subServices: [
+            'E-Commerce Store — ₹24,999',
+            'Razorpay or Cashfree checkout',
+            'Inventory management',
+            'No monthly commissions'
+          ]
+        },
+        {
+          title: 'AI & Automation Systems',
+          tag: 'AI OPERATIONS',
+          price: 25000,
+          oldPrice: 60000,
+          icon: Cpu,
+          description: 'Integrate artificial intelligence directly into your daily operations. Build FAQ chatbots, appointment booking assistants, and automated CRM workflows.',
+          subServices: [
+            'AI FAQ Chatbot (₹25,000)',
+            'AI Booking Assistant (₹45,000)',
+            'AI Lead Qualification Bot (₹50,000)',
+            'WhatsApp/CRM Automation (₹30,000-₹55,000)'
+          ]
+        },
+        {
+          title: 'Technical & Local SEO',
+          tag: 'TRAFFIC & SEARCH',
+          price: 1500,
+          oldPrice: 4500,
+          icon: Search,
+          description: 'Dominate Google local search rankings and AI search engines. Technical audits, local map pack optimization, and Google Business profile authority.',
+          subServices: [
+            'Google Business Profile Setup (₹1,500)',
+            'Local SEO Package (₹3,999)',
+            'Technical SEO Setup (₹4,999)',
+            'Monthly Management (₹2,499/mo)'
+          ]
+        },
+        {
+          title: 'Brand Identity & Copywriting',
+          tag: 'VISUAL SYSTEM',
+          price: 3000,
+          oldPrice: 9000,
+          icon: Edit3,
+          description: 'Establish absolute trust and prestige. Editorial logo design, brand guidelines, and high-converting copy copywriting package.',
+          subServices: [
+            'Logo Design (₹10,000)',
+            'Brand Identity (₹35,000)',
+            'Social Media Kit (₹9,000)',
+            'Full Website Copy Package (₹15,000)'
+          ]
+        }
+      ];
+    }
+  }, [region]);
+
+  // Dynamic Rate Card Matrix based on active region
+  const rateCardMatrix = useMemo(() => {
+    if (region === 'us_ca') {
+      return {
+        web: [
+          { service: 'Starter Landing Page', price: '$500', note: 'One page custom landing page' },
+          { service: 'Business Website', price: '$1,199', note: 'Up to 5 pages, custom designed' },
+          { service: 'Growth Website', price: '$2,200', note: 'Up to 10 pages + blog + booking' },
+          { service: 'E-Commerce Store', price: '$2,500', note: 'Up to 50 products, Stripe checkout' },
+          { service: 'Additional Page', price: '$150', note: 'Per inner page' }
+        ],
+        ai: [
+          { service: 'AI FAQ Chatbot', price: '$900', note: 'Answers routine questions' },
+          { service: 'AI Appointment Booking Bot', price: '$1,400', note: 'Auto-books calendar slots' },
+          { service: 'AI Lead Qualification Bot', price: '$1,600', note: 'Qualifies & routes leads' },
+          { service: 'Email / WhatsApp Automation', price: '$1,000', note: 'Automated messaging flows' },
+          { service: 'CRM Automation', price: '$1,800', note: 'HubSpot, ActiveCampaign sync' }
+        ],
+        branding: [
+          { service: 'Logo Design', price: '$350', note: 'Vector marks & lockups' },
+          { service: 'Brand Identity System', price: '$1,200', note: 'Full guidelines + logo + colors' },
+          { service: 'Social Media Kit', price: '$300', note: 'Banners, templates, icons' },
+          { service: 'Website Copywriting per section', price: '$90', note: 'High-converting copywriting' },
+          { service: 'Full Website Copy Package', price: '$500', note: 'Narrative rewrite' }
+        ],
+        care: [
+          { service: '6-Month Care Pack', price: '$249', note: 'Backups, updates, edits (Renew when ready)' },
+          { service: '12-Month Care Pack', price: '$399', note: 'Backups, updates, edits + speed audit' },
+          { service: 'Hosting addon (optional)', price: '$15/mo', note: 'Fully managed hosting' }
+        ],
+        hourly: [
+          { service: 'Design Rate', price: '$70/hr', note: 'UI/UX & graphic design' },
+          { service: 'Development Rate', price: '$90/hr', note: 'React, Next.js, APIs' },
+          { service: 'AI Consulting Rate', price: '$110/hr', note: 'Workflow & agent architecture' },
+          { service: 'Emergency Work Rate', price: '$150/hr', note: 'Immediate same-day fix' }
+        ]
+      };
+    } else {
+      return {
+        web: [
+          { service: 'Starter Landing Page', price: '₹5,000', note: 'One page, fast, mobile-ready' },
+          { service: 'Business Website', price: '₹11,999', note: 'Up to 5 pages, WhatsApp button, GST included' },
+          { service: 'Growth Website', price: '₹19,999', note: 'Up to 10 pages + blog + booking, GST included' },
+          { service: 'E-Commerce Store', price: '₹24,999', note: 'Razorpay or Cashfree checkout' },
+          { service: 'Additional Page', price: '₹1,500', note: 'Per inner page' }
+        ],
+        ai: [
+          { service: 'AI FAQ Chatbot', price: '₹25,000', note: 'Answers routine questions' },
+          { service: 'AI Appointment Booking Bot', price: '₹45,000', note: 'Auto-books calendar slots' },
+          { service: 'AI Lead Qualification Bot', price: '₹50,000', note: 'Qualifies & routes leads' },
+          { service: 'Email / WhatsApp Automation', price: '₹30,000', note: 'Automated messaging flows' },
+          { service: 'CRM Automation', price: '₹55,000', note: 'HubSpot, ActiveCampaign sync' }
+        ],
+        branding: [
+          { service: 'Logo Design', price: '₹10,000', note: 'Vector marks & lockups' },
+          { service: 'Brand Identity System', price: '₹35,000', note: 'Full guidelines + logo + colors' },
+          { service: 'Social Media Kit', price: '₹9,000', note: 'Banners, templates, icons' },
+          { service: 'Website Copywriting per section', price: '₹3,000', note: 'High-converting copywriting' },
+          { service: 'Full Website Copy Package', price: '₹15,000', note: 'Narrative rewrite' }
+        ],
+        care: [
+          { service: 'Basic Annual Care', price: '₹3,999/yr', note: 'Backups, updates, edits (GST included)' },
+          { service: 'Growth Annual Care', price: '₹7,999/yr', note: 'Basic + WhatsApp support line' },
+          { service: 'Hosting (after year 1)', price: '₹3,999/yr', note: '₹399/mo (1st year free)' }
+        ],
+        hourly: [
+          { service: 'Design Rate', price: '₹1,500/hr', note: 'UI/UX & graphic design' },
+          { service: 'Development Rate', price: '₹2,000/hr', note: 'React, Next.js, APIs' },
+          { service: 'AI Consulting Rate', price: '₹2,500/hr', note: 'Workflow & agent architecture' },
+          { service: 'Emergency Work Rate', price: '₹3,500/hr', note: 'Immediate same-day fix' }
+        ]
+      };
+    }
+  }, [region]);
+
+  const comparisonData = useMemo(() => {
+    return [
+      {
+        metric: "01",
+        feature: "Risk Architecture",
+        usVal: "100% Free Live Demo",
+        usDesc: "We build your custom home page for free before you sign anything. Zero deposit. Zero risk.",
+        themVal: "30% - 50% Upfront Deposit",
+        themDesc: "Forces you to lock in capital and sign blind contracts before seeing a single screen of work."
+      },
+      {
+        metric: "02",
+        feature: "Lock-in & Retainers",
+        usVal: "No Rigid Contracts",
+        usDesc: region === 'us_ca' 
+          ? "Option to buy out 100% of the code for a one-time fee, or keep flexible low-cost monthly care."
+          : "Option to buy out 100% of the code for a one-time fee, or keep flexible low-cost annual care.",
+        themVal: region === 'us_ca' ? "$1,500 - $3,000/mo Retainers" : "₹50,000 - ₹1,50,000/mo Retainers",
+        themDesc: "Locks you into rigid monthly retainers for hosting, simple text updates, and basic support."
+      },
+      {
+        metric: "03",
+        feature: "Overhead Costing",
+        usVal: "Direct Engineer Pricing",
+        usDesc: region === 'us_ca'
+          ? "Transparent project pricing starting at $500 for landing pages and $1,199 for full custom platforms. Every dollar goes directly into design and engineering."
+          : "Transparent project pricing starting at ₹5,000 for landing pages and ₹11,999 for full custom platforms. Every rupee goes directly into design and engineering.",
+        themVal: region === 'us_ca' ? "$15,000+ - $30,000+ Agency Bloat" : "₹3,00,000+ Agency Bloat",
+        themDesc: "Bloated agency minimums to fund sales commissions, project managers, and luxury office overhead."
+      },
+      {
+        metric: "04",
+        feature: "Build Speed",
+        usVal: "5 to 10 Days Delivery",
+        usDesc: "Rapid, agile sprints delivering fully functional products weeks ahead of schedule.",
+        themVal: "4 to 8 Weeks Timeline",
+        themDesc: "Bogged down by red tape, corporate account managers, and endless briefing loops."
+      }
+    ];
+  }, [region]);
+
+  // Reset/recalculate pricing on region change
+  useEffect(() => {
+    // Reset selection to Business Website when region changes
+    setSelectedServices([1]);
+  }, [region]);
+
+  // Floating Navigation floating styling on mount
   useEffect(() => {
     const nav = document.getElementById('navbar');
     if (nav) {
@@ -332,11 +502,13 @@ export default function ServicesPage({ onViewChange }) {
     e.preventDefault();
     const mappedServices = selectedServices.map(idx => serviceCategories[idx].title);
     sessionStorage.setItem('preferred_services', JSON.stringify(mappedServices));
+    sessionStorage.setItem('selected_region', region);
     
     trackCTA('claim_proposal', 'click', {
       selected_services: mappedServices,
       total_price: finalTotal,
-      discount_applied: hasDiscount
+      discount_applied: hasDiscount,
+      region: region
     });
     onViewChange('demo');
   };
@@ -382,7 +554,12 @@ export default function ServicesPage({ onViewChange }) {
   };
 
   return (
-    <div ref={pageRef} className="sp-wrapper">
+    <div ref={pageRef} className="sp-wrapper" onMouseMove={(e) => {
+      if (!isLite) {
+        const rect = pageRef.current.getBoundingClientRect();
+        setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      }
+    }}>
       
       {/* Background Ambient Lighting Container */}
       <div className="sp-bg-lighting" aria-hidden="true">
@@ -401,20 +578,74 @@ export default function ServicesPage({ onViewChange }) {
         <header className="sp-header">
           <div className="sp-header-badge">
             <Sparkles size={12} className="sp-badge-icon" />
-            <span>PREMIUM CANADIAN AGENCY CAPABILITIES</span>
+            <span>
+              {region === 'us_ca' 
+                ? 'PREMIUM CANADIAN AGENCY CAPABILITIES' 
+                : 'BUILT BY INDIAN ENGINEERS, FOR INDIAN BUSINESSES'}
+            </span>
           </div>
           <h1 className="sp-title">
             Digital Engineering & <br />
             <span className="sp-title-gradient">AI Automation Engine</span>
           </h1>
           <p className="sp-subtitle">
-            Transparent pricing for growing SMBs, medical practices, law firms, and trades. Built with high-fidelity React, Next.js, and automated workflow systems.
+            {region === 'us_ca'
+              ? 'Transparent pricing for growing SMBs, medical practices, law firms, and trades. Built with high-fidelity React, Next.js, and automated workflow systems.'
+              : 'Fast, modern, Google-friendly websites. No hidden charges. Transparent pricing for growing businesses, shops, clinics, and freelancers.'}
           </p>
+
+          {/* Region Selector tabs: Only visible if Indian region is auto-detected to prevent US/Canada visitors from seeing/switching */}
+          {detectedRegion === 'in' && (
+            <div className="sp-region-switcher" style={{ display: 'flex', justifyContent: 'center', marginTop: '32px' }}>
+              <div style={{
+                background: 'rgba(21, 17, 15, 0.6)',
+                border: '1px solid var(--border)',
+                borderRadius: '100px',
+                padding: '4px',
+                display: 'flex',
+                gap: '4px',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)'
+              }}>
+                <button
+                  onClick={() => setRegion('us_ca')}
+                  className={`lxs-btn ${region === 'us_ca' ? 'lxs-btn--primary' : 'lxs-btn--ghost'}`}
+                  style={{ padding: '8px 20px', fontSize: '12px', border: 'none', background: region === 'us_ca' ? '' : 'transparent', color: region === 'us_ca' ? '#070707' : 'var(--text-secondary)' }}
+                >
+                  🇺🇸🇨🇦 US / Canada (USD)
+                </button>
+                <button
+                  onClick={() => setRegion('in')}
+                  className={`lxs-btn ${region === 'in' ? 'lxs-btn--primary' : 'lxs-btn--ghost'}`}
+                  style={{ padding: '8px 20px', fontSize: '12px', border: 'none', background: region === 'in' ? '' : 'transparent', color: region === 'in' ? '#070707' : 'var(--text-secondary)' }}
+                >
+                  🇮🇳 India (INR)
+                </button>
+              </div>
+            </div>
+          )}
+
+          {region === 'in' && (
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '24px' }}>
+              <a
+                href="https://wa.me/919024378271?text=Hi%20OddWebs%2C%20I%20am%20interested%20in%20a%20website%20for%20my%20business."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="lxs-btn"
+                style={{ background: '#25D366', borderColor: '#25D366', color: '#fff', fontSize: '13px', padding: '10px 24px' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                  <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.45L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.413 9.863-9.83.001-2.624-1.023-5.09-2.885-6.954C16.59 1.958 14.13 1.95 11.517 1.95c-5.438 0-9.863 4.413-9.866 9.831 0 1.77.472 3.5 1.365 5.03L2.094 21.75l5.09-1.332zM17.487 14.4c-.299-.149-1.778-.875-2.053-.974-.275-.099-.475-.149-.675.15-.2.299-.775.974-.95 1.174-.175.199-.35.224-.65.074-1.122-.56-2.127-1.127-2.92-1.815-.615-.533-1.012-1.186-1.132-1.393-.12-.207-.013-.319.107-.439.108-.108.225-.262.337-.393.113-.131.15-.225.225-.375.075-.15.038-.281-.019-.413-.056-.131-.475-1.136-.65-1.56-.17-.411-.344-.356-.475-.362-.122-.005-.262-.006-.401-.006-.14 0-.367.052-.56.262-.193.21-1.378 1.348-1.378 3.288 0 1.94 1.412 3.815 1.612 4.077.2.262 2.78 4.248 6.732 5.952.94.406 1.674.647 2.247.829.945.3 1.806.258 2.486.156.758-.113 2.278-.93 2.597-1.785.319-.855.319-1.587.225-1.785-.095-.199-.35-.299-.65-.449z"/>
+                </svg>
+                WhatsApp Inquiry
+              </a>
+            </div>
+          )}
         </header>
 
         {/* HORIZONTAL CAROUSEL SHOWCASE */}
         <section className="lxs-carousel-section">
-          <div className="lxs-carousel-header">
+          <div className="lxs-carousel-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '32px' }}>
             <div>
               <span className="lxs-eyebrow">SERVICES & PLATFORMS</span>
               <h2 className="lxs-section-title">Core Capability Modules</h2>
@@ -448,15 +679,36 @@ export default function ServicesPage({ onViewChange }) {
           >
             {serviceCategories.map((service, idx) => {
               const Icon = service.icon;
+              const hasOldPrice = service.oldPrice !== undefined;
+              const isPopular = service.isPopular;
               return (
-                <div key={idx} className="lxs-carousel-slide">
+                <div key={idx} className="lxs-carousel-slide" style={{ flex: '0 0 380px', scrollSnapAlign: 'center' }}>
                   <article 
                     className="lxs-card"
                     style={{
                       transform: isDragging ? `rotateY(${tiltAngle}deg) scale(0.99)` : 'none',
+                      border: isPopular ? '1px solid var(--lxs-gold)' : '1px solid var(--lxs-border-thin)'
                     }}
                   >
-                    <div className="lxs-card-top">
+                    {isPopular && (
+                      <div className="lxs-popular-badge" style={{
+                        position: 'absolute',
+                        top: '16px',
+                        right: '16px',
+                        background: 'linear-gradient(135deg, var(--lxs-gold) 0%, #aa8037 100%)',
+                        color: '#070707',
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        padding: '4px 10px',
+                        borderRadius: '100px',
+                        letterSpacing: '0.05em',
+                        textTransform: 'uppercase',
+                        zIndex: 10
+                      }}>
+                        Most Popular
+                      </div>
+                    )}
+                    <div className="lxs-card-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
                       <span className="lxs-card-tag">{service.tag}</span>
                       <div className="lxs-card-icon-wrap">
                         <Icon size={20} strokeWidth={1.5} className="lxs-card-icon" />
@@ -466,19 +718,38 @@ export default function ServicesPage({ onViewChange }) {
                     <h3 className="lxs-card-title">{service.title}</h3>
                     <p className="lxs-card-desc">{service.description}</p>
                     
-                    <ul className="lxs-card-bullets">
-                      {service.subServices.slice(0, 3).map((sub, i) => (
-                        <li key={i}>
+                    <ul className="lxs-card-bullets" style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'flex', flexDirection: 'column', gap: '10px', flexGrow: 1 }}>
+                      {service.subServices.map((sub, i) => (
+                        <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12.5px', color: 'rgba(247, 245, 252, 0.7)' }}>
                           <span className="lxs-bullet-dot"></span>
                           {sub}
                         </li>
                       ))}
                     </ul>
 
+                    {/* Money framing line for Business Website */}
+                    {isPopular && region === 'us_ca' && (
+                      <p style={{ fontSize: '11px', color: 'var(--lxs-gold)', fontStyle: 'italic', marginBottom: '16px', opacity: 0.9 }}>
+                        * Less than one month of a traditional agency retainer. You own it forever.
+                      </p>
+                    )}
+
                     <div className="lxs-card-footer">
                       <div className="lxs-card-scope">
                         <span className="lxs-scope-label">STARTING PRICE</span>
-                        <span className="lxs-scope-price">From ${service.price} USD</span>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
+                          {hasOldPrice && (
+                            <span style={{ fontSize: '11px', textDecoration: 'line-through', color: 'rgba(255,255,255,0.3)' }}>
+                              {region === 'us_ca' ? '$' : '₹'}{service.oldPrice.toLocaleString('en-IN')}
+                            </span>
+                          )}
+                          <span className="lxs-scope-price" style={{ color: 'var(--lxs-gold)', fontWeight: 700 }}>
+                            {region === 'us_ca' ? '$' : '₹'}{service.price.toLocaleString('en-IN')}
+                          </span>
+                        </div>
+                        {region === 'in' && (
+                          <span style={{ fontSize: '9px', color: 'var(--lxs-mint)', fontWeight: 600 }}>No hidden charges • GST Included</span>
+                        )}
                       </div>
                       <button 
                         className="lxs-card-btn" 
@@ -534,7 +805,7 @@ export default function ServicesPage({ onViewChange }) {
                       <Icon size={16} strokeWidth={1.5} className="lxs-pill-icon" />
                       <div className="lxs-pill-info">
                         <span className="lxs-pill-name">{service.title}</span>
-                        <span className="lxs-pill-price">From +${service.price}</span>
+                        <span className="lxs-pill-price">From +{region === 'us_ca' ? '$' : '₹'}{service.price.toLocaleString('en-IN')}</span>
                       </div>
                     </button>
                   );
@@ -552,7 +823,7 @@ export default function ServicesPage({ onViewChange }) {
                   {selectedServices.map(idx => (
                     <li key={idx} className="lxs-summary-item">
                       <span className="lxs-summary-item-name">{serviceCategories[idx].title}</span>
-                      <span className="lxs-summary-item-price">${serviceCategories[idx].price} USD</span>
+                      <span className="lxs-summary-item-price">{region === 'us_ca' ? '$' : '₹'}{serviceCategories[idx].price.toLocaleString('en-IN')} {region === 'us_ca' ? 'USD' : 'INR'}</span>
                     </li>
                   ))}
                 </ul>
@@ -579,24 +850,40 @@ export default function ServicesPage({ onViewChange }) {
                 {hasDiscount && (
                   <div className="lxs-discount-badge">
                     <Sparkles size={11} className="lxs-sparkle-spin" />
-                    <span>20% Bundle Discount Applied (-${discountAmount} USD)</span>
+                    <span>20% Bundle Discount Applied (-{region === 'us_ca' ? '$' : '₹'}{discountAmount.toLocaleString('en-IN')} {region === 'us_ca' ? 'USD' : 'INR'})</span>
                   </div>
                 )}
 
                 <div className="lxs-total-section">
                   <span className="lxs-total-label">Estimated Build Total</span>
                   <div className="lxs-total-price">
-                    <span className="lxs-price-currency">$</span>
-                    <span className="lxs-price-val">{displayedPrice}</span>
-                    <span className="lxs-price-suffix">USD / starting</span>
+                    <span className="lxs-price-currency">{region === 'us_ca' ? '$' : '₹'}</span>
+                    <span className="lxs-price-val">{displayedPrice.toLocaleString('en-IN')}</span>
+                    <span className="lxs-price-suffix">{region === 'us_ca' ? 'USD' : 'INR'} / starting</span>
                   </div>
                 </div>
 
-                <button onClick={handleClaimProposal} className="lxs-btn lxs-btn--primary lxs-btn--full">
-                  Get My Custom Proposal
-                  <ArrowRight size={14} />
-                </button>
-                <span className="lxs-summary-footer-text">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' }}>
+                  {region === 'in' && (
+                    <a 
+                      href="https://wa.me/919024378271?text=Hi%20OddWebs%2C%20I%20want%20to%20get%20started%20with%20custom%20modules." 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="lxs-btn" 
+                      style={{ background: '#25D366', borderColor: '#25D366', color: '#fff', width: '100%', padding: '14px 20px', fontSize: '13px' }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.45L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.413 9.863-9.83.001-2.624-1.023-5.09-2.885-6.954C16.59 1.958 14.13 1.95 11.517 1.95c-5.438 0-9.863 4.413-9.866 9.831 0 1.77.472 3.5 1.365 5.03L2.094 21.75l5.09-1.332zM17.487 14.4c-.299-.149-1.778-.875-2.053-.974-.275-.099-.475-.149-.675.15-.2.299-.775.974-.95 1.174-.175.199-.35.224-.65.074-1.122-.56-2.127-1.127-2.92-1.815-.615-.533-1.012-1.186-1.132-1.393-.12-.207-.013-.319.107-.439.108-.108.225-.262.337-.393.113-.131.15-.225.225-.375.075-.15.038-.281-.019-.413-.056-.131-.475-1.136-.65-1.56-.17-.411-.344-.356-.475-.362-.122-.005-.262-.006-.401-.006-.14 0-.367.052-.56.262-.193.21-1.378 1.348-1.378 3.288 0 1.94 1.412 3.815 1.612 4.077.2.262 2.78 4.248 6.732 5.952.94.406 1.674.647 2.247.829.945.3 1.806.258 2.486.156.758-.113 2.278-.93 2.597-1.785.319-.855.319-1.587.225-1.785-.095-.199-.35-.299-.65-.449z"/>
+                      </svg>
+                      Chat on WhatsApp
+                    </a>
+                  )}
+                  <button onClick={handleClaimProposal} className="lxs-btn lxs-btn--primary lxs-btn--full">
+                    Get My Custom Proposal
+                    <ArrowRight size={14} />
+                  </button>
+                </div>
+                <span className="lxs-summary-footer-text" style={{ display: 'block', textAlign: 'center', marginTop: '8px' }}>
                   *Completely custom scoped. Transparent pricing. 100% Free Live Demo.
                 </span>
               </div>
@@ -611,7 +898,7 @@ export default function ServicesPage({ onViewChange }) {
             <span className="lxs-eyebrow">TRANSPARENT PRICING MATRIX</span>
             <h2 className="lxs-section-title">Itemized Service Rate Card</h2>
             <p className="lxs-section-subtitle">
-              Fair, upfront pricing tailored for Canadian small and medium businesses, medical clinics, trades, and professional practices.
+              Fair, upfront pricing tailored for growing businesses, medical clinics, trades, and professional practices.
             </p>
           </div>
 
@@ -642,7 +929,7 @@ export default function ServicesPage({ onViewChange }) {
                 <thead>
                   <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>
                     <th style={{ padding: '12px 16px' }}>SERVICE / CAPABILITY</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'right' }}>PRICE (USD)</th>
+                    <th style={{ padding: '12px 16px', textAlign: 'right' }}>PRICE ({region === 'us_ca' ? 'USD' : 'INR'})</th>
                     <th style={{ padding: '12px 16px' }}>SCOPE DETAILS</th>
                   </tr>
                 </thead>
@@ -666,11 +953,27 @@ export default function ServicesPage({ onViewChange }) {
 
             <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--text-muted)' }}>
-                * All rates in USD. Customized enterprise scopes available upon request.
+                {region === 'us_ca' ? '* All rates in USD. Customized enterprise scopes available upon request.' : '* All rates in INR (GST included). No hidden charges. Customized enterprise scopes available upon request.'}
               </span>
-              <button onClick={() => onViewChange('demo')} className="lxs-btn lxs-btn--primary" style={{ padding: '8px 18px', fontSize: '11px' }}>
-                Request Custom Proposal ↗
-              </button>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                {region === 'in' && (
+                  <a
+                    href="https://wa.me/919024378271?text=Hi%20OddWebs%2C%20I%20have%20questions%20about%20your%20services%20matrix."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="lxs-btn"
+                    style={{ background: '#25D366', borderColor: '#25D366', color: '#fff', padding: '8px 18px', fontSize: '11px' }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '6px', verticalAlign: 'middle' }}>
+                      <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.45L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.413 9.863-9.83.001-2.624-1.023-5.09-2.885-6.954C16.59 1.958 14.13 1.95 11.517 1.95c-5.438 0-9.863 4.413-9.866 9.831 0 1.77.472 3.5 1.365 5.03L2.094 21.75l5.09-1.332zM17.487 14.4c-.299-.149-1.778-.875-2.053-.974-.275-.099-.475-.149-.675.15-.2.299-.775.974-.95 1.174-.175.199-.35.224-.65.074-1.122-.56-2.127-1.127-2.92-1.815-.615-.533-1.012-1.186-1.132-1.393-.12-.207-.013-.319.107-.439.108-.108.225-.262.337-.393.113-.131.15-.225.225-.375.075-.15.038-.281-.019-.413-.056-.131-.475-1.136-.65-1.56-.17-.411-.344-.356-.475-.362-.122-.005-.262-.006-.401-.006-.14 0-.367.052-.56.262-.193.21-1.378 1.348-1.378 3.288 0 1.94 1.412 3.815 1.612 4.077.2.262 2.78 4.248 6.732 5.952.94.406 1.674.647 2.247.829.945.3 1.806.258 2.486.156.758-.113 2.278-.93 2.597-1.785.319-.855.319-1.587.225-1.785-.095-.199-.35-.299-.65-.449z"/>
+                    </svg>
+                    WhatsApp Us
+                  </a>
+                )}
+                <button onClick={() => onViewChange('demo')} className="lxs-btn lxs-btn--primary" style={{ padding: '8px 18px', fontSize: '11px' }}>
+                  Request Custom Proposal ↗
+                </button>
+              </div>
             </div>
           </div>
         </section>
@@ -683,7 +986,9 @@ export default function ServicesPage({ onViewChange }) {
               <span className="lxs-phil-underline" />
             </h2>
             <p className="lxs-phil-text">
-              We eliminate traditional agency bloat. No account managers playing telephone, no expensive office minimums. Direct software engineering flat-rates starting from $650 for landing pages and $3,500 for full custom platforms.
+              {region === 'us_ca'
+                ? 'We eliminate traditional agency bloat. No account managers playing telephone, no expensive office minimums. Direct software engineering flat-rates starting from $500 for landing pages and $1,199 for full custom platforms.'
+                : 'We eliminate traditional agency bloat. No account managers, no middlemen, just engineering. Direct flat-rates starting from ₹5,000 for landing pages and ₹11,999 for full custom platforms.'}
             </p>
           </div>
         </section>
@@ -695,33 +1000,60 @@ export default function ServicesPage({ onViewChange }) {
             <h2 className="lxs-section-title">The OddWebs Advantage</h2>
           </div>
 
-          <div className="lxs-comparison-grid">
-            {comparisonData.map((item, idx) => (
-              <div key={idx} className="lxs-comp-card">
-                <div className="lxs-comp-header">
-                  <span className="lxs-comp-num">{item.metric}</span>
-                  <h3 className="lxs-comp-feature">{item.feature}</h3>
-                </div>
-
-                <div className="lxs-comp-body">
-                  <div className="lxs-comp-side lxs-comp-side--us">
-                    <div className="lxs-side-badge">ODDWEBS</div>
-                    <span className="lxs-side-val">{item.usVal}</span>
-                    <p className="lxs-side-desc">{item.usDesc}</p>
-                  </div>
-
-                  <div className="lxs-comp-divider" />
-
-                  <div className="lxs-comp-side lxs-comp-side--them">
-                    <div className="lxs-side-badge lxs-side-badge--them">TRADITIONAL AGENCIES</div>
-                    <span className="lxs-side-val lxs-side-val--them">{item.themVal}</span>
-                    <p className="lxs-side-desc">{item.themDesc}</p>
-                  </div>
-                </div>
+          <div className="lxs-comp-grid">
+            {/* ODDWEBS PANEL */}
+            <div className="lxs-comp-panel lxs-comp-panel--us">
+              <div className="lxs-comp-panel-glow" />
+              <div className="lxs-comp-panel-header">
+                <span className="lxs-comp-panel-label">ODDWEBS</span>
+                <h3 className="lxs-comp-panel-title">Direct Engineering</h3>
               </div>
-            ))}
+              <ul className="lxs-comp-list">
+                {comparisonData.map((item, idx) => (
+                  <li key={idx} className="lxs-comp-item">
+                    <div className="lxs-comp-item-header">
+                      <span className="lxs-comp-num">{item.metric}</span>
+                      <div className="lxs-comp-check-icon success">
+                        <Check size={12} strokeWidth={3} />
+                      </div>
+                      <span className="lxs-comp-feature-name">{item.feature}</span>
+                    </div>
+                    <div className="lxs-comp-item-content">
+                      <span className="lxs-comp-highlight success">{item.usVal}</span>
+                      <p className="lxs-comp-desc">{item.usDesc}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* TRADITIONAL AGENCIES PANEL */}
+            <div className="lxs-comp-panel lxs-comp-panel--them">
+              <div className="lxs-comp-panel-header">
+                <span className="lxs-comp-panel-label">TRADITIONAL AGENCIES</span>
+                <h3 className="lxs-comp-panel-title">Typical Agency Model</h3>
+              </div>
+              <ul className="lxs-comp-list">
+                {comparisonData.map((item, idx) => (
+                  <li key={idx} className="lxs-comp-item">
+                    <div className="lxs-comp-item-header">
+                      <span className="lxs-comp-num">{item.metric}</span>
+                      <div className="lxs-comp-check-icon failure" style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255, 107, 74, 0.12)', color: 'var(--lxs-coral)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '14px', fontWeight: 'bold', lineHeight: 1 }}>×</span>
+                      </div>
+                      <span className="lxs-comp-feature-name">{item.feature}</span>
+                    </div>
+                    <div className="lxs-comp-item-content">
+                      <span className="lxs-comp-highlight failure">{item.themVal}</span>
+                      <p className="lxs-comp-desc">{item.themDesc}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </section>
+
 
         {/* BOTTOM CALL TO ACTION */}
         <section className="lxs-bottom-cta">
@@ -729,9 +1061,11 @@ export default function ServicesPage({ onViewChange }) {
             <span className="lxs-bottom-label">GET STARTED</span>
             <h2 className="lxs-bottom-title">Build Your Custom Engine.</h2>
             <p className="lxs-bottom-sub">
-              Claim your free roadmap design. We&apos;ll map out your custom digital structure and deliver a fully custom homepage demo within days, completely free.
+              {region === 'us_ca'
+                ? 'Claim your free roadmap design. We\'ll map out your custom digital structure and deliver a fully custom homepage demo within days, completely free.'
+                : 'Claim your free roadmap design. We\'ll map out your custom digital structure and deliver a fully custom homepage demo within days, completely free.'}
             </p>
-            <div className="lxs-bottom-ctas">
+            <div className="lxs-bottom-ctas" style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button 
                 onClick={() => onViewChange('demo')} 
                 className="lxs-btn lxs-btn--primary magnetic"
@@ -740,6 +1074,20 @@ export default function ServicesPage({ onViewChange }) {
                 Book Free Strategy Call
                 <ArrowRight size={16} />
               </button>
+              {region === 'in' && (
+                <a
+                  href="https://wa.me/919024378271?text=Hi%20OddWebs%2C%20I%20am%20interested%20in%20a%20website%20and%20want%20to%20book%20a%20call."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="lxs-btn"
+                  style={{ background: '#25D366', borderColor: '#25D366', color: '#fff', padding: '16px 36px', fontSize: '0.95rem' }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ marginRight: '8px', verticalAlign: 'middle' }}>
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.73-1.45L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.413 9.863-9.83.001-2.624-1.023-5.09-2.885-6.954C16.59 1.958 14.13 1.95 11.517 1.95c-5.438 0-9.863 4.413-9.866 9.831 0 1.77.472 3.5 1.365 5.03L2.094 21.75l5.09-1.332zM17.487 14.4c-.299-.149-1.778-.875-2.053-.974-.275-.099-.475-.149-.675.15-.2.299-.775.974-.95 1.174-.175.199-.35.224-.65.074-1.122-.56-2.127-1.127-2.92-1.815-.615-.533-1.012-1.186-1.132-1.393-.12-.207-.013-.319.107-.439.108-.108.225-.262.337-.393.113-.131.15-.225.225-.375.075-.15.038-.281-.019-.413-.056-.131-.475-1.136-.65-1.56-.17-.411-.344-.356-.475-.362-.122-.005-.262-.006-.401-.006-.14 0-.367.052-.56.262-.193.21-1.378 1.348-1.378 3.288 0 1.94 1.412 3.815 1.612 4.077.2.262 2.78 4.248 6.732 5.952.94.406 1.674.647 2.247.829.945.3 1.806.258 2.486.156.758-.113 2.278-.93 2.597-1.785.319-.855.319-1.587.225-1.785-.095-.199-.35-.299-.65-.449z"/>
+                  </svg>
+                  WhatsApp Us
+                </a>
+              )}
             </div>
           </div>
         </section>
@@ -750,7 +1098,11 @@ export default function ServicesPage({ onViewChange }) {
       <div className={`lxs-sticky-cta ${showStickyCta ? 'visible' : ''}`}>
         <div className="lxs-sticky-content">
           <span className="lxs-sticky-dot" />
-          <span className="lxs-sticky-text">Custom Growth Packages Start at $650</span>
+          <span className="lxs-sticky-text">
+            {region === 'us_ca' 
+              ? 'Custom Growth Packages Start at $500' 
+              : 'Custom Growth Packages Start at ₹5,000'}
+          </span>
           <button 
             onClick={() => onViewChange('demo')} 
             className="lxs-sticky-btn"

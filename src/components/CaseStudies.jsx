@@ -66,6 +66,7 @@ export default function CaseStudies() {
   const [isMobile, setIsMobile] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   // Monitor visibility of the section to suspend active RAF loop when off-screen
   useEffect(() => {
@@ -177,6 +178,9 @@ export default function CaseStudies() {
     });
 
     setActiveIndex(closestCardIndex);
+    if (!hasScrolled && closestCardIndex > 0) {
+      setHasScrolled(true);
+    }
   };
 
   // Run updates once on visibility or native mobile scroll
@@ -513,15 +517,15 @@ export default function CaseStudies() {
           }}
         >
           <div className="cs-card__box" style={{ background: 'transparent', border: 'none', boxShadow: 'none', backdropFilter: 'none' }}>
-            <div className="cs-card__inner" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: isMobile ? '0' : '40px' }}>
-              <div className="cs-card__content" style={{ maxWidth: '600px', width: '100%' }}>
+            <div className="cs-card__inner" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', height: '100%', padding: isMobile ? '0 24px' : '40px' }}>
+              <div className="cs-card__content" style={{ maxWidth: '600px', width: '100%', opacity: 1 }}>
                 <p className="eyebrow" style={{ color: 'var(--accent-ember)', letterSpacing: '0.25em', marginBottom: '20px' }}>
                   Selected Work
                 </p>
-                <h2 className="display-lg" style={{ fontSize: 'var(--text-display-lg)', fontWeight: 'var(--weight-black)', color: 'var(--text-primary)', lineHeight: 1.15, marginBottom: '24px' }}>
+                <h2 className="display-lg" style={{ fontSize: isMobile ? 'clamp(1.8rem, 7vw, 2.4rem)' : 'var(--text-display-lg)', fontWeight: 'var(--weight-black)', color: 'var(--text-primary)', lineHeight: 1.15, marginBottom: '24px' }}>
                   Web Design & Development Case Studies
                 </h2>
-                <p className="body-lg" style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>
+                <p className="body-lg" style={{ color: 'var(--text-secondary)', fontSize: isMobile ? '1rem' : '1.2rem' }}>
                   Not fake “concept universes.”
                 </p>
               </div>
@@ -667,6 +671,29 @@ export default function CaseStudies() {
           </article>
         ))}
       </div>
+
+      {/* Mobile Swipe Indicator + Dot Pagination */}
+      {isMobile && (
+        <>
+          <div className={`cs-swipe-hint ${hasScrolled ? 'cs-swipe-hint--hidden' : ''}`}>
+            <div className="cs-swipe-hint__arrow">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <span className="cs-swipe-hint__text">Swipe to explore</span>
+          </div>
+          <div className="cs-dot-pagination">
+            {[0, ...projects.map((_, i) => i + 1)].map((dotIdx) => (
+              <span
+                key={dotIdx}
+                className={`cs-dot ${activeIndex === dotIdx ? 'cs-dot--active' : ''}`}
+                style={{ '--dot-accent': dotIdx === 0 ? 'var(--accent-ember)' : (projects[dotIdx - 1]?.color || 'var(--accent-ember)') }}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </section>
   );
 }
