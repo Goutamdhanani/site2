@@ -1124,8 +1124,7 @@ export default function BookingFlow({ onViewChange }) {
 
                 <div className="bf-pass-header">
                   <div className="bf-pass-logo">
-                    <span className="logo-mark">OW</span>
-                    <span className="logo-name">oddwebs</span>
+                    <img src="/logo.png" alt="oddwebs" style={{ height: '28px', width: 'auto', objectFit: 'contain', display: 'block' }} />
                   </div>
                   <span className="bf-pass-badge">AGENCY DEMO PASS</span>
                 </div>

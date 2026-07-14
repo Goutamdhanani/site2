@@ -980,6 +980,10 @@ function HeroDesktop() {
           <div className="hero-gradient-bg" aria-hidden="true" style={{ opacity: 0.15 }}>
             <div className="hero-noise-overlay" />
           </div>
+          {/* Watermark cover: white circle + oddwebs logo over Gemini sparkle */}
+          <div className="hero-watermark-cover" aria-hidden="true">
+            <img src="/logo.png" alt="" className="hero-watermark-logo" />
+          </div>
         </div>
 
         <div className="hero-ui-layer">

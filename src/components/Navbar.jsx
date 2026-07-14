@@ -52,8 +52,14 @@ export default function Navbar({ currentView, onViewChange }) {
             }}
             className="nav-logo"
           >
-            <span className="nav-logo-mark">OW</span>
-            <span className="nav-logo-word">oddwebs</span>
+            <img
+              src="/logo.png"
+              alt="oddwebs"
+              className="nav-logo-img"
+              width="110"
+              height="36"
+              style={{ display: 'block', objectFit: 'contain', height: '36px', width: 'auto', maxWidth: '120px' }}
+            />
           </a>
 
           <ul className="nav-links">

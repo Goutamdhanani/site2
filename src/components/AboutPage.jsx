@@ -248,7 +248,7 @@ export default function AboutPage({ onViewChange }) {
                   
                   {/* Mock Site Header */}
                   <div className="mock-site-header">
-                    <div className="mock-logo">OW</div>
+                    <div className="mock-logo"><img src="/logo.png" alt="oddwebs" style={{ height: '14px', width: 'auto', objectFit: 'contain' }} /></div>
                     <div className="mock-nav-links">
                       <div className="mock-dot" />
                       <div className="mock-dot" />

@@ -175,29 +175,18 @@ export default function Preloader({ onComplete }) {
         {/* Visual scan scanner line */}
         <div className="preloader-scanline" aria-hidden="true" />
 
-        {/* Geometric Sigil Mandala Logo */}
         <div className="preloader-logo-wrapper">
-          <svg className="preloader-crest" viewBox="0 0 100 100">
-            <defs>
-              <linearGradient id="preloader-crest-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="var(--accent-ember)" />
-                <stop offset="100%" stopColor="var(--accent-amber)" />
-              </linearGradient>
-              <linearGradient id="preloader-crest-grad-2" x1="100%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="var(--accent-gold)" />
-                <stop offset="100%" stopColor="var(--accent-lacquer)" />
-              </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-            <circle cx="50" cy="50" r="38" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="4 4" />
-            
-            {/* Double rotating mandala triangles */}
-            <polygon points="50,16 79,68 21,68" fill="none" stroke="url(#preloader-crest-grad)" strokeWidth="1.5" className="crest-triangle-1" />
-            <polygon points="50,84 21,32 79,32" fill="none" stroke="url(#preloader-crest-grad-2)" strokeWidth="1.5" className="crest-triangle-2" />
-            
-            {/* Core central gravity pulse */}
-            <circle cx="50" cy="50" r="7" fill="var(--accent-ember)" className="crest-core" />
-          </svg>
+          <img
+            src="/logo.png"
+            alt="oddwebs"
+            className="preloader-logo-img"
+            style={{
+              width: '120px',
+              height: 'auto',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 0 20px rgba(100, 60, 200, 0.6))',
+            }}
+          />
         </div>
 
         {/* Status Messages Telemetry */}

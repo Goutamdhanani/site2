@@ -351,6 +351,34 @@ footer {
   transform-origin: center center;
 }
 
+/* ─── Gemini Watermark Cover ─── */
+/* Covers the Gemini sparkle watermark that appears in every animation frame.
+   Pixel-accurate position: ~13% from right, ~16% from bottom (1920x1080 source). */
+.hero-watermark-cover {
+  position: absolute;
+  right: 13%;
+  bottom: 16%;
+  /* Center the circle on the sparkle origin */
+  transform: translate(50%, 50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.hero-watermark-logo {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  border-radius: 50%;
+  display: block;
+}
+
 .hero-ui-layer {
   position: fixed;
   inset: 0;

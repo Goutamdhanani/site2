@@ -83,8 +83,12 @@ export default function Footer({ onViewChange }) {
               onViewChange('home');
             }}
           >
-            <span className="nav-logo-mark">OW</span>
-            <span className="nav-logo-word">oddwebs</span>
+            <img
+              src="/logo.png"
+              alt="oddwebs"
+              className="footer-logo-img"
+              style={{ display: 'block', objectFit: 'contain', height: '40px', width: 'auto', maxWidth: '130px' }}
+            />
           </div>
           <p className="footer-tagline">
             A premium web design and development agency helping startups and brands across the US and Canada build custom websites, mobile apps, and AI-powered automation systems that drive real growth.
