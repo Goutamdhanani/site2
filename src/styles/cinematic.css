@@ -1078,100 +1078,88 @@ html, body, .cinematic-wrapper {
   opacity: 1 !important;
 }
 
-/* Swipe Discover Indicator */
-.cs-swipe-discover {
+/* Swipe Hint */
+.cs-swipe-hint {
+  position: absolute;
+  bottom: 10vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 10px;
+  padding: 10px 20px;
+  background: rgba(10, 8, 8, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 100px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   opacity: 1;
-  visibility: visible;
-  transition: opacity 0.6s ease, visibility 0.6s ease;
-  z-index: 10;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  animation: csSwipeFloat 2s ease-in-out infinite;
 }
 
-.cs-swipe-discover--hidden {
+.cs-swipe-hint--hidden {
   opacity: 0;
-  visibility: hidden;
+  transform: translateX(-50%) translateY(20px);
   pointer-events: none;
 }
 
-.cs-swipe-arrow {
-  font-family: var(--font-mono);
-  font-size: 14px;
+.cs-swipe-hint__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--accent-ember);
-  display: inline-block;
-  will-change: transform;
+  animation: csSwipeBounce 1.5s ease-in-out infinite;
 }
 
-.cs-swipe-arrow.left {
-  animation: csArrowLeftMove 2s ease-in-out infinite;
-}
-
-.cs-swipe-arrow.right {
-  animation: csArrowRightMove 2s ease-in-out infinite;
-}
-
-@keyframes csArrowLeftMove {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(-6px); }
-}
-
-@keyframes csArrowRightMove {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(6px); }
-}
-
-.cs-swipe-discover.paused .cs-swipe-arrow {
-  animation-play-state: paused !important;
-}
-
-.cs-swipe-line {
-  color: rgba(255, 255, 255, 0.15);
-  font-size: 10px;
-  letter-spacing: -2px;
-}
-
-.cs-swipe-text {
+.cs-swipe-hint__text {
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+@keyframes csSwipeBounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(6px); }
+}
+
+@keyframes csSwipeFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-4px); }
 }
 
 /* Dot Pagination */
 .cs-dot-pagination {
+  position: absolute;
+  bottom: 5vh;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
-  z-index: 10;
+  gap: 8px;
 }
 
 .cs-dot {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.08);
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-}
-
-.cs-dot:hover {
-  background: rgba(255, 255, 255, 0.45);
 }
 
 .cs-dot--active {
-  width: 32px;
-  height: 10px;
+  width: 24px;
   border-radius: 100px;
   background: var(--dot-accent, var(--accent-ember));
   border-color: var(--dot-accent, var(--accent-ember));
-  box-shadow: 0 0 16px var(--dot-accent, var(--accent-ember));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--dot-accent, var(--accent-ember)) 40%, transparent);
 }
 
 

@@ -339,36 +339,16 @@
   .cs-card__showcase {
     position: relative !important;
     width: 100% !important;
-    height: 240px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    margin-bottom: 16px !important;
+    height: auto !important;
+    aspect-ratio: 16 / 10 !important;
+    margin-bottom: 8px !important;
   }
 
-  .cs-card__img-container {
-    height: 100% !important;
-    width: auto !important;
-    max-width: 100% !important;
-    border-radius: 12px !important;
+  .cs-card__image-wrapper {
+    aspect-ratio: 16 / 10 !important;
+    border-radius: 8px !important;
     overflow: hidden !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
-  }
-
-  .cs-card__showcase--mobile .cs-card__img-container {
-    aspect-ratio: 9 / 19.3 !important;
-    border-radius: 20px !important;
-    border: 3px solid rgba(255, 255, 255, 0.15) !important;
-  }
-
-  .cs-card__showcase:not(.cs-card__showcase--mobile) .cs-card__img-container {
-    aspect-ratio: 16 / 10 !important;
-  }
-
-  .cs-card__img {
-    object-fit: contain !important;
-    width: 100% !important;
-    height: 100% !important;
   }
 
   .cs-card__floating-badge {

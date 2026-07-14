@@ -70,18 +70,8 @@ const projects = [
 export default function PortfolioPage({ onViewChange }) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef(null);
   const stageRef = useRef(null);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile, { passive: true });
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   // ─── SWIPE/DRAG INTERACTION TO CHANGE PROJECTS ───
   const dragStart = useRef({ x: 0, y: 0, isDragging: false });
@@ -347,131 +337,102 @@ export default function PortfolioPage({ onViewChange }) {
         {/* Full Cinematic 2-Column Grid */}
         <div className="pt-cinematic-grid">
           {/* Left Column: 3D Parallax Device Showcase */}
-          <div className="pt-visual-wrapper" style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+          <div 
+            ref={stageRef}
+            className="pt-visual-column"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            onMouseDown={handleDragStart}
+            onTouchStart={handleDragStart}
+          >
+            <div className="hud-brackets" aria-hidden="true">
+              <div className="hud-corner-r tl" />
+              <div className="hud-corner-r tr" />
+              <div className="hud-corner-r bl" />
+              <div className="hud-corner-r br" />
+            </div>
+
+            {/* Glowing spotlight effect behind the active device */}
+            <div className="pt-spotlight" style={{ '--spotlight-color': activeProject.color }} />
+
+            {/* The main browser mockup */}
             <div 
-              ref={stageRef}
-              className="pt-visual-column"
-              onMouseMove={handleMouseMove}
-              onMouseLeave={handleMouseLeave}
-              onMouseDown={handleDragStart}
-              onTouchStart={handleDragStart}
+              className={`pt-browser-mockup ${activeProject.isMobile ? 'pt-mobile-mockup' : ''}`} 
+              style={{ 
+                transformStyle: 'preserve-3d',
+                ...(activeProject.isMobile ? { 
+                  aspectRatio: '9/19.3', 
+                  maxWidth: '240px',
+                  borderRadius: '32px',
+                  borderWidth: '8px',
+                  borderColor: 'rgba(255,255,255,0.15)'
+                } : {})
+              }}
             >
-              <div className="hud-brackets" aria-hidden="true">
-                <div className="hud-corner-r tl" />
-                <div className="hud-corner-r tr" />
-                <div className="hud-corner-r bl" />
-                <div className="hud-corner-r br" />
-              </div>
-
-              {/* Glowing spotlight effect behind the active device */}
-              <div className="pt-spotlight" style={{ '--spotlight-color': activeProject.color }} />
-
-              {/* The main browser mockup */}
-              <div 
-                className={`pt-browser-mockup ${activeProject.isMobile ? 'pt-mobile-mockup' : ''}`} 
-                style={{ 
-                  transformStyle: 'preserve-3d',
-                  maxHeight: '85%',
-                  maxWidth: '90%',
-                  ...(activeProject.isMobile ? { 
-                    aspectRatio: '9/19.3', 
-                    maxWidth: '240px',
-                    borderRadius: '32px',
-                    borderWidth: '8px',
-                    borderColor: 'rgba(255,255,255,0.15)'
-                  } : {
-                    maxWidth: '440px',
-                    aspectRatio: '16/10',
-                  })
-                }}
-              >
-                {activeProject.isMobile ? (
-                  /* Mobile Phone Header / Notch */
-                  <div 
-                    className="pt-mobile-header"
-                    style={{
-                      height: '24px',
-                      background: 'transparent',
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      position: 'relative',
-                    }}
-                  >
-                    <div 
-                      className="pt-mobile-notch"
-                      style={{
-                        width: '80px',
-                        height: '14px',
-                        background: 'rgba(255, 255, 255, 0.15)',
-                        borderRadius: '0 0 10px 10px',
-                      }}
-                    />
-                  </div>
-                ) : (
-                  /* Browser window header */
-                  <div className="pt-browser-header">
-                    <div className="pt-browser-dots">
-                      <span className="dot red" />
-                      <span className="dot yellow" />
-                      <span className="dot green" />
-                    </div>
-                    <div className="pt-browser-address">{activeProject.title.toLowerCase()}.oddwebs.com</div>
-                  </div>
-                )}
-                
-                {/* Image viewport */}
+              {activeProject.isMobile ? (
+                /* Mobile Phone Header / Notch */
                 <div 
-                  className={activeProject.isMobile ? "pt-mobile-body" : "pt-browser-body"}
-                  style={activeProject.isMobile ? {
-                    width: '100%',
-                    height: 'calc(100% - 24px)',
-                    overflow: 'hidden',
-                  } : {}}
+                  className="pt-mobile-header"
+                  style={{
+                    height: '24px',
+                    background: 'transparent',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    position: 'relative',
+                  }}
                 >
-                  <img src={activeProject.image} alt={activeProject.title} className="pt-browser-img" draggable="false" />
+                  <div 
+                    className="pt-mobile-notch"
+                    style={{
+                      width: '80px',
+                      height: '14px',
+                      background: 'rgba(255, 255, 255, 0.15)',
+                      borderRadius: '0 0 10px 10px',
+                    }}
+                  />
                 </div>
-              </div>
-
-              {/* Floating Badge 1: Key Metric (parallax layers) */}
-              <div className="pt-float-badge-metric pt-floating-card">
-                <span className="badge-title">PROVEN OUTCOME</span>
-                <span className="badge-value" style={{ color: activeProject.color }}>{activeProject.metric}</span>
-                <span className="badge-label">{activeProject.metricLabel}</span>
-              </div>
-
-              {/* Floating Badge 2: Tech Details */}
-              <div className="pt-float-badge-tech pt-floating-card">
-                <span className="badge-title">KEY SPECIALIZATION</span>
-                <div className="badge-tech-list">
-                  <span className="badge-tech-item">{activeProject.tags[0]}</span>
-                  <span className="badge-tech-item">{activeProject.tags[1]}</span>
+              ) : (
+                /* Browser window header */
+                <div className="pt-browser-header">
+                  <div className="pt-browser-dots">
+                    <span className="dot red" />
+                    <span className="dot yellow" />
+                    <span className="dot green" />
+                  </div>
+                  <div className="pt-browser-address">{activeProject.title.toLowerCase()}.oddwebs.com</div>
                 </div>
-                <span className="badge-label">{activeProject.category}</span>
+              )}
+              
+              {/* Image viewport */}
+              <div 
+                className={activeProject.isMobile ? "pt-mobile-body" : "pt-browser-body"}
+                style={activeProject.isMobile ? {
+                  width: '100%',
+                  height: 'calc(100% - 24px)',
+                  overflow: 'hidden',
+                } : {}}
+              >
+                <img src={activeProject.image} alt={activeProject.title} className="pt-browser-img" draggable="false" />
               </div>
             </div>
 
-            {/* Mobile Interaction Hints */}
-            {isMobile && (
-              <div className="pt-mobile-controls" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', marginTop: '16px', marginBottom: '8px' }}>
-                <div className="pt-mobile-swipe-hint">
-                  Swipe to Explore <span className="pt-swipe-arrow">→</span>
-                </div>
-                <div className="pt-dot-pagination">
-                  {projects.map((_, idx) => (
-                    <span
-                      key={idx}
-                      className={`pt-dot ${idx === activeIdx ? 'pt-dot--active' : ''}`}
-                      style={{ 
-                        '--dot-accent': projects[idx].color,
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => handleProjectSelect(idx)}
-                    />
-                  ))}
-                </div>
+            {/* Floating Badge 1: Key Metric (parallax layers) */}
+            <div className="pt-float-badge-metric pt-floating-card">
+              <span className="badge-title">PROVEN OUTCOME</span>
+              <span className="badge-value" style={{ color: activeProject.color }}>{activeProject.metric}</span>
+              <span className="badge-label">{activeProject.metricLabel}</span>
+            </div>
+
+            {/* Floating Badge 2: Tech Details */}
+            <div className="pt-float-badge-tech pt-floating-card">
+              <span className="badge-title">KEY SPECIALIZATION</span>
+              <div className="badge-tech-list">
+                <span className="badge-tech-item">{activeProject.tags[0]}</span>
+                <span className="badge-tech-item">{activeProject.tags[1]}</span>
               </div>
-            )}
+              <span className="badge-label">{activeProject.category}</span>
+            </div>
           </div>
 
           {/* Right Column: Specs & Roadmapping Console */}
