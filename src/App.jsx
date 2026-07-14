@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, lazy, Suspense } from 'react';
+import { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { isLite } from './utils/device';
@@ -218,11 +218,11 @@ export default function App() {
     };
   }, [siteVisible, currentView]);
 
-  const handlePreloaderComplete = () => {
+  const handlePreloaderComplete = useCallback(() => {
     setLoading(false);
     setSiteVisible(true);
     trackEvent(ANALYTICS_EVENTS.SITE_LOADED);
-  };
+  }, []);
 
   // ─── GLOBAL SAFETY NET ───
   // If preloader or hero frames stall for any reason (network, GSAP error, HMR race),
@@ -241,8 +241,8 @@ export default function App() {
 
   // ─── LENIS SMOOTH SCROLL (desktop only) ───
   useEffect(() => {
-    // Lite mode: skip Lenis entirely — use native scroll
-    if (isLite) return;
+    // Only initialize Lenis when the preloader has finished and the site is visible
+    if (isLite || !siteVisible) return;
 
     // Dynamic import Lenis only when needed (desktop)
     let lenis = null;
@@ -424,7 +424,7 @@ export default function App() {
         window.lenis = null;
       }
     };
-  }, []);
+  }, [siteVisible]);
 
   // ─── SECTION TRANSITIONS + GLOBAL EFFECTS ───
   useEffect(() => {

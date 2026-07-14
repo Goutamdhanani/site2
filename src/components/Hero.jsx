@@ -796,20 +796,7 @@ function HeroDesktop() {
     };
   }, [totalFrames]);
 
-  // Scroll Lock during desktop loading sequence to prevent scroll-stutter during preloading
-  useEffect(() => {
-    if (!loaded) {
-      document.body.style.overflow = 'hidden';
-      document.documentElement.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-      document.documentElement.style.overflow = '';
-    };
-  }, [loaded]);
+  // Scroll lock removed to prevent permanent scroll locking when image sequence is loading or missing.
 
   // ─── SCROLL ANIMATION + EXIT TRANSITION ───
   useLayoutEffect(() => {

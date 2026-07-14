@@ -160,8 +160,9 @@ export default function Preloader({ onComplete }) {
     return () => {
       clearTimeout(fallbackTimer);
       ctx.revert();
-      // If effect is cleaned up (HMR, StrictMode, etc.) before timeline finishes,
-      // force-complete so the site never gets stuck invisible
+      // Always restore scroll when the preloader is unmounted
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
       finish();
     };
   }, [finish]);
