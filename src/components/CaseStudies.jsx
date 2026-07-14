@@ -179,15 +179,13 @@ export default function CaseStudies() {
     setActiveIndex(closestCardIndex);
   };
 
-  // Run updates once on visibility or native mobile scroll
+  // Run updates on mount, visibility, or mobile layout changes
   useEffect(() => {
-    if (isVisible) {
-      updateCarouselDynamics();
-    }
-  }, [isVisible]);
+    updateCarouselDynamics();
+  }, [isVisible, isMobile]);
 
   useEffect(() => {
-    if (!isMobile || !isVisible) return;
+    if (!isMobile) return;
     const scrollContainer = sectionRef.current;
     if (!scrollContainer) return;
 
@@ -197,7 +195,7 @@ export default function CaseStudies() {
 
     scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
     return () => scrollContainer.removeEventListener('scroll', handleScroll);
-  }, [isMobile, isVisible]);
+  }, [isMobile]);
 
   // Desktop Click-and-Drag / Touch-Swipe to slide horizontal scroll cards
   useEffect(() => {
@@ -648,7 +646,7 @@ export default function CaseStudies() {
                       overflow: 'hidden'
                     }}
                   >
-                    {isVisible && project.image && (
+                    {project.image && (
                       <img
                         src={project.image}
                         alt={project.title}
