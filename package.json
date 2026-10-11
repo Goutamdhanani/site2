@@ -1,17 +1,22 @@
 {
-  "name": "oddwebs-temp",
+  "name": "oddwebs-studio",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "node studio/build.mjs && node studio/serve.mjs",
+    "build": "vite build --base=/legacy/ --outDir dist/legacy && node studio/build.mjs",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "node studio/serve.mjs",
+    "dev:legacy": "vite",
+    "build:studio": "node studio/build.mjs",
+    "check": "node --test studio/check.test.mjs"
   },
   "dependencies": {
     "@studio-freight/lenis": "^1.0.42",
     "@supabase/supabase-js": "^2.110.0",
+    "@upstash/ratelimit": "^2.2.0",
+    "@upstash/redis": "^1.39.0",
     "bcryptjs": "^3.0.3",
     "gsap": "^3.15.0",
     "jsonwebtoken": "^9.0.3",
@@ -22,6 +27,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@fontsource-variable/cormorant-garamond": "^5.3.0",
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource/hedvig-letters-serif": "^5.3.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.1",

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" fill="none">
+<defs>
+ <linearGradient id="bg" x2="1600" y2="1000" gradientUnits="userSpaceOnUse"><stop stop-color="#29263e"/><stop offset=".55" stop-color="#65627e"/><stop offset="1" stop-color="#a5a1bb"/></linearGradient>
+ <radialGradient id="halo"><stop stop-color="#e8dcff" stop-opacity=".42"/><stop offset="1" stop-color="#dfd4ff" stop-opacity="0"/></radialGradient>
+ <linearGradient id="enamel" x1="830" y1="190" x2="1270" y2="790" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset=".27" stop-color="#e6e5f3"/><stop offset=".55" stop-color="#bcb9d4"/><stop offset=".76" stop-color="#f0eefc"/><stop offset="1" stop-color="#87869f"/></linearGradient>
+ <linearGradient id="facet" x1="1000" y1="270" x2="1180" y2="770" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".7"/><stop offset=".4" stop-color="#73728d" stop-opacity=".18"/><stop offset="1" stop-color="#403f61" stop-opacity=".5"/></linearGradient>
+ <filter id="shadow" x="-40%" y="-30%" width="180%" height="180%"><feGaussianBlur stdDeviation="30"/></filter>
+</defs>
+<path fill="url(#bg)" d="M0 0h1600v1000H0z"/>
+<ellipse cx="1140" cy="430" rx="650" ry="620" fill="url(#halo)"/>
+<g stroke="#e0dbff" stroke-opacity=".16"><circle cx="1110" cy="480" r="335"/><circle cx="1110" cy="480" r="410"/><circle cx="1110" cy="480" r="480"/><path d="M680 480h870M1110 30v900" stroke-dasharray="2 12"/></g>
+<g stroke-linecap="round" transform="rotate(-26 1110 480)"><circle cx="1110" cy="480" r="410" stroke="#ddd5fe" stroke-opacity=".6" stroke-width="3" stroke-dasharray="200 2376"/><circle cx="1110" cy="480" r="335" stroke="#b7d5e8" stroke-opacity=".8" stroke-width="3" stroke-dasharray="110 1995"/></g>
+<ellipse cx="1130" cy="840" rx="200" ry="35" fill="#131026" opacity=".45" filter="url(#shadow)"/>
+<path d="M1092 236c-69-12-120-53-176-20-103 61-96 155-64 239 24 63 34 131 44 210 13 109 31 159 64 156 34-4 36-80 68-147 18-37 42-83 69-82 32 0 60 42 75 84 26 72 39 145 75 145 38 0 58-86 69-173 10-83 30-140 57-210 30-78 28-153-37-203-72-55-122 21-182 9-22-4-40-6-62-8Z" fill="url(#enamel)" stroke="#f4f0ff" stroke-opacity=".55" stroke-width="2"/>
+<path d="M924 247c66-32 114 42 175 27 43-11 85-33 130-16-45 9-81 46-127 45-66-1-106-56-178-56Z" fill="#fff" opacity=".65"/>
+<path d="M1133 287c-42 85-17 179-38 244-16 51-54 111-67 143 25-42 44-83 69-82 32 0 60 42 75 84 17 48 29 102 46 128-20-73-26-170-19-266 7-92 58-185 38-255-16-43-57-29-104 4Z" fill="url(#facet)"/>
+<path d="M887 277c-52 67-27 132-11 178 24 66 27 158 48 234" stroke="#fff" stroke-opacity=".44" stroke-width="5" stroke-linecap="round"/>
+<circle cx="1406" cy="277" r="8" fill="#d5eaf2"/><circle cx="843" cy="715" r="5" fill="#e2d8f8"/>
+</svg>
