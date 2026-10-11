@@ -46,5 +46,3 @@ test('all public HTML pages have complete metadata, local assets and working int
   assert.ok(!/InventoryAvangers|BizzHouse|320%|99\.4%|4\.9\/5/.test(html),`${file}: unsupported/private content`);
  }
 });
-
-\n

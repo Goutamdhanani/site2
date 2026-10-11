@@ -22,5 +22,3 @@ export const services = [
   { name: 'Search & performance', text: 'Make your site easier to find and easier to use. Technical SEO, structured content, accessibility, and performance improvements.', list: 'Technical SEO · Local SEO · Performance · Accessibility', price: 'From ₹1,500 / $200' },
   { name: 'Interactive experiences', text: 'Create moments people remember. Art-directed product pages, spatial interfaces, and purposeful motion for ambitious brands.', list: 'Interactive 3D · Creative development · Motion design', price: 'Scoped to your project' }
 ];
-
-\n

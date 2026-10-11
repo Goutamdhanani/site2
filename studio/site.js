@@ -99,5 +99,3 @@ if(location.pathname==='/'){
  const routes={'#portfolio':'/work/','#process':'/services/','#demo':'/contact/','#services-page':'/services/','#services':'/services/','#admin':'/legacy/#admin','#analytics':'/legacy/#analytics'};
  if(routes[location.hash])location.replace(routes[location.hash]);
 }
-
-\n
