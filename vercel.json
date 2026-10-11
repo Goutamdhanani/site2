@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "headers": [
     {
       "source": "/(.*)",
@@ -22,7 +24,16 @@
       ]
     },
     {
-      "source": "/assets/(.*)",
+      "source": "/studio/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/legacy/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",

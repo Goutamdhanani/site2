@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" fill="none">
+<defs>
+ <radialGradient id="sky" cx=".72" cy=".47" r=".75"><stop stop-color="#273b58"/><stop offset=".5" stop-color="#101c31"/><stop offset="1" stop-color="#040913"/></radialGradient>
+ <radialGradient id="planet" cx=".3" cy=".22" r=".82"><stop stop-color="#dae7e8"/><stop offset=".24" stop-color="#8aaebf"/><stop offset=".53" stop-color="#456879"/><stop offset=".79" stop-color="#14283c"/><stop offset="1" stop-color="#060c1b"/></radialGradient>
+ <radialGradient id="glow"><stop offset=".74" stop-color="#63869c" stop-opacity="0"/><stop offset=".85" stop-color="#91d1ee" stop-opacity=".23"/><stop offset=".92" stop-color="#91d1ee" stop-opacity="0"/></radialGradient>
+ <linearGradient id="rings" x1="550" y1="300" x2="1530" y2="670" gradientUnits="userSpaceOnUse"><stop stop-color="#b3cada" stop-opacity=".05"/><stop offset=".45" stop-color="#b3cada" stop-opacity=".7"/><stop offset="1" stop-color="#b3cada" stop-opacity=".1"/></linearGradient>
+ <clipPath id="disc"><circle cx="1090" cy="476" r="287"/></clipPath>
+ <filter id="soft"><feGaussianBlur stdDeviation="1.5"/></filter>
+</defs>
+<path fill="url(#sky)" d="M0 0h1600v1000H0z"/>
+<g fill="#d0e1f1" opacity=".65"><circle cx="126" cy="131" r="1.3"/><circle cx="346" cy="98" r="1"/><circle cx="608" cy="211" r="1.4"/><circle cx="726" cy="91" r="1"/><circle cx="992" cy="79" r="1.3"/><circle cx="1462" cy="180" r="1.6"/><circle cx="1550" cy="380" r="1"/><circle cx="129" cy="651" r="1"/><circle cx="458" cy="738" r="1.8"/><circle cx="774" cy="849" r="1"/><circle cx="1150" cy="871" r="1.4"/><circle cx="1442" cy="740" r="1"/><circle cx="289" cy="341" r="1"/><circle cx="524" cy="427" r="1.1"/><circle cx="71" cy="877" r="1.4"/><circle cx="1504" cy="941" r="1"/></g>
+<g transform="rotate(-24 1090 476)"><ellipse cx="1090" cy="476" rx="548" ry="132" stroke="url(#rings)" stroke-width="16"/><ellipse cx="1090" cy="476" rx="587" ry="151" stroke="#9ab9ca" stroke-opacity=".18"/><ellipse cx="1090" cy="476" rx="530" ry="124" stroke="#b4d0dd" stroke-opacity=".4" stroke-width="3"/></g>
+<circle cx="1090" cy="476" r="350" fill="url(#glow)"/>
+<circle cx="1090" cy="476" r="287" fill="url(#planet)"/>
+<g clip-path="url(#disc)" opacity=".26" filter="url(#soft)" stroke="#d1e5e7" stroke-width="12"><path d="M740 245c200 80 285-95 474 12s193 26 250-1M730 311c181 126 372-87 529 45s215 23 240 4M720 389c201 85 319-81 540 62s200 45 230 17M739 516c205-47 313-42 526 96s145 6 200 1M798 649c151-7 247-18 397 81"/></g>
+<g clip-path="url(#disc)" fill="#2c4357" opacity=".22"><ellipse cx="1003" cy="390" rx="56" ry="26" transform="rotate(20 1003 390)"/><ellipse cx="1190" cy="580" rx="83" ry="34" transform="rotate(20 1190 580)"/></g>
+<g transform="rotate(-24 1090 476)"><path d="M542 476a548 132 0 0 0 1096 0" stroke="url(#rings)" stroke-width="16"/><path d="M560 476a530 124 0 0 0 1060 0" stroke="#b4d0dd" stroke-opacity=".4" stroke-width="3"/><path d="M503 476a587 151 0 0 0 1174 0" stroke="#9ab9ca" stroke-opacity=".18"/></g>
+<circle cx="656" cy="222" r="27" fill="url(#planet)"/>
+</svg>
