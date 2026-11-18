@@ -48,12 +48,15 @@ For the new contact endpoint, set server-only variables in the hosting environme
 | `RESEND_API_KEY` | Email provider credential |
 | `RESEND_FROM_EMAIL` | Sender address on a verified Resend domain |
 | `ODD_CONTACT_EMAIL` | Optional destination; defaults to the founder-provided Gmail address |
-| `UPSTASH_REDIS_REST_URL` | Upstash Redis REST endpoint for shared rate-limit state |
-| `UPSTASH_REDIS_REST_TOKEN` | Server-only Upstash Redis token; also HMACs IP identifiers before storage |
+| `CONTACT_VERCEL_FIREWALL` | Set to `1` in Preview and Production only after the contact rate-limit rule is active |
+| `UPSTASH_REDIS_REST_URL` | Shared rate-limit endpoint when the Vercel Firewall setting is off |
+| `UPSTASH_REDIS_REST_TOKEN` | Server-only Upstash Redis token used when the Vercel Firewall setting is off |
 | `SUPABASE_URL` | Optional existing leads database |
 | `SUPABASE_SERVICE_ROLE_KEY` | Optional server-only key for archiving enquiries in the existing leads table |
 
-The contact endpoint allows five submissions per IP per ten-minute sliding window. It uses Vercel's `x-forwarded-for` client IP header, stores only an HMAC identifier in Upstash, and returns `429` with `Retry-After` when the limit is exceeded. It fails closed if Upstash is missing or unavailable, so configure both Upstash variables in Vercel before enabling form delivery. Without email configuration, the form reports an unavailable delivery and retains the message. The direct email link and email-draft fallback remain available. Success is returned only when Resend accepts the message and returns an ID; this is not an inbox-delivery guarantee. Optional lead archival follows email acceptance and does not turn a successful send into a retry request. No tracking fields or invented budget/lead-score values are collected by the new form.
+On Vercel, keep system environment variables enabled and use a project Firewall rule matching POST requests whose path starts with `/api/contact`. Configure a fixed window of 600 seconds with a limit of five requests per IP and a `429` action. Apply the rule before enabling `CONTACT_VERCEL_FIREWALL`. Keep the rule active for as long as any deployment uses that setting. Other installations require a working Upstash rate limiter, which allows five submissions per IP per ten-minute sliding window and stores an HMAC-derived identifier.
+
+Name, reply email, and topic are required. Notes are optional and have no minimum length. If delivery fails, the form keeps the entries available for the email draft. The endpoint reports success when Resend accepts the email and returns an ID. Optional lead archival runs after acceptance.
 
 Public agent discovery is available at `https://oddwebs.com/llms.txt` and `https://oddwebs.com/site-data.json`. The JSON feed uses the `oddwebs.public-site-data/v1` schema; every generated HTML page links to both sources, and `robots.txt` permits crawling while excluding `/api/` and `/legacy/`.
 

@@ -16,10 +16,11 @@ const server=http.createServer(async(req,res)=>{
    res.end(`<!doctype html><title>Oddwebs responsive review</title><style>body{margin:0;background:#242622;display:grid;place-items:start center}iframe{border:0;width:${width}px;height:844px;background:#0c0e0c}</style><iframe id="responsive-preview" title="Oddwebs at ${width} pixels" src="${route}"></iframe>`);return;
   }
   if(url.pathname==='/api/contact'){
-   let body='';for await(const part of req){body+=part;if(body.length>16000){res.writeHead(413);res.end();return;}}
+   req.setEncoding('utf8');
+   let body='';for await(const part of req){body+=part;if(body.length>48000){res.writeHead(413);res.end();return;}}
    const {default:handler}=await import('../api/contact.js');
    const adapted={setHeader:(k,v)=>res.setHeader(k,v),status(code){res.statusCode=code;return this;},json(data){res.setHeader('Content-Type','application/json');res.end(JSON.stringify(data));}};
-   return handler({method:req.method,body},adapted);
+   return handler({method:req.method,socket:req.socket,body},adapted);
   }
   if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405);res.end();return;}
   let file=path.resolve(root,'.'+decodeURIComponent(url.pathname));

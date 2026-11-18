@@ -10,7 +10,7 @@ const valid = {
   name: 'Preview Test',
   email: 'preview@example.com',
   subject: 'New project',
-  message: 'A local test message that is never delivered.',
+  message: 'Hi!',
   website: '',
 };
 const allowLimiter = { limit: async () => ({ success: true, remaining: 4, reset: Date.now() + 600_000 }) };
@@ -30,7 +30,8 @@ test('enquiries reject injection, invalid fields and bot submissions', () => {
   assert.equal(validateEnquiry({ ...valid, email: 'invalid' }), null);
   assert.equal(validateEnquiry({ ...valid, subject: 'Project\nBcc: other@example.com' }), null);
   assert.equal(validateEnquiry({ ...valid, website: 'bot' }), null);
-  assert.equal(validateEnquiry({ ...valid, message: 'short' }), null);
+  assert.equal(validateEnquiry({ ...valid, message: '' }).message, '');
+  assert.equal(validateEnquiry({ ...valid, message: undefined }).message, '');
   assert.equal(validateEnquiry({ ...valid, message: 'x'.repeat(5001) }), null);
   assert.equal(validateEnquiry(valid).email, valid.email);
 });
@@ -100,7 +101,11 @@ test('contact reports only provider-confirmed acceptance; no external email is s
     let archived = false;
     const res = response();
     await createHandler(
-      async payload => { assert.equal(payload.replyTo, valid.email); return { data: { id: 'local-mock' } }; },
+      async payload => {
+        assert.equal(payload.replyTo, valid.email);
+        assert.equal(payload.text, `Name: ${valid.name}\nEmail: ${valid.email}\nTopic: ${valid.subject}\n\nNotes:\n${valid.message}`);
+        return { data: { id: 'local-mock' } };
+      },
       async data => { assert.equal(data.message, valid.message); archived = true; },
       allowLimiter,
     )(request(valid), res);
